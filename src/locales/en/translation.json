@@ -1,0 +1,193 @@
+{
+  "app": {
+    "name": "HeyFlat",
+    "tagline": "Your Shared Home, Sorted"
+  },
+  "nav": {
+    "home": "Home",
+    "accounts": "Bills",
+    "tasks": "Tasks",
+    "expenses": "Expenses",
+    "shopping": "Shopping",
+    "calendar": "Calendar",
+    "house": "House"
+  },
+  "auth": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "name": "Full name",
+    "email": "Email",
+    "password": "Password",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "loggingIn": "Logging in…",
+    "registering": "Creating account…",
+    "loginError": "Invalid email or password.",
+    "registerError": "Couldn't create your account. Try a different email.",
+    "checkEmailTitle": "Check your email",
+    "checkEmailHint": "We sent a confirmation link to {{email}}. Click it, then come back and log in.",
+    "logout": "Log out"
+  },
+  "onboarding": {
+    "createTab": "Create a house",
+    "joinTab": "Join a house",
+    "createTitle": "Name your house",
+    "createHint": "You'll be the admin and can invite roommates after.",
+    "houseNamePlaceholder": "House name",
+    "createButton": "Create house",
+    "createError": "Couldn't create the house. Try again.",
+    "joinTitle": "Join your roommates",
+    "joinHint": "Ask your roommate for the invite code.",
+    "codePlaceholder": "Invite code",
+    "joinButton": "Join house",
+    "invalidCode": "Invalid invite code."
+  },
+  "home": {
+    "greeting": "Hey, {{name}}",
+    "house": "You're in {{houseName}}"
+  },
+  "housePage": {
+    "inviteTitle": "Invite roommates",
+    "inviteHint": "Share this code or link so new roommates can join.",
+    "copyCode": "Copy code",
+    "copyLink": "Copy link",
+    "copied": "Copied!",
+    "regenerate": "Regenerate code",
+    "membersTitle": "Roommates",
+    "pastMembersTitle": "Past roommates",
+    "admin": "Admin",
+    "since": "Since {{date}}",
+    "period": "{{start}} – {{end}}",
+    "remove": "Mark as left"
+  },
+  "recurrence": {
+    "none": "One-time",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly"
+  },
+  "splitType": {
+    "equal": "Equal",
+    "percentage": "Percentage",
+    "exact": "Exact amount"
+  },
+  "billCategories": {
+    "rent": "Rent",
+    "utilities": "Utilities",
+    "internet": "Internet",
+    "groceries": "Groceries",
+    "other": "Other"
+  },
+  "billsPage": {
+    "addBill": "Add bill",
+    "close": "Close",
+    "titleLabel": "Title",
+    "categoryLabel": "Category",
+    "amountLabel": "Total amount",
+    "dueDateLabel": "Due date",
+    "recurrenceLabel": "Recurrence",
+    "participantsLabel": "Split between",
+    "splitTypeLabel": "Split type",
+    "percentageTotal": "Total: {{total}}%",
+    "exactTotal": "Allocated {{total}} of {{amount}}",
+    "save": "Save bill",
+    "pendingTitle": "Pending",
+    "paidTitle": "Paid",
+    "noPending": "No pending bills. Nice!",
+    "dueOn": "Due {{date}}",
+    "paid": "Paid",
+    "pending": "Pending",
+    "markPaid": "Mark paid",
+    "paidOn": "paid {{date}}",
+    "fromShopping": "Added from shopping list"
+  },
+  "tasksPage": {
+    "addTask": "Add task",
+    "close": "Close",
+    "titleLabel": "Task",
+    "assigneeLabel": "Assigned to",
+    "general": "Everyone",
+    "recurrenceLabel": "Recurrence",
+    "notifyLabel": "Notify assignee",
+    "save": "Save task",
+    "todoTitle": "To do",
+    "doneTitle": "Done",
+    "noPending": "No pending tasks. Nice!",
+    "markDone": "Mark as done",
+    "notifyOn": "Notifications on",
+    "completedBy": "Done by {{name}} · {{date}}",
+    "dueDateLabel": "Due date (optional)",
+    "dueOn": "Due {{date}}"
+  },
+  "roommateOfMonth": {
+    "title": "Roommate of the month",
+    "empty": "No tasks completed yet this month. Be the first!",
+    "taskCount_one": "{{count}} task done",
+    "taskCount_other": "{{count}} tasks done",
+    "tie": "It's a tie!",
+    "viewHallOfFame": "View hall of fame",
+    "hideHallOfFame": "Hide hall of fame"
+  },
+  "expensesPage": {
+    "byCategory": "By category",
+    "monthlyComparison": "Monthly comparison",
+    "export": "Export report (CSV)",
+    "empty": "No expenses yet.",
+    "noneThisMonth": "No expenses this month.",
+    "csvTitle": "Title",
+    "csvCategory": "Category",
+    "csvAmount": "Amount",
+    "csvDueDate": "Due date"
+  },
+  "shoppingPage": {
+    "addPlaceholder": "Add an item",
+    "add": "Add",
+    "toBuyTitle": "To buy",
+    "boughtTitle": "Bought",
+    "noPending": "Nothing on the list. Add something!",
+    "addedBy": "Added by {{name}}",
+    "markBought": "Mark as bought",
+    "pricePlaceholder": "Price",
+    "confirmBought": "Confirm",
+    "cancel": "Cancel",
+    "boughtBy": "Bought by {{name}} · {{date}}"
+  },
+  "calendarPage": {
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "noEvents": "Nothing scheduled.",
+    "billDue": "Bill due",
+    "taskDue": "Task due",
+    "taskDone": "Task done",
+    "weekday": {
+      "sun": "S",
+      "mon": "M",
+      "tue": "T",
+      "wed": "W",
+      "thu": "T",
+      "fri": "F",
+      "sat": "S"
+    }
+  },
+  "vaultPage": {
+    "title": "House vault",
+    "wifiTitle": "Wi-Fi",
+    "wifiNameLabel": "Network name",
+    "wifiPasswordLabel": "Password",
+    "paymentsTitle": "PayID & bank details",
+    "payIdLabel": "PayID",
+    "bankDetailsLabel": "Bank details",
+    "customFieldsTitle": "Other info",
+    "noCustomFields": "No extra info yet.",
+    "addField": "Add",
+    "fieldLabelPlaceholder": "Label (e.g. Landlord phone)",
+    "fieldValuePlaceholder": "Value",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "show": "Show",
+    "hide": "Hide"
+  }
+}

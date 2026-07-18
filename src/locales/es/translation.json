@@ -1,0 +1,193 @@
+{
+  "app": {
+    "name": "HeyFlat",
+    "tagline": "Tu Hogar Compartido, Organizado"
+  },
+  "nav": {
+    "home": "Inicio",
+    "accounts": "Cuentas",
+    "tasks": "Tareas",
+    "expenses": "Gastos",
+    "shopping": "Compras",
+    "calendar": "Calendario",
+    "house": "Casa"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "register": "Crear Cuenta",
+    "name": "Nombre completo",
+    "email": "Correo",
+    "password": "Contraseña",
+    "noAccount": "¿No tienes una cuenta?",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "loggingIn": "Iniciando sesión…",
+    "registering": "Creando cuenta…",
+    "loginError": "Correo o contraseña inválidos.",
+    "registerError": "No pudimos crear tu cuenta. Prueba otro correo.",
+    "checkEmailTitle": "Revisa tu correo",
+    "checkEmailHint": "Enviamos un enlace de confirmación a {{email}}. Haz clic en él y luego vuelve para iniciar sesión.",
+    "logout": "Cerrar sesión"
+  },
+  "onboarding": {
+    "createTab": "Crear una casa",
+    "joinTab": "Unirse a una casa",
+    "createTitle": "Nombra tu casa",
+    "createHint": "Serás el admin y podrás invitar compañeros después.",
+    "houseNamePlaceholder": "Nombre de la casa",
+    "createButton": "Crear casa",
+    "createError": "No pudimos crear la casa. Intenta de nuevo.",
+    "joinTitle": "Únete a tus compañeros",
+    "joinHint": "Pide el código de invitación a tu compañero.",
+    "codePlaceholder": "Código de invitación",
+    "joinButton": "Unirse a la casa",
+    "invalidCode": "Código de invitación inválido."
+  },
+  "home": {
+    "greeting": "Hola, {{name}}",
+    "house": "Estás en {{houseName}}"
+  },
+  "housePage": {
+    "inviteTitle": "Invita a tus compañeros",
+    "inviteHint": "Comparte este código o link para que nuevos compañeros se unan.",
+    "copyCode": "Copiar código",
+    "copyLink": "Copiar link",
+    "copied": "¡Copiado!",
+    "regenerate": "Generar nuevo código",
+    "membersTitle": "Compañeros de casa",
+    "pastMembersTitle": "Ex compañeros",
+    "admin": "Admin",
+    "since": "Desde {{date}}",
+    "period": "{{start}} – {{end}}",
+    "remove": "Marcar como salida"
+  },
+  "recurrence": {
+    "none": "Única vez",
+    "daily": "Diaria",
+    "weekly": "Semanal",
+    "monthly": "Mensual",
+    "yearly": "Anual"
+  },
+  "splitType": {
+    "equal": "Igual",
+    "percentage": "Porcentaje",
+    "exact": "Monto exacto"
+  },
+  "billCategories": {
+    "rent": "Alquiler",
+    "utilities": "Servicios",
+    "internet": "Internet",
+    "groceries": "Supermercado",
+    "other": "Otros"
+  },
+  "billsPage": {
+    "addBill": "Agregar cuenta",
+    "close": "Cerrar",
+    "titleLabel": "Título",
+    "categoryLabel": "Categoría",
+    "amountLabel": "Monto total",
+    "dueDateLabel": "Vencimiento",
+    "recurrenceLabel": "Recurrencia",
+    "participantsLabel": "Dividir entre",
+    "splitTypeLabel": "Tipo de división",
+    "percentageTotal": "Total: {{total}}%",
+    "exactTotal": "Asignado {{total}} de {{amount}}",
+    "save": "Guardar cuenta",
+    "pendingTitle": "Pendientes",
+    "paidTitle": "Pagadas",
+    "noPending": "No hay cuentas pendientes. ¡Genial!",
+    "dueOn": "Vence {{date}}",
+    "paid": "Pagado",
+    "pending": "Pendiente",
+    "markPaid": "Marcar como pagado",
+    "paidOn": "pagado el {{date}}",
+    "fromShopping": "Agregada desde la lista de compras"
+  },
+  "tasksPage": {
+    "addTask": "Agregar tarea",
+    "close": "Cerrar",
+    "titleLabel": "Tarea",
+    "assigneeLabel": "Responsable",
+    "general": "Todos",
+    "recurrenceLabel": "Recurrencia",
+    "notifyLabel": "Notificar al responsable",
+    "save": "Guardar tarea",
+    "todoTitle": "Por hacer",
+    "doneTitle": "Hechas",
+    "noPending": "No hay tareas pendientes. ¡Genial!",
+    "markDone": "Marcar como hecha",
+    "notifyOn": "Notificaciones activas",
+    "completedBy": "Hecha por {{name}} · {{date}}",
+    "dueDateLabel": "Vencimiento (opcional)",
+    "dueOn": "Vence {{date}}"
+  },
+  "roommateOfMonth": {
+    "title": "Compañero del mes",
+    "empty": "Aún no hay tareas completadas este mes. ¡Sé el primero!",
+    "taskCount_one": "{{count}} tarea hecha",
+    "taskCount_other": "{{count}} tareas hechas",
+    "tie": "¡Empate!",
+    "viewHallOfFame": "Ver salón de la fama",
+    "hideHallOfFame": "Ocultar salón de la fama"
+  },
+  "expensesPage": {
+    "byCategory": "Por categoría",
+    "monthlyComparison": "Comparativo mensual",
+    "export": "Exportar informe (CSV)",
+    "empty": "Aún no hay gastos.",
+    "noneThisMonth": "No hay gastos este mes.",
+    "csvTitle": "Título",
+    "csvCategory": "Categoría",
+    "csvAmount": "Monto",
+    "csvDueDate": "Vencimiento"
+  },
+  "shoppingPage": {
+    "addPlaceholder": "Agregar artículo",
+    "add": "Agregar",
+    "toBuyTitle": "Por comprar",
+    "boughtTitle": "Comprados",
+    "noPending": "Lista vacía. ¡Agrega algo!",
+    "addedBy": "Agregado por {{name}}",
+    "markBought": "Marcar como comprado",
+    "pricePlaceholder": "Precio",
+    "confirmBought": "Confirmar",
+    "cancel": "Cancelar",
+    "boughtBy": "Comprado por {{name}} · {{date}}"
+  },
+  "calendarPage": {
+    "prevMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "noEvents": "Nada programado.",
+    "billDue": "Cuenta vence",
+    "taskDue": "Tarea prevista",
+    "taskDone": "Tarea hecha",
+    "weekday": {
+      "sun": "D",
+      "mon": "L",
+      "tue": "M",
+      "wed": "M",
+      "thu": "J",
+      "fri": "V",
+      "sat": "S"
+    }
+  },
+  "vaultPage": {
+    "title": "Caja fuerte de la casa",
+    "wifiTitle": "Wi-Fi",
+    "wifiNameLabel": "Nombre de la red",
+    "wifiPasswordLabel": "Contraseña",
+    "paymentsTitle": "PayID y datos bancarios",
+    "payIdLabel": "PayID",
+    "bankDetailsLabel": "Datos bancarios",
+    "customFieldsTitle": "Otra información",
+    "noCustomFields": "Aún no hay información extra.",
+    "addField": "Agregar",
+    "fieldLabelPlaceholder": "Etiqueta (ej: Teléfono del propietario)",
+    "fieldValuePlaceholder": "Valor",
+    "edit": "Editar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "remove": "Eliminar",
+    "show": "Mostrar",
+    "hide": "Ocultar"
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "app": {
+    "name": "HeyFlat",
+    "tagline": "Sua Casa Compartilhada, Organizada"
+  },
+  "nav": {
+    "home": "Início",
+    "accounts": "Contas",
+    "tasks": "Tarefas",
+    "expenses": "Gastos",
+    "shopping": "Compras",
+    "calendar": "Calendário",
+    "house": "Casa"
+  },
+  "auth": {
+    "login": "Entrar",
+    "register": "Criar Conta",
+    "name": "Nome completo",
+    "email": "E-mail",
+    "password": "Senha",
+    "noAccount": "Não tem uma conta?",
+    "haveAccount": "Já tem uma conta?",
+    "loggingIn": "Entrando…",
+    "registering": "Criando conta…",
+    "loginError": "E-mail ou senha inválidos.",
+    "registerError": "Não foi possível criar sua conta. Tente outro e-mail.",
+    "checkEmailTitle": "Confira seu e-mail",
+    "checkEmailHint": "Enviamos um link de confirmação para {{email}}. Clique nele e depois volte para entrar.",
+    "logout": "Sair"
+  },
+  "onboarding": {
+    "createTab": "Criar uma casa",
+    "joinTab": "Entrar em uma casa",
+    "createTitle": "Dê um nome pra sua casa",
+    "createHint": "Você vai ser o admin e pode convidar moradores depois.",
+    "houseNamePlaceholder": "Nome da casa",
+    "createButton": "Criar casa",
+    "createError": "Não foi possível criar a casa. Tente de novo.",
+    "joinTitle": "Entre na casa dos seus moradores",
+    "joinHint": "Peça o código de convite pro seu morador.",
+    "codePlaceholder": "Código de convite",
+    "joinButton": "Entrar na casa",
+    "invalidCode": "Código de convite inválido."
+  },
+  "home": {
+    "greeting": "Olá, {{name}}",
+    "house": "Você está em {{houseName}}"
+  },
+  "housePage": {
+    "inviteTitle": "Convide moradores",
+    "inviteHint": "Compartilhe este código ou link para novos moradores entrarem.",
+    "copyCode": "Copiar código",
+    "copyLink": "Copiar link",
+    "copied": "Copiado!",
+    "regenerate": "Gerar novo código",
+    "membersTitle": "Moradores",
+    "pastMembersTitle": "Ex-moradores",
+    "admin": "Admin",
+    "since": "Desde {{date}}",
+    "period": "{{start}} – {{end}}",
+    "remove": "Marcar como saída"
+  },
+  "recurrence": {
+    "none": "Única",
+    "daily": "Diária",
+    "weekly": "Semanal",
+    "monthly": "Mensal",
+    "yearly": "Anual"
+  },
+  "splitType": {
+    "equal": "Igual",
+    "percentage": "Porcentagem",
+    "exact": "Valor exato"
+  },
+  "billCategories": {
+    "rent": "Aluguel",
+    "utilities": "Contas de casa",
+    "internet": "Internet",
+    "groceries": "Mercado",
+    "other": "Outros"
+  },
+  "billsPage": {
+    "addBill": "Adicionar conta",
+    "close": "Fechar",
+    "titleLabel": "Título",
+    "categoryLabel": "Categoria",
+    "amountLabel": "Valor total",
+    "dueDateLabel": "Vencimento",
+    "recurrenceLabel": "Recorrência",
+    "participantsLabel": "Dividir entre",
+    "splitTypeLabel": "Tipo de divisão",
+    "percentageTotal": "Total: {{total}}%",
+    "exactTotal": "Alocado {{total}} de {{amount}}",
+    "save": "Salvar conta",
+    "pendingTitle": "Pendentes",
+    "paidTitle": "Pagas",
+    "noPending": "Nenhuma conta pendente. Show!",
+    "dueOn": "Vence {{date}}",
+    "paid": "Pago",
+    "pending": "Pendente",
+    "markPaid": "Marcar como pago",
+    "paidOn": "pago em {{date}}",
+    "fromShopping": "Adicionada pela lista de compras"
+  },
+  "tasksPage": {
+    "addTask": "Adicionar tarefa",
+    "close": "Fechar",
+    "titleLabel": "Tarefa",
+    "assigneeLabel": "Responsável",
+    "general": "Todos",
+    "recurrenceLabel": "Recorrência",
+    "notifyLabel": "Notificar responsável",
+    "save": "Salvar tarefa",
+    "todoTitle": "A fazer",
+    "doneTitle": "Feitas",
+    "noPending": "Nenhuma tarefa pendente. Show!",
+    "markDone": "Marcar como feita",
+    "notifyOn": "Notificações ativas",
+    "completedBy": "Feita por {{name}} · {{date}}",
+    "dueDateLabel": "Vencimento (opcional)",
+    "dueOn": "Vence {{date}}"
+  },
+  "roommateOfMonth": {
+    "title": "Morador do mês",
+    "empty": "Nenhuma tarefa concluída ainda este mês. Seja o primeiro!",
+    "taskCount_one": "{{count}} tarefa feita",
+    "taskCount_other": "{{count}} tarefas feitas",
+    "tie": "Empate!",
+    "viewHallOfFame": "Ver hall da fama",
+    "hideHallOfFame": "Esconder hall da fama"
+  },
+  "expensesPage": {
+    "byCategory": "Por categoria",
+    "monthlyComparison": "Comparativo mensal",
+    "export": "Exportar relatório (CSV)",
+    "empty": "Nenhum gasto ainda.",
+    "noneThisMonth": "Nenhum gasto neste mês.",
+    "csvTitle": "Título",
+    "csvCategory": "Categoria",
+    "csvAmount": "Valor",
+    "csvDueDate": "Vencimento"
+  },
+  "shoppingPage": {
+    "addPlaceholder": "Adicionar item",
+    "add": "Adicionar",
+    "toBuyTitle": "Para comprar",
+    "boughtTitle": "Compradas",
+    "noPending": "Lista vazia. Adicione algo!",
+    "addedBy": "Adicionado por {{name}}",
+    "markBought": "Marcar como comprado",
+    "pricePlaceholder": "Valor",
+    "confirmBought": "Confirmar",
+    "cancel": "Cancelar",
+    "boughtBy": "Comprado por {{name}} · {{date}}"
+  },
+  "calendarPage": {
+    "prevMonth": "Mês anterior",
+    "nextMonth": "Próximo mês",
+    "noEvents": "Nada agendado.",
+    "billDue": "Conta vence",
+    "taskDue": "Tarefa prevista",
+    "taskDone": "Tarefa concluída",
+    "weekday": {
+      "sun": "D",
+      "mon": "S",
+      "tue": "T",
+      "wed": "Q",
+      "thu": "Q",
+      "fri": "S",
+      "sat": "S"
+    }
+  },
+  "vaultPage": {
+    "title": "Cofre da casa",
+    "wifiTitle": "Wi-Fi",
+    "wifiNameLabel": "Nome da rede",
+    "wifiPasswordLabel": "Senha",
+    "paymentsTitle": "PayID e dados bancários",
+    "payIdLabel": "PayID",
+    "bankDetailsLabel": "Dados bancários",
+    "customFieldsTitle": "Outras informações",
+    "noCustomFields": "Nenhuma informação extra ainda.",
+    "addField": "Adicionar",
+    "fieldLabelPlaceholder": "Título (ex: Telefone do síndico)",
+    "fieldValuePlaceholder": "Valor",
+    "edit": "Editar",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "remove": "Remover",
+    "show": "Mostrar",
+    "hide": "Ocultar"
+  }
+}
