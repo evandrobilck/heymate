@@ -199,6 +199,7 @@
     "changePhoto": "Change photo",
     "uploading": "Uploading…",
     "photoError": "Couldn't upload the photo. Try again.",
+    "language": "Language",
     "basicInfo": "Basic info",
     "name": "Full name",
     "email": "Email",

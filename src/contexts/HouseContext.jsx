@@ -16,12 +16,18 @@ function mapHouseRow(row) {
 }
 
 export function HouseProvider({ children }) {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [house, setHouse] = useState(null)
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
+    // Wait for AuthContext to finish resolving the session before deciding
+    // there's no user — otherwise a fresh page load briefly treats "not
+    // loaded yet" as "logged out" and bounces an authenticated user with a
+    // house back to onboarding.
+    if (authLoading) return
+
     if (!user) {
       setHouse(null)
       setMembers([])
@@ -66,7 +72,7 @@ export function HouseProvider({ children }) {
       }))
     )
     setLoading(false)
-  }, [user])
+  }, [user, authLoading])
 
   useEffect(() => {
     refresh()

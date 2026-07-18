@@ -2,11 +2,19 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import Avatar from '../components/Avatar'
+
+const LANGUAGE_LABELS = {
+  en: 'English',
+  'pt-BR': 'Português (Brasil)',
+  es: 'Español',
+}
 
 export default function ProfilePage() {
   const { t } = useTranslation()
   const { user, updateProfile, uploadAvatar, logout } = useAuth()
+  const { language, setLanguage, supportedLanguages } = useLanguage()
   const navigate = useNavigate()
 
   const [name, setName] = useState(user.name)
@@ -82,6 +90,24 @@ export default function ProfilePage() {
               className="hidden"
             />
           </label>
+        </div>
+      </div>
+
+      <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+        <p className="text-sm font-semibold text-gray-900">{t('profilePage.language')}</p>
+        <div className="flex gap-2">
+          {supportedLanguages.map((lang) => (
+            <button
+              key={lang}
+              type="button"
+              onClick={() => setLanguage(lang)}
+              className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
+                language === lang ? 'border-purple-500 bg-purple-50 text-purple-700' : 'border-gray-200 text-gray-600'
+              }`}
+            >
+              {LANGUAGE_LABELS[lang]}
+            </button>
+          ))}
         </div>
       </div>
 
