@@ -10,15 +10,20 @@ export function VaultProvider({ children }) {
   const { house } = useHouse()
   const [vault, setVault] = useState(EMPTY_VAULT)
 
+  const memberIds = house?.members.map((member) => member.id) ?? []
+  const memberIdsKey = memberIds.join(',')
+
   const refresh = useCallback(async () => {
     if (!house?.id) {
       setVault(EMPTY_VAULT)
       return
     }
 
-    const [{ data: wifiRow }, { data: paymentRows }, { data: fieldRows }] = await Promise.all([
+    const [{ data: wifiRow }, { data: profileRows }, { data: fieldRows }] = await Promise.all([
       supabase.from('house_wifi').select('*').eq('house_id', house.id).maybeSingle(),
-      supabase.from('member_payments').select('*').eq('house_id', house.id),
+      memberIds.length
+        ? supabase.from('profiles').select('id, pay_id, bank_details').in('id', memberIds)
+        : Promise.resolve({ data: [] }),
       supabase
         .from('vault_custom_fields')
         .select('*')
@@ -27,8 +32,8 @@ export function VaultProvider({ children }) {
     ])
 
     const memberPayments = {}
-    ;(paymentRows ?? []).forEach((row) => {
-      memberPayments[row.user_id] = { payId: row.pay_id, bankDetails: row.bank_details }
+    ;(profileRows ?? []).forEach((row) => {
+      memberPayments[row.id] = { payId: row.pay_id ?? '', bankDetails: row.bank_details ?? '' }
     })
 
     setVault({
@@ -36,7 +41,8 @@ export function VaultProvider({ children }) {
       memberPayments,
       customFields: (fieldRows ?? []).map((row) => ({ id: row.id, label: row.label, value: row.value })),
     })
-  }, [house?.id])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [house?.id, memberIdsKey])
 
   useEffect(() => {
     refresh()
@@ -52,11 +58,7 @@ export function VaultProvider({ children }) {
         { event: '*', schema: 'public', table: 'house_wifi', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'member_payments', filter: `house_id=eq.${house.id}` },
-        () => refresh()
-      )
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, () => refresh())
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'vault_custom_fields', filter: `house_id=eq.${house.id}` },
@@ -73,21 +75,6 @@ export function VaultProvider({ children }) {
     const { error } = await supabase
       .from('house_wifi')
       .upsert({ house_id: house.id, name, password }, { onConflict: 'house_id' })
-
-    if (error) {
-      console.error(error)
-      return
-    }
-    await refresh()
-  }
-
-  async function updateMemberPayment(memberId, payId, bankDetails) {
-    const { error } = await supabase
-      .from('member_payments')
-      .upsert(
-        { house_id: house.id, user_id: memberId, pay_id: payId, bank_details: bankDetails },
-        { onConflict: 'house_id,user_id' }
-      )
 
     if (error) {
       console.error(error)
@@ -116,10 +103,7 @@ export function VaultProvider({ children }) {
     await refresh()
   }
 
-  const value = useMemo(
-    () => ({ vault, updateWifi, updateMemberPayment, addCustomField, removeCustomField }),
-    [vault]
-  )
+  const value = useMemo(() => ({ vault, updateWifi, addCustomField, removeCustomField }), [vault])
 
   return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>
 }

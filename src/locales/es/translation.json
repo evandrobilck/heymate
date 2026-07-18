@@ -191,6 +191,25 @@
     "cancel": "Cancelar",
     "remove": "Eliminar",
     "show": "Mostrar",
-    "hide": "Ocultar"
+    "hide": "Ocultar",
+    "editInProfile": "Editar en el perfil"
+  },
+  "profilePage": {
+    "title": "Configuración del perfil",
+    "changePhoto": "Cambiar foto",
+    "uploading": "Subiendo…",
+    "photoError": "No pudimos subir la foto. Intenta de nuevo.",
+    "basicInfo": "Información básica",
+    "name": "Nombre completo",
+    "email": "Correo",
+    "phone": "Teléfono",
+    "paymentInfo": "Datos de pago",
+    "emergencyContact": "Contacto de emergencia",
+    "emergencyName": "Nombre del contacto",
+    "emergencyPhone": "Teléfono del contacto",
+    "save": "Guardar cambios",
+    "saving": "Guardando…",
+    "saved": "¡Guardado!",
+    "saveError": "No pudimos guardar tu perfil. Intenta de nuevo."
   }
 }

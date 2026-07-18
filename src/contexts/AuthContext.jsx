@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { supabase } from '../services/supabase'
 
 const AuthContext = createContext(null)
@@ -21,19 +21,26 @@ export function AuthProvider({ children }) {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  useEffect(() => {
+  const refreshProfile = useCallback(async () => {
     if (!session?.user) {
       setProfile(null)
       return
     }
 
-    supabase
+    const { data } = await supabase
       .from('profiles')
-      .select('id, full_name')
+      .select(
+        'id, full_name, phone, avatar_url, pay_id, bank_details, emergency_contact_name, emergency_contact_phone'
+      )
       .eq('id', session.user.id)
       .single()
-      .then(({ data }) => setProfile(data))
+
+    setProfile(data)
   }, [session?.user?.id])
+
+  useEffect(() => {
+    refreshProfile()
+  }, [refreshProfile])
 
   async function register(email, password, fullName) {
     const { data, error } = await supabase.auth.signUp({
@@ -54,16 +61,66 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut()
   }
 
+  async function updateProfile(updates) {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        full_name: updates.name,
+        phone: updates.phone,
+        pay_id: updates.payId,
+        bank_details: updates.bankDetails,
+        emergency_contact_name: updates.emergencyContactName,
+        emergency_contact_phone: updates.emergencyContactPhone,
+      })
+      .eq('id', session.user.id)
+
+    if (error) throw error
+    await refreshProfile()
+  }
+
+  async function uploadAvatar(file) {
+    const extension = file.name.split('.').pop()
+    const path = `${session.user.id}/avatar-${Date.now()}.${extension}`
+
+    const { error: uploadError } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+    if (uploadError) throw uploadError
+
+    const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(path)
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ avatar_url: publicUrlData.publicUrl })
+      .eq('id', session.user.id)
+    if (updateError) throw updateError
+
+    await refreshProfile()
+  }
+
   const user = session?.user
     ? {
         id: session.user.id,
         email: session.user.email,
         name: profile?.full_name ?? session.user.email,
+        phone: profile?.phone ?? '',
+        avatarUrl: profile?.avatar_url ?? null,
+        payId: profile?.pay_id ?? '',
+        bankDetails: profile?.bank_details ?? '',
+        emergencyContactName: profile?.emergency_contact_name ?? '',
+        emergencyContactPhone: profile?.emergency_contact_phone ?? '',
       }
     : null
 
   const value = useMemo(
-    () => ({ user, isAuthenticated: Boolean(user), loading, register, login, logout }),
+    () => ({
+      user,
+      isAuthenticated: Boolean(user),
+      loading,
+      register,
+      login,
+      logout,
+      updateProfile,
+      uploadAvatar,
+    }),
     [user, loading]
   )
 

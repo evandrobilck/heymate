@@ -191,6 +191,25 @@
     "cancel": "Cancel",
     "remove": "Remove",
     "show": "Show",
-    "hide": "Hide"
+    "hide": "Hide",
+    "editInProfile": "Edit in profile"
+  },
+  "profilePage": {
+    "title": "Profile settings",
+    "changePhoto": "Change photo",
+    "uploading": "Uploading…",
+    "photoError": "Couldn't upload the photo. Try again.",
+    "basicInfo": "Basic info",
+    "name": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "paymentInfo": "Payment info",
+    "emergencyContact": "Emergency contact",
+    "emergencyName": "Contact name",
+    "emergencyPhone": "Contact phone",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Saved!",
+    "saveError": "Couldn't save your profile. Try again."
   }
 }

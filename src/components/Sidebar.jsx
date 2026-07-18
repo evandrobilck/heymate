@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
@@ -7,14 +7,8 @@ import { NAV_TABS } from './navIcons'
 
 export default function Sidebar() {
   const { t } = useTranslation()
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const { house } = useHouse()
-  const navigate = useNavigate()
-
-  async function handleLogout() {
-    await logout()
-    navigate('/login')
-  }
 
   return (
     <nav className="hidden h-svh w-60 shrink-0 flex-col border-r border-gray-200 bg-white md:flex">
@@ -41,19 +35,15 @@ export default function Sidebar() {
         ))}
       </ul>
 
-      <div className="border-t border-gray-100 px-5 py-4">
-        <div className="flex items-center gap-3">
-          <Avatar name={user.name} size="sm" />
-          <p className="truncate text-sm font-medium text-gray-700">{user.name}</p>
-        </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="mt-2 text-xs font-medium text-gray-400 hover:text-gray-600"
-        >
-          {t('auth.logout')}
-        </button>
-      </div>
+      <NavLink
+        to="/perfil"
+        className={({ isActive }) =>
+          `flex items-center gap-3 border-t border-gray-100 px-5 py-4 ${isActive ? 'bg-purple-50' : 'hover:bg-gray-50'}`
+        }
+      >
+        <Avatar name={user.name} avatarUrl={user.avatarUrl} size="sm" />
+        <p className="truncate text-sm font-medium text-gray-700">{user.name}</p>
+      </NavLink>
     </nav>
   )
 }

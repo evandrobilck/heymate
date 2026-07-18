@@ -13,6 +13,7 @@ import GastosPage from './pages/GastosPage'
 import ComprasPage from './pages/ComprasPage'
 import CalendarioPage from './pages/CalendarioPage'
 import CasaPage from './pages/CasaPage'
+import ProfilePage from './pages/ProfilePage'
 
 export default function App() {
   return (
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/compras" element={<ComprasPage />} />
         <Route path="/calendario" element={<CalendarioPage />} />
         <Route path="/casa" element={<CasaPage />} />
+        <Route path="/perfil" element={<ProfilePage />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/home" replace />} />

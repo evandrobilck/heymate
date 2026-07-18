@@ -7,7 +7,7 @@ export default function MemberListItem({ member, isPast = false, canManage = fal
 
   return (
     <li className="flex items-center gap-3 py-3">
-      <Avatar name={member.name} />
+      <Avatar name={member.name} avatarUrl={member.avatarUrl} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="truncate text-sm font-medium text-gray-900">{member.name}</p>

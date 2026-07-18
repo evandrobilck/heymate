@@ -33,7 +33,7 @@ export default function RoommateOfMonthCard() {
 
       {leaders.length === 1 && (
         <div className="mt-3 flex items-center gap-3">
-          <Avatar name={leaders[0].member.name} />
+          <Avatar name={leaders[0].member.name} avatarUrl={leaders[0].member.avatarUrl} />
           <div>
             <p className="text-sm font-medium text-gray-900">{leaders[0].member.name}</p>
             <p className="text-xs text-gray-500">
@@ -48,7 +48,7 @@ export default function RoommateOfMonthCard() {
           <p className="text-xs font-medium text-amber-600">{t('roommateOfMonth.tie')}</p>
           {leaders.map(({ member, count }) => (
             <div key={member.id} className="flex items-center gap-3">
-              <Avatar name={member.name} size="sm" />
+              <Avatar name={member.name} avatarUrl={member.avatarUrl} size="sm" />
               <div>
                 <p className="text-sm font-medium text-gray-900">{member.name}</p>
                 <p className="text-xs text-gray-500">{t('roommateOfMonth.taskCount', { count })}</p>

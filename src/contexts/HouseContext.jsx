@@ -50,7 +50,7 @@ export function HouseProvider({ children }) {
       supabase.from('houses').select('*').eq('id', membership.house_id).single(),
       supabase
         .from('house_members')
-        .select('id, user_id, role, joined_at, left_at, profiles(full_name)')
+        .select('id, user_id, role, joined_at, left_at, profiles(full_name, avatar_url)')
         .eq('house_id', membership.house_id),
     ])
 
@@ -59,6 +59,7 @@ export function HouseProvider({ children }) {
       (memberRows ?? []).map((row) => ({
         id: row.user_id,
         name: row.profiles?.full_name ?? 'Unknown',
+        avatarUrl: row.profiles?.avatar_url ?? null,
         role: row.role,
         joinedAt: row.joined_at,
         leftAt: row.left_at,
@@ -82,6 +83,7 @@ export function HouseProvider({ children }) {
         { event: '*', schema: 'public', table: 'house_members', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, () => refresh())
       .subscribe()
 
     return () => {
