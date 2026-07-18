@@ -57,8 +57,8 @@ export default function CalendarioPage() {
     <div>
       <h1 className="text-xl font-semibold text-gray-900">{t('nav.calendar')}</h1>
 
-      <div className="mt-4 flex gap-8">
-        <div className="w-80 shrink-0">
+      <div className="mt-4 flex flex-col gap-6 md:flex-row md:gap-8">
+        <div className="w-full md:w-80 md:shrink-0">
           <div className="flex items-center justify-between">
             <button
               type="button"

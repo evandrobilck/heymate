@@ -17,7 +17,7 @@ export default function Sidebar() {
   }
 
   return (
-    <nav className="flex h-svh w-60 shrink-0 flex-col border-r border-gray-200 bg-white">
+    <nav className="hidden h-svh w-60 shrink-0 flex-col border-r border-gray-200 bg-white md:flex">
       <div className="px-5 py-6">
         <p className="text-lg font-semibold text-purple-600">{t('app.name')}</p>
         <p className="mt-0.5 truncate text-xs text-gray-400">{house.name}</p>
