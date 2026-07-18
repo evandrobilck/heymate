@@ -123,6 +123,12 @@ export function HouseProvider({ children }) {
     setHouse(mapHouseRow(data))
   }
 
+  async function leaveHouse() {
+    const { error } = await supabase.rpc('leave_house')
+    if (error) throw error
+    await refresh()
+  }
+
   const value = useMemo(
     () => ({
       house: house ? { ...house, members } : null,
@@ -133,6 +139,7 @@ export function HouseProvider({ children }) {
       joinHouse,
       markMemberAsLeft,
       regenerateInviteCode,
+      leaveHouse,
     }),
     [house, members, isAdmin, loading]
   )

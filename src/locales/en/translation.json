@@ -58,7 +58,10 @@
     "admin": "Admin",
     "since": "Since {{date}}",
     "period": "{{start}} – {{end}}",
-    "remove": "Mark as left"
+    "remove": "Mark as left",
+    "leaveHouse": "Leave this house",
+    "leaveConfirm": "Are you sure you want to leave this house? You'll need an invite code to join another one.",
+    "leaveError": "Couldn't leave the house. Try again."
   },
   "recurrence": {
     "none": "One-time",

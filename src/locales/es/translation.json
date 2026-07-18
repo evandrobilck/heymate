@@ -58,7 +58,10 @@
     "admin": "Admin",
     "since": "Desde {{date}}",
     "period": "{{start}} – {{end}}",
-    "remove": "Marcar como salida"
+    "remove": "Marcar como salida",
+    "leaveHouse": "Salir de esta casa",
+    "leaveConfirm": "¿Seguro que quieres salir de esta casa? Vas a necesitar un código de invitación para unirte a otra.",
+    "leaveError": "No pudimos salir de la casa. Intenta de nuevo."
   },
   "recurrence": {
     "none": "Única vez",

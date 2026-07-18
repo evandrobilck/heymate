@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
@@ -10,10 +11,24 @@ import CustomFieldsCard from '../components/CustomFieldsCard'
 export default function CasaPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const { house, isAdmin, markMemberAsLeft, regenerateInviteCode } = useHouse()
+  const { house, isAdmin, markMemberAsLeft, regenerateInviteCode, leaveHouse } = useHouse()
+  const navigate = useNavigate()
+
+  if (!house) return null
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
   const pastMembers = house.members.filter((member) => member.leftAt)
+
+  async function handleLeaveHouse() {
+    if (!window.confirm(t('housePage.leaveConfirm'))) return
+    try {
+      await leaveHouse()
+      navigate('/onboarding')
+    } catch (err) {
+      console.error(err)
+      alert(t('housePage.leaveError'))
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -51,6 +66,12 @@ export default function CasaPage() {
         <WifiCard />
         <PaymentInfoList />
         <CustomFieldsCard />
+      </div>
+
+      <div className="border-t border-gray-100 pt-6">
+        <button type="button" onClick={handleLeaveHouse} className="text-xs font-medium text-red-500 hover:text-red-700">
+          {t('housePage.leaveHouse')}
+        </button>
       </div>
     </div>
   )
