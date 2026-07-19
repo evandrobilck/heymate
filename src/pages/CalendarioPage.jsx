@@ -4,6 +4,7 @@ import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useTasks } from '../contexts/TasksContext'
 import { getMonthGrid, toDayKey } from '../utils/calendar'
+import { getRecurrenceOccurrencesInRange } from '../utils/recurrence'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 
@@ -19,11 +20,18 @@ export default function CalendarioPage() {
   const [cursor, setCursor] = useState({ year: today.getFullYear(), month: today.getMonth() })
   const [selectedDay, setSelectedDay] = useState(toDayKey(today))
 
+  const grid = useMemo(() => getMonthGrid(cursor.year, cursor.month), [cursor])
+  const rangeStartKey = grid[0]?.dayKey
+  const rangeEndKey = grid[grid.length - 1]?.dayKey
+
   const eventsByDay = useMemo(() => {
     const map = {}
     bills.forEach((bill) => {
-      if (!map[bill.dueDate]) map[bill.dueDate] = []
-      map[bill.dueDate].push({ type: 'bill', id: bill.id, title: bill.title, amount: bill.totalAmount })
+      const occurrences = getRecurrenceOccurrencesInRange(bill.dueDate, bill.recurrence, rangeStartKey, rangeEndKey)
+      occurrences.forEach((day) => {
+        if (!map[day]) map[day] = []
+        map[day].push({ type: 'bill', id: bill.id, title: bill.title, amount: bill.totalAmount })
+      })
     })
     tasks.forEach((task) => {
       const day = task.completed ? task.completedAt : task.dueDate
@@ -32,9 +40,7 @@ export default function CalendarioPage() {
       map[day].push({ type: 'task', id: task.id, title: task.title, completed: task.completed })
     })
     return map
-  }, [bills, tasks])
-
-  const grid = useMemo(() => getMonthGrid(cursor.year, cursor.month), [cursor])
+  }, [bills, tasks, rangeStartKey, rangeEndKey])
   const monthLabel = new Intl.DateTimeFormat(i18n.language, { year: 'numeric', month: 'long' }).format(
     new Date(cursor.year, cursor.month, 1)
   )
