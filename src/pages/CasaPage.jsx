@@ -11,8 +11,17 @@ import CustomFieldsCard from '../components/CustomFieldsCard'
 export default function CasaPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const { house, isAdmin, markMemberAsLeft, makeAdmin, regenerateInviteCode, leaveHouse, resetHouseData, deleteHouse } =
-    useHouse()
+  const {
+    house,
+    isAdmin,
+    markMemberAsLeft,
+    makeAdmin,
+    updateMemberJoinedAt,
+    regenerateInviteCode,
+    leaveHouse,
+    resetHouseData,
+    deleteHouse,
+  } = useHouse()
   const navigate = useNavigate()
 
   if (!house) return null
@@ -27,6 +36,15 @@ export default function CasaPage() {
     } catch (err) {
       console.error(err)
       alert(t('housePage.makeAdminError'))
+    }
+  }
+
+  async function handleEditJoinedAt(memberId, joinedAt) {
+    try {
+      await updateMemberJoinedAt(memberId, joinedAt)
+    } catch (err) {
+      console.error(err)
+      alert(t('housePage.editJoinDateError'))
     }
   }
 
@@ -83,6 +101,7 @@ export default function CasaPage() {
               canManage={isAdmin && member.id !== user.id}
               onMarkAsLeft={markMemberAsLeft}
               onMakeAdmin={handleMakeAdmin}
+              onEditJoinedAt={handleEditJoinedAt}
             />
           ))}
         </ul>

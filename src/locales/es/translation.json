@@ -59,6 +59,8 @@
     "since": "Desde {{date}}",
     "period": "{{start}} – {{end}}",
     "remove": "Marcar como salida",
+    "editJoinDate": "Editar",
+    "editJoinDateError": "No pudimos actualizar la fecha de ingreso. Intenta de nuevo.",
     "makeAdmin": "Hacer admin",
     "makeAdminConfirm": "¿Hacer admin a este compañero? Podrá gestionar los compañeros y el código de invitación.",
     "makeAdminError": "No pudimos hacer admin a este compañero. Intenta de nuevo.",

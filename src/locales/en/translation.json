@@ -59,6 +59,8 @@
     "since": "Since {{date}}",
     "period": "{{start}} – {{end}}",
     "remove": "Mark as left",
+    "editJoinDate": "Edit",
+    "editJoinDateError": "Couldn't update the join date. Try again.",
     "makeAdmin": "Make admin",
     "makeAdminConfirm": "Make this roommate an admin? They'll be able to manage members and the invite code.",
     "makeAdminError": "Couldn't make this roommate an admin. Try again.",
