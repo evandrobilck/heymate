@@ -64,7 +64,14 @@
     "makeAdminError": "No pudimos hacer admin a este compañero. Intenta de nuevo.",
     "leaveHouse": "Salir de esta casa",
     "leaveConfirm": "¿Seguro que quieres salir de esta casa? Vas a necesitar un código de invitación para unirte a otra.",
-    "leaveError": "No pudimos salir de la casa. Intenta de nuevo."
+    "leaveError": "No pudimos salir de la casa. Intenta de nuevo.",
+    "resetData": "Borrar todos los datos",
+    "resetDataConfirm": "Esto borrará permanentemente todas las cuentas, tareas, artículos de compras, datos de Wi-Fi y campos de la caja fuerte de esta casa. La casa y los compañeros se mantienen. Esta acción no se puede deshacer. ¿Continuar?",
+    "resetDataError": "No pudimos borrar los datos de la casa. Intenta de nuevo.",
+    "deleteHouse": "Eliminar casa",
+    "deleteHouseConfirmPrompt": "Esto eliminará permanentemente \"{{name}}\" y todo lo que contiene, para todos los compañeros. Esta acción no se puede deshacer. Escribe el nombre de la casa para confirmar:",
+    "deleteHouseNameMismatch": "El nombre escrito no coincide. La casa no fue eliminada.",
+    "deleteHouseError": "No pudimos eliminar la casa. Intenta de nuevo."
   },
   "recurrence": {
     "none": "Única vez",

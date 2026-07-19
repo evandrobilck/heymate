@@ -148,6 +148,19 @@ export function HouseProvider({ children }) {
     await refresh()
   }
 
+  async function resetHouseData() {
+    if (!house) return
+    const { error } = await supabase.rpc('reset_house_data', { target_house_id: house.id })
+    if (error) throw error
+  }
+
+  async function deleteHouse() {
+    if (!house) return
+    const { error } = await supabase.rpc('delete_house', { target_house_id: house.id })
+    if (error) throw error
+    await refresh()
+  }
+
   const value = useMemo(
     () => ({
       house: house ? { ...house, members } : null,
@@ -160,6 +173,8 @@ export function HouseProvider({ children }) {
       makeAdmin,
       regenerateInviteCode,
       leaveHouse,
+      resetHouseData,
+      deleteHouse,
     }),
     [house, members, isAdmin, loading]
   )

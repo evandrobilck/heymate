@@ -64,7 +64,14 @@
     "makeAdminError": "Não foi possível tornar este morador admin. Tente de novo.",
     "leaveHouse": "Sair desta casa",
     "leaveConfirm": "Tem certeza que quer sair desta casa? Você vai precisar de um código de convite pra entrar em outra.",
-    "leaveError": "Não foi possível sair da casa. Tente de novo."
+    "leaveError": "Não foi possível sair da casa. Tente de novo.",
+    "resetData": "Apagar todos os dados",
+    "resetDataConfirm": "Isso vai apagar permanentemente todas as contas, tarefas, itens de compras, dados do Wi-Fi e campos do cofre desta casa. A casa e os moradores continuam. Essa ação não pode ser desfeita. Continuar?",
+    "resetDataError": "Não foi possível apagar os dados da casa. Tente de novo.",
+    "deleteHouse": "Deletar casa",
+    "deleteHouseConfirmPrompt": "Isso vai apagar permanentemente \"{{name}}\" e tudo que tem nela, para todos os moradores. Essa ação não pode ser desfeita. Digite o nome da casa para confirmar:",
+    "deleteHouseNameMismatch": "O nome digitado não confere. A casa não foi deletada.",
+    "deleteHouseError": "Não foi possível deletar a casa. Tente de novo."
   },
   "recurrence": {
     "none": "Única",

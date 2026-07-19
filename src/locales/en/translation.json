@@ -64,7 +64,14 @@
     "makeAdminError": "Couldn't make this roommate an admin. Try again.",
     "leaveHouse": "Leave this house",
     "leaveConfirm": "Are you sure you want to leave this house? You'll need an invite code to join another one.",
-    "leaveError": "Couldn't leave the house. Try again."
+    "leaveError": "Couldn't leave the house. Try again.",
+    "resetData": "Delete all data",
+    "resetDataConfirm": "This will permanently delete all bills, tasks, shopping items, Wi-Fi info, and vault fields for this house. The house and its members stay. This cannot be undone. Continue?",
+    "resetDataError": "Couldn't reset the house data. Try again.",
+    "deleteHouse": "Delete house",
+    "deleteHouseConfirmPrompt": "This will permanently delete \"{{name}}\" and everything in it for every member. This cannot be undone. Type the house name to confirm:",
+    "deleteHouseNameMismatch": "The name you typed doesn't match. House was not deleted.",
+    "deleteHouseError": "Couldn't delete the house. Try again."
   },
   "recurrence": {
     "none": "One-time",

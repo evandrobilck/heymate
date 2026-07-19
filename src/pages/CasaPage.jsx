@@ -11,7 +11,8 @@ import CustomFieldsCard from '../components/CustomFieldsCard'
 export default function CasaPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const { house, isAdmin, markMemberAsLeft, makeAdmin, regenerateInviteCode, leaveHouse } = useHouse()
+  const { house, isAdmin, markMemberAsLeft, makeAdmin, regenerateInviteCode, leaveHouse, resetHouseData, deleteHouse } =
+    useHouse()
   const navigate = useNavigate()
 
   if (!house) return null
@@ -37,6 +38,32 @@ export default function CasaPage() {
     } catch (err) {
       console.error(err)
       alert(t('housePage.leaveError'))
+    }
+  }
+
+  async function handleResetData() {
+    if (!window.confirm(t('housePage.resetDataConfirm'))) return
+    try {
+      await resetHouseData()
+    } catch (err) {
+      console.error(err)
+      alert(t('housePage.resetDataError'))
+    }
+  }
+
+  async function handleDeleteHouse() {
+    const typed = window.prompt(t('housePage.deleteHouseConfirmPrompt', { name: house.name }))
+    if (typed === null) return
+    if (typed !== house.name) {
+      alert(t('housePage.deleteHouseNameMismatch'))
+      return
+    }
+    try {
+      await deleteHouse()
+      navigate('/onboarding')
+    } catch (err) {
+      console.error(err)
+      alert(t('housePage.deleteHouseError'))
     }
   }
 
@@ -79,7 +106,7 @@ export default function CasaPage() {
         <CustomFieldsCard />
       </div>
 
-      <div className="border-t border-gray-100 pt-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-6">
         <button
           type="button"
           onClick={handleLeaveHouse}
@@ -87,6 +114,25 @@ export default function CasaPage() {
         >
           {t('housePage.leaveHouse')}
         </button>
+
+        {isAdmin && (
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={handleResetData}
+              className="rounded-full border border-red-300 px-4 py-1.5 text-xs font-medium text-red-500 hover:border-red-400 hover:text-red-700"
+            >
+              {t('housePage.resetData')}
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteHouse}
+              className="rounded-full border border-red-600 bg-red-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-red-700"
+            >
+              {t('housePage.deleteHouse')}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
