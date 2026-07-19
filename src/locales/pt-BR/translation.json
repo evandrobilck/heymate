@@ -11,7 +11,8 @@
     "shopping": "Compras",
     "calendar": "Calendário",
     "house": "Casa",
-    "settings": "Configurações"
+    "settings": "Configurações",
+    "editProfile": "Editar perfil"
   },
   "auth": {
     "login": "Entrar",

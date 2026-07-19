@@ -43,7 +43,10 @@ export default function Sidebar() {
         }
       >
         <Avatar name={user.name} avatarUrl={user.avatarUrl} size="sm" />
-        <p className="truncate text-sm font-medium text-gray-700">{user.name}</p>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium text-gray-700">{user.name}</p>
+          <p className="truncate text-xs text-gray-400">{t('nav.editProfile')}</p>
+        </div>
       </NavLink>
     </nav>
   )

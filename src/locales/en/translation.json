@@ -11,7 +11,8 @@
     "shopping": "Shopping",
     "calendar": "Calendar",
     "house": "House",
-    "settings": "Settings"
+    "settings": "Settings",
+    "editProfile": "Edit profile"
   },
   "auth": {
     "login": "Log In",
