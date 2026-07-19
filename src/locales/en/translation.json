@@ -142,6 +142,8 @@
     "doneTitle": "Done",
     "noPending": "No pending tasks. Nice!",
     "markDone": "Mark as done",
+    "whoCompleted": "Who did it?",
+    "confirmDone": "Confirm",
     "notifyOn": "Notifications on",
     "completedBy": "Done by {{name}} · {{date}}",
     "dueDateLabel": "Due date (optional)",

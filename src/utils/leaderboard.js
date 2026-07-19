@@ -5,9 +5,11 @@ export function getCurrentMonthKey(date = new Date()) {
 export function computeTaskCountsByMember(tasks, monthKey) {
   const counts = {}
   tasks.forEach((task) => {
-    if (!task.completed || !task.completedBy || !task.completedAt) return
+    if (!task.completed || !task.completedAt) return
     if (!task.completedAt.startsWith(monthKey)) return
-    counts[task.completedBy] = (counts[task.completedBy] || 0) + 1
+    task.completedByIds.forEach((memberId) => {
+      counts[memberId] = (counts[memberId] || 0) + 1
+    })
   })
   return counts
 }

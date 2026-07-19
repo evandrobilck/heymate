@@ -13,7 +13,7 @@ function mapTaskRow(row) {
     dueDate: row.due_date,
     notify: row.notify,
     completed: row.completed,
-    completedBy: row.completed_by,
+    completedByIds: (row.task_completers ?? []).map((completer) => completer.user_id),
     completedAt: row.completed_at,
     createdBy: row.created_by,
   }
@@ -31,7 +31,7 @@ export function TasksProvider({ children }) {
 
     const { data, error } = await supabase
       .from('tasks')
-      .select('*, task_assignees(user_id)')
+      .select('*, task_assignees(user_id), task_completers(user_id)')
       .eq('house_id', house.id)
       .order('created_at', { ascending: false })
 
@@ -58,6 +58,7 @@ export function TasksProvider({ children }) {
         () => refresh()
       )
       .on('postgres_changes', { event: '*', schema: 'public', table: 'task_assignees' }, () => refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_completers' }, () => refresh())
       .subscribe()
 
     return () => {
@@ -92,28 +93,36 @@ export function TasksProvider({ children }) {
     await refresh()
   }
 
-  async function toggleTaskCompleted(taskId, userId) {
-    const task = tasks.find((current) => current.id === taskId)
-    if (!task) return
-    const nextCompleted = !task.completed
-
+  async function markTaskDone(taskId, completedByIds) {
     const { error } = await supabase
       .from('tasks')
-      .update({
-        completed: nextCompleted,
-        completed_by: nextCompleted ? userId : null,
-        completed_at: nextCompleted ? new Date().toISOString().slice(0, 10) : null,
-      })
+      .update({ completed: true, completed_at: new Date().toISOString().slice(0, 10) })
       .eq('id', taskId)
 
-    if (error) {
-      console.error(error)
-      return
-    }
+    if (error) throw error
+
+    const { error: completersError } = await supabase
+      .from('task_completers')
+      .insert(completedByIds.map((userId) => ({ task_id: taskId, user_id: userId })))
+
+    if (completersError) throw completersError
     await refresh()
   }
 
-  const value = useMemo(() => ({ tasks, addTask, toggleTaskCompleted }), [tasks])
+  async function markTaskUndone(taskId) {
+    const { error } = await supabase
+      .from('tasks')
+      .update({ completed: false, completed_at: null })
+      .eq('id', taskId)
+
+    if (error) throw error
+
+    const { error: completersError } = await supabase.from('task_completers').delete().eq('task_id', taskId)
+    if (completersError) throw completersError
+    await refresh()
+  }
+
+  const value = useMemo(() => ({ tasks, addTask, markTaskDone, markTaskUndone }), [tasks])
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
 }

@@ -142,6 +142,8 @@
     "doneTitle": "Feitas",
     "noPending": "Nenhuma tarefa pendente. Show!",
     "markDone": "Marcar como feita",
+    "whoCompleted": "Quem fez?",
+    "confirmDone": "Confirmar",
     "notifyOn": "Notificações ativas",
     "completedBy": "Feita por {{name}} · {{date}}",
     "dueDateLabel": "Vencimento (opcional)",
