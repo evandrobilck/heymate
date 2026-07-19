@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useBills } from '../contexts/BillsContext'
 import BillCard from '../components/BillCard'
 import AddBillForm from '../components/AddBillForm'
+import BalanceSummary from '../components/BalanceSummary'
 
 export default function ContasPage() {
   const { t } = useTranslation()
@@ -24,6 +25,10 @@ export default function ContasPage() {
         >
           + {t('billsPage.addBill')}
         </button>
+      </div>
+
+      <div className="mt-4">
+        <BalanceSummary />
       </div>
 
       <div className="mt-4 space-y-3">
