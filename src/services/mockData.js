@@ -18,6 +18,7 @@ export const mockHouse = {
 export const billCategories = [
   { id: 'rent', labelKey: 'billCategories.rent', icon: '🏠' },
   { id: 'utilities', labelKey: 'billCategories.utilities', icon: '💡' },
+  { id: 'water', labelKey: 'billCategories.water', icon: '💧' },
   { id: 'internet', labelKey: 'billCategories.internet', icon: '📶' },
   { id: 'groceries', labelKey: 'billCategories.groceries', icon: '🛒' },
   { id: 'other', labelKey: 'billCategories.other', icon: '📄' },

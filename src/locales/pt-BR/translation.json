@@ -93,7 +93,8 @@
   },
   "billCategories": {
     "rent": "Aluguel",
-    "utilities": "Contas de casa",
+    "utilities": "Energia",
+    "water": "Água",
     "internet": "Internet",
     "groceries": "Mercado",
     "other": "Outros"

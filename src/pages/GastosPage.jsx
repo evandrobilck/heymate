@@ -21,6 +21,7 @@ import { formatMonth } from '../utils/leaderboard'
 const CATEGORY_COLORS = {
   rent: '#a855f7',
   utilities: '#f59e0b',
+  water: '#06b6d4',
   internet: '#3b82f6',
   groceries: '#10b981',
   other: '#6b7280',
