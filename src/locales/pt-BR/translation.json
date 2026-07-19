@@ -194,6 +194,11 @@
     "billDue": "Conta vence",
     "taskDue": "Tarefa prevista",
     "taskDone": "Tarefa concluída",
+    "deleteOnlyThis": "Excluir somente essa",
+    "deleteThisAndFollowing": "Excluir essa e demais adiante",
+    "deleteOnlyThisConfirm": "Remover só essa ocorrência do calendário? A conta em si e as outras datas dela continuam.",
+    "deleteFollowingConfirm": "Remover essa e todas as ocorrências seguintes do calendário? As anteriores continuam, e a conta em si não é apagada.",
+    "deleteError": "Não foi possível atualizar o calendário. Tente de novo.",
     "weekday": {
       "sun": "D",
       "mon": "S",

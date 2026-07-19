@@ -22,6 +22,8 @@ function mapBillRow(row) {
     totalAmount: Number(row.total_amount),
     dueDate: row.due_date,
     recurrence: row.recurrence,
+    recurrenceUntil: row.recurrence_until,
+    excludedDates: (row.bill_occurrence_exceptions ?? []).map((exception) => exception.occurrence_date),
     splitType: row.split_type,
     createdBy: row.created_by,
     source: row.source,
@@ -42,7 +44,7 @@ export function BillsProvider({ children }) {
 
     const { data, error } = await supabase
       .from('bills')
-      .select('*, bill_shares(*)')
+      .select('*, bill_shares(*), bill_occurrence_exceptions(occurrence_date)')
       .eq('house_id', house.id)
       .order('due_date', { ascending: true })
 
@@ -69,6 +71,7 @@ export function BillsProvider({ children }) {
         () => refresh()
       )
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_shares' }, () => refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_occurrence_exceptions' }, () => refresh())
       .subscribe()
 
     return () => {
@@ -151,7 +154,34 @@ export function BillsProvider({ children }) {
     await refresh()
   }
 
-  const value = useMemo(() => ({ bills, addBill, updateBill, toggleParticipantPaid }), [bills])
+  async function deleteOccurrence(billId, occurrenceDate) {
+    const { error } = await supabase
+      .from('bill_occurrence_exceptions')
+      .insert({ bill_id: billId, occurrence_date: occurrenceDate })
+
+    if (error) throw error
+    await refresh()
+  }
+
+  async function deleteOccurrenceAndFollowing(billId, fromDate) {
+    const [year, month, day] = fromDate.split('-').map(Number)
+    const cutoff = new Date(year, month - 1, day)
+    cutoff.setDate(cutoff.getDate() - 1)
+    const untilDate = cutoff.toISOString().slice(0, 10)
+
+    const { error } = await supabase.rpc('set_bill_recurrence_until', {
+      p_bill_id: billId,
+      p_until_date: untilDate,
+    })
+
+    if (error) throw error
+    await refresh()
+  }
+
+  const value = useMemo(
+    () => ({ bills, addBill, updateBill, toggleParticipantPaid, deleteOccurrence, deleteOccurrenceAndFollowing }),
+    [bills]
+  )
 
   return <BillsContext.Provider value={value}>{children}</BillsContext.Provider>
 }

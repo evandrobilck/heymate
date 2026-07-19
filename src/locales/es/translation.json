@@ -194,6 +194,11 @@
     "billDue": "Cuenta vence",
     "taskDue": "Tarea prevista",
     "taskDone": "Tarea hecha",
+    "deleteOnlyThis": "Eliminar solo esta",
+    "deleteThisAndFollowing": "Eliminar esta y las siguientes",
+    "deleteOnlyThisConfirm": "¿Quitar solo esta ocurrencia del calendario? La cuenta y sus otras fechas siguen igual.",
+    "deleteFollowingConfirm": "¿Quitar esta y todas las ocurrencias siguientes del calendario? Las anteriores se mantienen, y la cuenta no se elimina.",
+    "deleteError": "No pudimos actualizar el calendario. Intenta de nuevo.",
     "weekday": {
       "sun": "D",
       "mon": "L",

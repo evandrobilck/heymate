@@ -13,12 +13,13 @@ const WEEKDAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 export default function CalendarioPage() {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
-  const { bills } = useBills()
+  const { bills, deleteOccurrence, deleteOccurrenceAndFollowing } = useBills()
   const { tasks } = useTasks()
 
   const today = useMemo(() => new Date(), [])
   const [cursor, setCursor] = useState({ year: today.getFullYear(), month: today.getMonth() })
   const [selectedDay, setSelectedDay] = useState(toDayKey(today))
+  const [deletingEventId, setDeletingEventId] = useState(null)
 
   const grid = useMemo(() => getMonthGrid(cursor.year, cursor.month), [cursor])
   const rangeStartKey = grid[0]?.dayKey
@@ -27,10 +28,23 @@ export default function CalendarioPage() {
   const eventsByDay = useMemo(() => {
     const map = {}
     bills.forEach((bill) => {
-      const occurrences = getRecurrenceOccurrencesInRange(bill.dueDate, bill.recurrence, rangeStartKey, rangeEndKey)
+      const occurrences = getRecurrenceOccurrencesInRange(
+        bill.dueDate,
+        bill.recurrence,
+        rangeStartKey,
+        rangeEndKey,
+        bill.recurrenceUntil,
+        bill.excludedDates
+      )
       occurrences.forEach((day) => {
         if (!map[day]) map[day] = []
-        map[day].push({ type: 'bill', id: bill.id, title: bill.title, amount: bill.totalAmount })
+        map[day].push({
+          type: 'bill',
+          id: bill.id,
+          title: bill.title,
+          amount: bill.totalAmount,
+          recurrence: bill.recurrence,
+        })
       })
     })
     tasks.forEach((task) => {
@@ -57,6 +71,28 @@ export default function CalendarioPage() {
       const date = new Date(prev.year, prev.month + 1, 1)
       return { year: date.getFullYear(), month: date.getMonth() }
     })
+  }
+
+  async function handleDeleteOnlyThis(billId) {
+    if (!window.confirm(t('calendarPage.deleteOnlyThisConfirm'))) return
+    try {
+      await deleteOccurrence(billId, selectedDay)
+    } catch (err) {
+      console.error(err)
+      alert(t('calendarPage.deleteError'))
+    }
+    setDeletingEventId(null)
+  }
+
+  async function handleDeleteFollowing(billId) {
+    if (!window.confirm(t('calendarPage.deleteFollowingConfirm'))) return
+    try {
+      await deleteOccurrenceAndFollowing(billId, selectedDay)
+    } catch (err) {
+      console.error(err)
+      alert(t('calendarPage.deleteError'))
+    }
+    setDeletingEventId(null)
   }
 
   const selectedEvents = eventsByDay[selectedDay] ?? []
@@ -105,7 +141,10 @@ export default function CalendarioPage() {
                 <button
                   key={cell.dayKey}
                   type="button"
-                  onClick={() => setSelectedDay(cell.dayKey)}
+                  onClick={() => {
+                    setSelectedDay(cell.dayKey)
+                    setDeletingEventId(null)
+                  }}
                   className={`flex flex-col items-center gap-0.5 rounded-lg py-1.5 text-xs ${
                     !cell.inCurrentMonth ? 'text-gray-300' : 'text-gray-700'
                   } ${isSelected ? 'bg-purple-600 text-white' : isToday ? 'bg-purple-50' : ''}`}
@@ -134,25 +173,67 @@ export default function CalendarioPage() {
               {selectedEvents.map((event) => (
                 <li
                   key={`${event.type}-${event.id}`}
-                  className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3"
+                  className="rounded-xl border border-gray-200 bg-white p-3"
                 >
-                  <span
-                    className={`h-2 w-2 shrink-0 rounded-full ${event.type === 'bill' ? 'bg-purple-500' : 'bg-blue-500'}`}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900">{event.title}</p>
-                    <p className="text-xs text-gray-500">
-                      {event.type === 'bill'
-                        ? t('calendarPage.billDue')
-                        : event.completed
-                          ? t('calendarPage.taskDone')
-                          : t('calendarPage.taskDue')}
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`h-2 w-2 shrink-0 rounded-full ${event.type === 'bill' ? 'bg-purple-500' : 'bg-blue-500'}`}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-gray-900">{event.title}</p>
+                      <p className="text-xs text-gray-500">
+                        {event.type === 'bill'
+                          ? t('calendarPage.billDue')
+                          : event.completed
+                            ? t('calendarPage.taskDone')
+                            : t('calendarPage.taskDue')}
+                      </p>
+                    </div>
+                    {event.type === 'bill' && (
+                      <span className="text-sm font-semibold text-gray-900">
+                        {formatCurrency(event.amount, i18n.language, house.currency)}
+                      </span>
+                    )}
                   </div>
-                  {event.type === 'bill' && (
-                    <span className="text-sm font-semibold text-gray-900">
-                      {formatCurrency(event.amount, i18n.language, house.currency)}
-                    </span>
+
+                  {event.type === 'bill' && event.recurrence !== 'none' && (
+                    <div className="mt-2 border-t border-gray-100 pt-2">
+                      {deletingEventId === event.id ? (
+                        <div className="flex flex-wrap justify-end gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteOnlyThis(event.id)}
+                            className="text-xs font-medium text-red-600 hover:text-red-700"
+                          >
+                            {t('calendarPage.deleteOnlyThis')}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteFollowing(event.id)}
+                            className="text-xs font-medium text-red-600 hover:text-red-700"
+                          >
+                            {t('calendarPage.deleteThisAndFollowing')}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeletingEventId(null)}
+                            className="text-xs font-medium text-gray-400"
+                          >
+                            {t('vaultPage.cancel')}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => setDeletingEventId(event.id)}
+                            className="text-xs font-medium text-gray-400 hover:text-red-600"
+                          >
+                            {t('vaultPage.remove')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </li>
               ))}

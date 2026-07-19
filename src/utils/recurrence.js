@@ -27,11 +27,26 @@ function stepAnchor(anchor, recurrence, steps) {
 
 // All occurrences of a recurring due date that fall within [rangeStartKey, rangeEndKey]
 // (both "YYYY-MM-DD"), projected forward and backward from the anchor date.
-export function getRecurrenceOccurrencesInRange(dueDateKey, recurrence, rangeStartKey, rangeEndKey) {
+// `recurrenceUntil` (inclusive cutoff) and `excludedDates` let individual
+// occurrences be hidden without touching the underlying bill.
+export function getRecurrenceOccurrencesInRange(
+  dueDateKey,
+  recurrence,
+  rangeStartKey,
+  rangeEndKey,
+  recurrenceUntil = null,
+  excludedDates = []
+) {
   if (!dueDateKey) return []
 
+  function isVisible(key) {
+    if (recurrenceUntil && key > recurrenceUntil) return false
+    if (excludedDates.includes(key)) return false
+    return true
+  }
+
   if (!recurrence || recurrence === 'none') {
-    return dueDateKey >= rangeStartKey && dueDateKey <= rangeEndKey ? [dueDateKey] : []
+    return dueDateKey >= rangeStartKey && dueDateKey <= rangeEndKey && isVisible(dueDateKey) ? [dueDateKey] : []
   }
 
   const [year, month, day] = dueDateKey.split('-').map(Number)
@@ -42,13 +57,13 @@ export function getRecurrenceOccurrencesInRange(dueDateKey, recurrence, rangeSta
   for (let i = 0; i < MAX_STEPS; i++) {
     const key = toDayKey(stepAnchor(anchor, recurrence, i))
     if (key > rangeEndKey) break
-    if (key >= rangeStartKey) results.push(key)
+    if (key >= rangeStartKey && isVisible(key)) results.push(key)
   }
 
   for (let i = -1; i > -MAX_STEPS; i--) {
     const key = toDayKey(stepAnchor(anchor, recurrence, i))
     if (key < rangeStartKey) break
-    if (key <= rangeEndKey) results.push(key)
+    if (key <= rangeEndKey && isVisible(key)) results.push(key)
   }
 
   return results

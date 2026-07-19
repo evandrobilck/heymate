@@ -194,6 +194,11 @@
     "billDue": "Bill due",
     "taskDue": "Task due",
     "taskDone": "Task done",
+    "deleteOnlyThis": "Delete only this one",
+    "deleteThisAndFollowing": "Delete this and following",
+    "deleteOnlyThisConfirm": "Remove just this occurrence from the calendar? The bill itself and its other due dates stay.",
+    "deleteFollowingConfirm": "Remove this and every following occurrence from the calendar? Past ones stay, and the bill itself isn't deleted.",
+    "deleteError": "Couldn't update the calendar. Try again.",
     "weekday": {
       "sun": "S",
       "mon": "M",
