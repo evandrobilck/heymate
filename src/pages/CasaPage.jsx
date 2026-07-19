@@ -80,7 +80,11 @@ export default function CasaPage() {
       </div>
 
       <div className="border-t border-gray-100 pt-6">
-        <button type="button" onClick={handleLeaveHouse} className="text-xs font-medium text-red-500 hover:text-red-700">
+        <button
+          type="button"
+          onClick={handleLeaveHouse}
+          className="rounded-full border border-red-300 px-4 py-1.5 text-xs font-medium text-red-500 hover:border-red-400 hover:text-red-700"
+        >
           {t('housePage.leaveHouse')}
         </button>
       </div>
