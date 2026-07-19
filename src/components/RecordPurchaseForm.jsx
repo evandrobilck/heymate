@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useShopping } from '../contexts/ShoppingContext'
+import { useCategories } from '../contexts/CategoriesContext'
 import { billCategories } from '../services/mockData'
 import { computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
 import { formatCurrency } from '../utils/formatCurrency'
@@ -15,6 +16,7 @@ export default function RecordPurchaseForm({ item, onClose }) {
   const { user } = useAuth()
   const { house } = useHouse()
   const { recordPurchase } = useShopping()
+  const { customShoppingCategories } = useCategories()
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
 
@@ -122,6 +124,21 @@ export default function RecordPurchaseForm({ item, onClose }) {
                 >
                   <span>{cat.icon}</span>
                   {t(cat.labelKey)}
+                </button>
+              ))}
+              {customShoppingCategories.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setCategory(cat.id)}
+                  className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium ${
+                    category === cat.id
+                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      : 'border-gray-200 text-gray-600'
+                  }`}
+                >
+                  <span>🏷️</span>
+                  {cat.label}
                 </button>
               ))}
             </div>

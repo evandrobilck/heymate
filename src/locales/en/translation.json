@@ -10,7 +10,8 @@
     "expenses": "Expenses",
     "shopping": "Shopping",
     "calendar": "Calendar",
-    "house": "House"
+    "house": "House",
+    "settings": "Settings"
   },
   "auth": {
     "login": "Log In",
@@ -231,5 +232,20 @@
     "saving": "Saving…",
     "saved": "Saved!",
     "saveError": "Couldn't save your profile. Try again."
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "housePhoto": "House photo",
+    "changePhoto": "Change photo",
+    "photoError": "Couldn't upload the photo. Try again.",
+    "houseName": "House name",
+    "nameError": "Couldn't rename the house. Try again.",
+    "billCategories": "Bill categories",
+    "billCategoriesHint": "Add extra categories for Bills, on top of the built-in ones.",
+    "shoppingCategories": "Shopping categories",
+    "shoppingCategoriesHint": "Add extra categories for Shopping, on top of the built-in ones.",
+    "addCategory": "Add",
+    "noCustomCategories": "No custom categories yet.",
+    "categoryPlaceholder": "Category name"
   }
 }

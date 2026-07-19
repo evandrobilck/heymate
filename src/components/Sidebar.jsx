@@ -8,7 +8,8 @@ import { NAV_TABS } from './navIcons'
 export default function Sidebar() {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const { house } = useHouse()
+  const { house, isAdmin } = useHouse()
+  const visibleTabs = NAV_TABS.filter((tab) => !tab.adminOnly || isAdmin)
 
   return (
     <nav className="hidden h-svh w-60 shrink-0 flex-col border-r border-gray-200 bg-white md:flex">
@@ -18,7 +19,7 @@ export default function Sidebar() {
       </div>
 
       <ul className="flex-1 space-y-1 px-3">
-        {NAV_TABS.map(({ to, labelKey, Icon }) => (
+        {visibleTabs.map(({ to, labelKey, Icon }) => (
           <li key={to}>
             <NavLink
               to={to}

@@ -9,6 +9,7 @@ function mapHouseRow(row) {
   return {
     id: row.id,
     name: row.name,
+    photoUrl: row.photo_url,
     inviteCode: row.invite_code,
     createdBy: row.created_by,
     createdAt: row.created_at,
@@ -90,6 +91,11 @@ export function HouseProvider({ children }) {
         () => refresh()
       )
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, () => refresh())
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'houses', filter: `id=eq.${house.id}` },
+        () => refresh()
+      )
       .subscribe()
 
     return () => {
@@ -146,6 +152,32 @@ export function HouseProvider({ children }) {
     await refresh()
   }
 
+  async function renameHouse(name) {
+    if (!house) return
+    const { error } = await supabase.from('houses').update({ name }).eq('id', house.id)
+    if (error) throw error
+    await refresh()
+  }
+
+  async function uploadHousePhoto(file) {
+    if (!house) return
+    const extension = file.name.split('.').pop()
+    const path = `${house.id}/photo-${Date.now()}.${extension}`
+
+    const { error: uploadError } = await supabase.storage.from('house-photos').upload(path, file, { upsert: true })
+    if (uploadError) throw uploadError
+
+    const { data: publicUrlData } = supabase.storage.from('house-photos').getPublicUrl(path)
+
+    const { error: updateError } = await supabase
+      .from('houses')
+      .update({ photo_url: publicUrlData.publicUrl })
+      .eq('id', house.id)
+    if (updateError) throw updateError
+
+    await refresh()
+  }
+
   async function regenerateInviteCode() {
     if (!house) return
     const { data, error } = await supabase.rpc('regenerate_invite_code', { target_house_id: house.id })
@@ -183,6 +215,8 @@ export function HouseProvider({ children }) {
       markMemberAsLeft,
       makeAdmin,
       updateMemberJoinedAt,
+      renameHouse,
+      uploadHousePhoto,
       regenerateInviteCode,
       leaveHouse,
       resetHouseData,

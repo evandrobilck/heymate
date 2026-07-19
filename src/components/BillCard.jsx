@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
+import { useCategories } from '../contexts/CategoriesContext'
 import { billCategories } from '../services/mockData'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
@@ -12,9 +13,13 @@ export default function BillCard({ bill, onEdit }) {
   const { user } = useAuth()
   const { house, isAdmin } = useHouse()
   const { toggleParticipantPaid } = useBills()
+  const { customBillCategories, customShoppingCategories } = useCategories()
   const [expanded, setExpanded] = useState(false)
 
   const category = billCategories.find((item) => item.id === bill.category)
+  const customCategory = category
+    ? null
+    : [...customBillCategories, ...customShoppingCategories].find((item) => item.id === bill.category)
   const participants = bill.participantIds.map((id) => ({
     member: house.members.find((member) => member.id === id),
     share: bill.shares[id],
@@ -29,7 +34,7 @@ export default function BillCard({ bill, onEdit }) {
         onClick={() => setExpanded((prev) => !prev)}
         className="flex w-full items-center gap-3 text-left"
       >
-        <span className="text-xl">{category?.icon}</span>
+        <span className="text-xl">{category?.icon ?? (customCategory ? '🏷️' : '')}</span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-gray-900">
             {bill.title}

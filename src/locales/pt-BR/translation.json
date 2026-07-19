@@ -10,7 +10,8 @@
     "expenses": "Gastos",
     "shopping": "Compras",
     "calendar": "Calendário",
-    "house": "Casa"
+    "house": "Casa",
+    "settings": "Configurações"
   },
   "auth": {
     "login": "Entrar",
@@ -231,5 +232,20 @@
     "saving": "Salvando…",
     "saved": "Salvo!",
     "saveError": "Não foi possível salvar seu perfil. Tente de novo."
+  },
+  "settingsPage": {
+    "title": "Configurações",
+    "housePhoto": "Foto da casa",
+    "changePhoto": "Trocar foto",
+    "photoError": "Não foi possível enviar a foto. Tente de novo.",
+    "houseName": "Nome da casa",
+    "nameError": "Não foi possível renomear a casa. Tente de novo.",
+    "billCategories": "Categorias de Contas",
+    "billCategoriesHint": "Adicione categorias extras para Contas, além das já existentes.",
+    "shoppingCategories": "Categorias de Compras",
+    "shoppingCategoriesHint": "Adicione categorias extras para Compras, além das já existentes.",
+    "addCategory": "Adicionar",
+    "noCustomCategories": "Nenhuma categoria personalizada ainda.",
+    "categoryPlaceholder": "Nome da categoria"
   }
 }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
+import { useCategories } from '../contexts/CategoriesContext'
 import { billCategories, recurrenceOptions } from '../services/mockData'
 import { computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
 import { formatCurrency } from '../utils/formatCurrency'
@@ -12,6 +13,7 @@ export default function AddBillForm({ onClose, bill = null }) {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
   const { addBill, updateBill } = useBills()
+  const { customBillCategories } = useCategories()
   const isEditing = Boolean(bill)
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
@@ -143,6 +145,21 @@ export default function AddBillForm({ onClose, bill = null }) {
                 >
                   <span>{cat.icon}</span>
                   {t(cat.labelKey)}
+                </button>
+              ))}
+              {customBillCategories.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setCategory(cat.id)}
+                  className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium ${
+                    category === cat.id
+                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      : 'border-gray-200 text-gray-600'
+                  }`}
+                >
+                  <span>🏷️</span>
+                  {cat.label}
                 </button>
               ))}
             </div>

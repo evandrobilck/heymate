@@ -13,6 +13,7 @@ import GastosPage from './pages/GastosPage'
 import ComprasPage from './pages/ComprasPage'
 import CalendarioPage from './pages/CalendarioPage'
 import CasaPage from './pages/CasaPage'
+import SettingsPage from './pages/SettingsPage'
 import ProfilePage from './pages/ProfilePage'
 
 export default function App() {
@@ -60,6 +61,7 @@ export default function App() {
         <Route path="/compras" element={<ComprasPage />} />
         <Route path="/calendario" element={<CalendarioPage />} />
         <Route path="/casa" element={<CasaPage />} />
+        <Route path="/configuracoes" element={<SettingsPage />} />
         <Route path="/perfil" element={<ProfilePage />} />
       </Route>
 

@@ -87,6 +87,14 @@ export default function CasaPage() {
 
   return (
     <div className="space-y-6">
+      {house.photoUrl && (
+        <img
+          src={house.photoUrl}
+          alt={house.name}
+          className="h-40 w-full rounded-xl object-cover sm:h-52"
+        />
+      )}
+
       <h1 className="text-xl font-semibold text-gray-900">{house.name}</h1>
 
       <InviteCodeCard inviteCode={house.inviteCode} canManage={isAdmin} onRegenerate={regenerateInviteCode} />
