@@ -16,12 +16,18 @@ export default function RecordPurchaseForm({ item, onClose }) {
   const { user } = useAuth()
   const { house } = useHouse()
   const { recordPurchase } = useShopping()
-  const { customShoppingCategories } = useCategories()
+  const { customShoppingCategories, hiddenCategoryIds } = useCategories()
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
 
+  const visiblePurchaseCategories = PURCHASE_CATEGORIES.filter((cat) => !hiddenCategoryIds.includes(cat.id))
+  const pickablePurchaseCategories =
+    visiblePurchaseCategories.length > 0 || customShoppingCategories.length > 0
+      ? visiblePurchaseCategories
+      : PURCHASE_CATEGORIES
+
   const [title, setTitle] = useState(item.name)
-  const [category, setCategory] = useState('groceries')
+  const [category, setCategory] = useState(pickablePurchaseCategories[0]?.id ?? customShoppingCategories[0]?.id ?? 'groceries')
   const [totalAmount, setTotalAmount] = useState('')
   const [buyerId, setBuyerId] = useState(user.id)
   const [splitType, setSplitType] = useState('equal')
@@ -111,7 +117,7 @@ export default function RecordPurchaseForm({ item, onClose }) {
           <div>
             <label className="text-xs font-medium text-gray-600">{t('billsPage.categoryLabel')}</label>
             <div className="mt-1 flex flex-wrap gap-2">
-              {PURCHASE_CATEGORIES.map((cat) => (
+              {pickablePurchaseCategories.map((cat) => (
                 <button
                   key={cat.id}
                   type="button"
@@ -256,8 +262,8 @@ export default function RecordPurchaseForm({ item, onClose }) {
                 }`}
               >
                 {t('billsPage.exactTotal', {
-                  total: formatCurrency(exactTotal, i18n.language),
-                  amount: formatCurrency(amountValue, i18n.language),
+                  total: formatCurrency(exactTotal, i18n.language, house.currency),
+                  amount: formatCurrency(amountValue, i18n.language, house.currency),
                 })}
               </p>
             )}

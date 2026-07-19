@@ -38,7 +38,9 @@ export default function ShoppingListItem({ item }) {
             })}
           </p>
         </div>
-        <span className="text-sm font-medium text-gray-900">{formatCurrency(item.price, i18n.language)}</span>
+        <span className="text-sm font-medium text-gray-900">
+          {formatCurrency(item.price, i18n.language, house.currency)}
+        </span>
       </li>
     )
   }

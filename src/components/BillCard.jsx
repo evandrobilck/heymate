@@ -51,7 +51,7 @@ export default function BillCard({ bill, onEdit }) {
         </div>
         <div className="text-right">
           <p className="text-sm font-semibold text-gray-900">
-            {formatCurrency(bill.totalAmount, i18n.language)}
+            {formatCurrency(bill.totalAmount, i18n.language, house.currency)}
           </p>
           <span className={`text-[10px] font-medium ${isFullyPaid ? 'text-green-600' : 'text-amber-600'}`}>
             {isFullyPaid ? t('billsPage.paid') : t('billsPage.pending')}
@@ -80,7 +80,7 @@ export default function BillCard({ bill, onEdit }) {
                   <div>
                     <p className="text-gray-800">{member.name}</p>
                     <p className="text-xs text-gray-500">
-                      {formatCurrency(share.amount, i18n.language)}
+                      {formatCurrency(share.amount, i18n.language, house.currency)}
                       {share.paid && share.paidAt
                         ? ` · ${t('billsPage.paidOn', { date: formatDate(share.paidAt, i18n.language) })}`
                         : ''}

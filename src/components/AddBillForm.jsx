@@ -13,7 +13,7 @@ export default function AddBillForm({ onClose, bill = null }) {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
   const { addBill, updateBill } = useBills()
-  const { customBillCategories } = useCategories()
+  const { customBillCategories, hiddenCategoryIds } = useCategories()
   const isEditing = Boolean(bill)
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
@@ -29,8 +29,16 @@ export default function AddBillForm({ onClose, bill = null }) {
       ]
     : activeMembers
 
+  // Fall back to showing every built-in category if hiding left nothing
+  // pickable, so the form never becomes unusable.
+  const visibleBuiltInCategories = billCategories.filter((cat) => !hiddenCategoryIds.includes(cat.id))
+  const pickableBuiltInCategories =
+    visibleBuiltInCategories.length > 0 || customBillCategories.length > 0 ? visibleBuiltInCategories : billCategories
+
   const [title, setTitle] = useState(bill?.title ?? '')
-  const [category, setCategory] = useState(bill?.category ?? billCategories[0].id)
+  const [category, setCategory] = useState(
+    bill?.category ?? pickableBuiltInCategories[0]?.id ?? customBillCategories[0]?.id
+  )
   const [totalAmount, setTotalAmount] = useState(bill ? String(bill.totalAmount) : '')
   const [dueDate, setDueDate] = useState(bill?.dueDate ?? '')
   const [recurrence, setRecurrence] = useState(bill?.recurrence ?? 'none')
@@ -132,7 +140,7 @@ export default function AddBillForm({ onClose, bill = null }) {
           <div>
             <label className="text-xs font-medium text-gray-600">{t('billsPage.categoryLabel')}</label>
             <div className="mt-1 flex flex-wrap gap-2">
-              {billCategories.map((cat) => (
+              {pickableBuiltInCategories.map((cat) => (
                 <button
                   key={cat.id}
                   type="button"
@@ -286,8 +294,8 @@ export default function AddBillForm({ onClose, bill = null }) {
                 }`}
               >
                 {t('billsPage.exactTotal', {
-                  total: formatCurrency(exactTotal, i18n.language),
-                  amount: formatCurrency(amountValue, i18n.language),
+                  total: formatCurrency(exactTotal, i18n.language, house.currency),
+                  amount: formatCurrency(amountValue, i18n.language, house.currency),
                 })}
               </p>
             )}

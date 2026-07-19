@@ -48,6 +48,8 @@
     "house": "You're in {{houseName}}"
   },
   "housePage": {
+    "addressTitle": "Address",
+    "addressPlaceholder": "Street address",
     "inviteTitle": "Invite roommates",
     "inviteHint": "Share this code or link so new roommates can join.",
     "copyCode": "Copy code",
@@ -240,12 +242,28 @@
     "photoError": "Couldn't upload the photo. Try again.",
     "houseName": "House name",
     "nameError": "Couldn't rename the house. Try again.",
+    "currency": "Currency",
+    "currencyError": "Couldn't update the currency. Try again.",
+    "builtInCategories": "Built-in categories",
+    "builtInCategoriesHint": "Hide the ones your house doesn't use. They won't show up when adding a bill or purchase.",
+    "hideCategory": "Hide",
+    "showCategory": "Show",
+    "categoryToggleError": "Couldn't update the category. Try again.",
     "billCategories": "Bill categories",
     "billCategoriesHint": "Add extra categories for Bills, on top of the built-in ones.",
     "shoppingCategories": "Shopping categories",
     "shoppingCategoriesHint": "Add extra categories for Shopping, on top of the built-in ones.",
     "addCategory": "Add",
     "noCustomCategories": "No custom categories yet.",
-    "categoryPlaceholder": "Category name"
+    "categoryPlaceholder": "Category name",
+    "categoryInUseConfirm_one": "{{count}} bill uses this category. It'll keep working, but lose its category tag. Remove anyway?",
+    "categoryInUseConfirm_other": "{{count}} bills use this category. They'll keep working, but lose their category tag. Remove anyway?",
+    "categoryRemoveError": "Couldn't remove the category. Try again.",
+    "transferAdmin": "Transfer admin",
+    "transferAdminHint": "Hand admin rights to another roommate. You'll become a regular member.",
+    "noOtherMembers": "No other roommates to transfer to yet.",
+    "transfer": "Transfer",
+    "transferAdminConfirm": "Make {{name}} the admin? You'll lose admin rights and become a regular member.",
+    "transferAdminError": "Couldn't transfer admin rights. Try again."
   }
 }

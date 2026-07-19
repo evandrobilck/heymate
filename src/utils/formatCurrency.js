@@ -1,3 +1,3 @@
-export function formatCurrency(amount, locale = 'en') {
-  return new Intl.NumberFormat(locale, { style: 'currency', currency: 'AUD' }).format(amount)
+export function formatCurrency(amount, locale = 'en', currency = 'AUD') {
+  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount)
 }

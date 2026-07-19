@@ -10,6 +10,8 @@ function mapHouseRow(row) {
     id: row.id,
     name: row.name,
     photoUrl: row.photo_url,
+    address: row.address,
+    currency: row.currency ?? 'AUD',
     inviteCode: row.invite_code,
     createdBy: row.created_by,
     createdAt: row.created_at,
@@ -178,6 +180,27 @@ export function HouseProvider({ children }) {
     await refresh()
   }
 
+  async function updateHouseAddress(address) {
+    if (!house) return
+    const { error } = await supabase.from('houses').update({ address }).eq('id', house.id)
+    if (error) throw error
+    await refresh()
+  }
+
+  async function updateHouseCurrency(currency) {
+    if (!house) return
+    const { error } = await supabase.from('houses').update({ currency }).eq('id', house.id)
+    if (error) throw error
+    await refresh()
+  }
+
+  async function transferAdmin(memberId) {
+    if (!house) return
+    const { error } = await supabase.rpc('transfer_admin', { target_house_id: house.id, new_admin_id: memberId })
+    if (error) throw error
+    await refresh()
+  }
+
   async function regenerateInviteCode() {
     if (!house) return
     const { data, error } = await supabase.rpc('regenerate_invite_code', { target_house_id: house.id })
@@ -217,6 +240,9 @@ export function HouseProvider({ children }) {
       updateMemberJoinedAt,
       renameHouse,
       uploadHousePhoto,
+      updateHouseAddress,
+      updateHouseCurrency,
+      transferAdmin,
       regenerateInviteCode,
       leaveHouse,
       resetHouseData,

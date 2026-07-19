@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useTasks } from '../contexts/TasksContext'
 import { getMonthGrid, toDayKey } from '../utils/calendar'
@@ -10,6 +11,7 @@ const WEEKDAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 
 export default function CalendarioPage() {
   const { t, i18n } = useTranslation()
+  const { house } = useHouse()
   const { bills } = useBills()
   const { tasks } = useTasks()
 
@@ -143,7 +145,7 @@ export default function CalendarioPage() {
                   </div>
                   {event.type === 'bill' && (
                     <span className="text-sm font-semibold text-gray-900">
-                      {formatCurrency(event.amount, i18n.language)}
+                      {formatCurrency(event.amount, i18n.language, house.currency)}
                     </span>
                   )}
                 </li>

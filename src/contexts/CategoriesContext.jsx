@@ -12,25 +12,29 @@ export function CategoriesProvider({ children }) {
   const { house } = useHouse()
   const [customBillCategories, setCustomBillCategories] = useState([])
   const [customShoppingCategories, setCustomShoppingCategories] = useState([])
+  const [hiddenCategoryIds, setHiddenCategoryIds] = useState([])
 
   const refresh = useCallback(async () => {
     if (!house?.id) {
       setCustomBillCategories([])
       setCustomShoppingCategories([])
+      setHiddenCategoryIds([])
       return
     }
 
-    const [{ data: billRows }, { data: shoppingRows }] = await Promise.all([
+    const [{ data: billRows }, { data: shoppingRows }, { data: hiddenRows }] = await Promise.all([
       supabase.from('bill_categories').select('*').eq('house_id', house.id).order('created_at', { ascending: true }),
       supabase
         .from('shopping_categories')
         .select('*')
         .eq('house_id', house.id)
         .order('created_at', { ascending: true }),
+      supabase.from('hidden_bill_categories').select('category_id').eq('house_id', house.id),
     ])
 
     setCustomBillCategories((billRows ?? []).map(mapRow))
     setCustomShoppingCategories((shoppingRows ?? []).map(mapRow))
+    setHiddenCategoryIds((hiddenRows ?? []).map((row) => row.category_id))
   }, [house?.id])
 
   useEffect(() => {
@@ -50,6 +54,11 @@ export function CategoriesProvider({ children }) {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'shopping_categories', filter: `house_id=eq.${house.id}` },
+        () => refresh()
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'hidden_bill_categories', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
       .subscribe()
@@ -83,16 +92,37 @@ export function CategoriesProvider({ children }) {
     await refresh()
   }
 
+  async function hideBuiltInCategory(categoryId) {
+    const { error } = await supabase
+      .from('hidden_bill_categories')
+      .insert({ house_id: house.id, category_id: categoryId })
+    if (error) throw error
+    await refresh()
+  }
+
+  async function showBuiltInCategory(categoryId) {
+    const { error } = await supabase
+      .from('hidden_bill_categories')
+      .delete()
+      .eq('house_id', house.id)
+      .eq('category_id', categoryId)
+    if (error) throw error
+    await refresh()
+  }
+
   const value = useMemo(
     () => ({
       customBillCategories,
       customShoppingCategories,
+      hiddenCategoryIds,
       addBillCategory,
       removeBillCategory,
       addShoppingCategory,
       removeShoppingCategory,
+      hideBuiltInCategory,
+      showBuiltInCategory,
     }),
-    [customBillCategories, customShoppingCategories]
+    [customBillCategories, customShoppingCategories, hiddenCategoryIds]
   )
 
   return <CategoriesContext.Provider value={value}>{children}</CategoriesContext.Provider>

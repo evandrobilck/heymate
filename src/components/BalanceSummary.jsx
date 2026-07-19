@@ -28,14 +28,14 @@ export default function BalanceSummary() {
       {totalOwedToYou > 0 && (
         <div className="rounded-xl border border-green-200 bg-green-50 p-4">
           <p className="text-sm font-semibold text-green-800">
-            {t('billsPage.owedToYouTotal', { amount: formatCurrency(totalOwedToYou, i18n.language) })}
+            {t('billsPage.owedToYouTotal', { amount: formatCurrency(totalOwedToYou, i18n.language, house.currency) })}
           </p>
           <ul className="mt-2 space-y-1">
             {owedToYou.map(({ memberId, amount }) => (
               <li key={memberId} className="text-sm text-green-700">
                 {t('billsPage.owesYou', {
                   name: memberName(memberId),
-                  amount: formatCurrency(amount, i18n.language),
+                  amount: formatCurrency(amount, i18n.language, house.currency),
                 })}
               </li>
             ))}
@@ -46,14 +46,14 @@ export default function BalanceSummary() {
       {totalYouOwe > 0 && (
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
           <p className="text-sm font-semibold text-amber-800">
-            {t('billsPage.youOweTotal', { amount: formatCurrency(totalYouOwe, i18n.language) })}
+            {t('billsPage.youOweTotal', { amount: formatCurrency(totalYouOwe, i18n.language, house.currency) })}
           </p>
           <ul className="mt-2 space-y-1">
             {youOwe.map(({ memberId, amount }) => (
               <li key={memberId} className="text-sm text-amber-700">
                 {t('billsPage.youOweMember', {
                   name: memberName(memberId),
-                  amount: formatCurrency(amount, i18n.language),
+                  amount: formatCurrency(amount, i18n.language, house.currency),
                 })}
               </li>
             ))}

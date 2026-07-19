@@ -48,6 +48,8 @@
     "house": "Estás en {{houseName}}"
   },
   "housePage": {
+    "addressTitle": "Dirección",
+    "addressPlaceholder": "Dirección de la casa",
     "inviteTitle": "Invita a tus compañeros",
     "inviteHint": "Comparte este código o link para que nuevos compañeros se unan.",
     "copyCode": "Copiar código",
@@ -240,12 +242,28 @@
     "photoError": "No pudimos subir la foto. Intenta de nuevo.",
     "houseName": "Nombre de la casa",
     "nameError": "No pudimos renombrar la casa. Intenta de nuevo.",
+    "currency": "Moneda",
+    "currencyError": "No pudimos actualizar la moneda. Intenta de nuevo.",
+    "builtInCategories": "Categorías predeterminadas",
+    "builtInCategoriesHint": "Oculta las que tu casa no usa. No aparecerán al agregar una cuenta o compra.",
+    "hideCategory": "Ocultar",
+    "showCategory": "Mostrar",
+    "categoryToggleError": "No pudimos actualizar la categoría. Intenta de nuevo.",
     "billCategories": "Categorías de Cuentas",
     "billCategoriesHint": "Agrega categorías extra para Cuentas, además de las ya existentes.",
     "shoppingCategories": "Categorías de Compras",
     "shoppingCategoriesHint": "Agrega categorías extra para Compras, además de las ya existentes.",
     "addCategory": "Agregar",
     "noCustomCategories": "Aún no hay categorías personalizadas.",
-    "categoryPlaceholder": "Nombre de la categoría"
+    "categoryPlaceholder": "Nombre de la categoría",
+    "categoryInUseConfirm_one": "{{count}} cuenta usa esta categoría. Seguirá funcionando, pero perderá su etiqueta de categoría. ¿Eliminar de todos modos?",
+    "categoryInUseConfirm_other": "{{count}} cuentas usan esta categoría. Seguirán funcionando, pero perderán su etiqueta de categoría. ¿Eliminar de todos modos?",
+    "categoryRemoveError": "No pudimos eliminar la categoría. Intenta de nuevo.",
+    "transferAdmin": "Transferir administración",
+    "transferAdminHint": "Dale los derechos de admin a otro compañero. Tú pasarás a ser un miembro normal.",
+    "noOtherMembers": "Aún no hay otro compañero para transferir.",
+    "transfer": "Transferir",
+    "transferAdminConfirm": "¿Hacer admin a {{name}}? Perderás los derechos de admin y pasarás a ser un miembro normal.",
+    "transferAdminError": "No pudimos transferir la administración. Intenta de nuevo."
   }
 }

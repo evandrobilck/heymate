@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
+import { useCategories } from '../contexts/CategoriesContext'
 import { billCategories } from '../services/mockData'
 import { computeCategoryTotals, computeMonthlyTotals, getMonthKeysWithBills } from '../utils/expenseStats'
 import { downloadCsv } from '../utils/exportCsv'
@@ -15,17 +17,39 @@ const CATEGORY_COLORS = {
   groceries: '#10b981',
   other: '#6b7280',
 }
+const CUSTOM_CATEGORY_COLOR = '#f97316'
 
 export default function GastosPage() {
   const { t, i18n } = useTranslation()
+  const { house } = useHouse()
   const { bills } = useBills()
+  const { customBillCategories, customShoppingCategories } = useCategories()
+
+  const allCustomCategories = [...customBillCategories, ...customShoppingCategories]
+
+  function categoryLabel(categoryId) {
+    const builtin = billCategories.find((cat) => cat.id === categoryId)
+    if (builtin) return t(builtin.labelKey)
+    return allCustomCategories.find((cat) => cat.id === categoryId)?.label ?? categoryId
+  }
 
   const monthKeys = useMemo(() => getMonthKeysWithBills(bills), [bills])
   const [selectedMonth, setSelectedMonth] = useState(monthKeys[0] ?? '')
 
   const categoryTotals = useMemo(() => computeCategoryTotals(bills, selectedMonth), [bills, selectedMonth])
-  const categoryData = billCategories
-    .map((category) => ({ id: category.id, name: t(category.labelKey), value: categoryTotals[category.id] || 0 }))
+  const categoryData = [
+    ...billCategories.map((category) => ({
+      id: category.id,
+      name: t(category.labelKey),
+      color: CATEGORY_COLORS[category.id],
+    })),
+    ...allCustomCategories.map((category) => ({
+      id: category.id,
+      name: category.label,
+      color: CUSTOM_CATEGORY_COLOR,
+    })),
+  ]
+    .map((category) => ({ ...category, value: categoryTotals[category.id] || 0 }))
     .filter((entry) => entry.value > 0)
   const monthTotal = categoryData.reduce((sum, entry) => sum + entry.value, 0)
 
@@ -42,7 +66,7 @@ export default function GastosPage() {
       [t('expensesPage.csvTitle'), t('expensesPage.csvCategory'), t('expensesPage.csvAmount'), t('expensesPage.csvDueDate')],
       ...bills
         .filter((bill) => bill.dueDate.startsWith(selectedMonth))
-        .map((bill) => [bill.title, t(`billCategories.${bill.category}`), bill.totalAmount, bill.dueDate]),
+        .map((bill) => [bill.title, categoryLabel(bill.category), bill.totalAmount, bill.dueDate]),
     ]
     downloadCsv(`heyflat-expenses-${selectedMonth}.csv`, rows)
   }
@@ -76,7 +100,7 @@ export default function GastosPage() {
       <div className="rounded-xl border border-gray-200 bg-white p-4">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold text-gray-900">{t('expensesPage.byCategory')}</p>
-          <p className="text-sm font-semibold text-gray-900">{formatCurrency(monthTotal, i18n.language)}</p>
+          <p className="text-sm font-semibold text-gray-900">{formatCurrency(monthTotal, i18n.language, house.currency)}</p>
         </div>
 
         {categoryData.length === 0 ? (
@@ -88,10 +112,10 @@ export default function GastosPage() {
                 <PieChart>
                   <Pie data={categoryData} dataKey="value" nameKey="name" innerRadius={45} outerRadius={70} paddingAngle={2}>
                     {categoryData.map((entry) => (
-                      <Cell key={entry.id} fill={CATEGORY_COLORS[entry.id]} />
+                      <Cell key={entry.id} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => formatCurrency(value, i18n.language)} />
+                  <Tooltip formatter={(value) => formatCurrency(value, i18n.language, house.currency)} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -99,10 +123,12 @@ export default function GastosPage() {
               {categoryData.map((entry) => (
                 <li key={entry.id} className="flex items-center justify-between text-xs">
                   <span className="flex items-center gap-2 text-gray-600">
-                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: CATEGORY_COLORS[entry.id] }} />
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
                     {entry.name}
                   </span>
-                  <span className="font-medium text-gray-900">{formatCurrency(entry.value, i18n.language)}</span>
+                  <span className="font-medium text-gray-900">
+                    {formatCurrency(entry.value, i18n.language, house.currency)}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -118,7 +144,7 @@ export default function GastosPage() {
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
               <XAxis dataKey="label" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={40} />
-              <Tooltip formatter={(value) => formatCurrency(value, i18n.language)} />
+              <Tooltip formatter={(value) => formatCurrency(value, i18n.language, house.currency)} />
               <Bar dataKey="total" fill="#9333ea" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>

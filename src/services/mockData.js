@@ -25,6 +25,8 @@ export const billCategories = [
 
 export const recurrenceOptions = ['none', 'weekly', 'biweekly', 'monthly', 'yearly']
 
+export const currencyOptions = ['AUD', 'USD', 'EUR', 'GBP', 'BRL', 'CAD']
+
 export const mockBills = [
   {
     id: 'b1',

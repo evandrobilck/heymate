@@ -48,6 +48,8 @@
     "house": "Você está em {{houseName}}"
   },
   "housePage": {
+    "addressTitle": "Endereço",
+    "addressPlaceholder": "Endereço da casa",
     "inviteTitle": "Convide moradores",
     "inviteHint": "Compartilhe este código ou link para novos moradores entrarem.",
     "copyCode": "Copiar código",
@@ -240,12 +242,28 @@
     "photoError": "Não foi possível enviar a foto. Tente de novo.",
     "houseName": "Nome da casa",
     "nameError": "Não foi possível renomear a casa. Tente de novo.",
+    "currency": "Moeda",
+    "currencyError": "Não foi possível atualizar a moeda. Tente de novo.",
+    "builtInCategories": "Categorias padrão",
+    "builtInCategoriesHint": "Esconda as que sua casa não usa. Elas não vão aparecer ao criar uma conta ou compra.",
+    "hideCategory": "Esconder",
+    "showCategory": "Mostrar",
+    "categoryToggleError": "Não foi possível atualizar a categoria. Tente de novo.",
     "billCategories": "Categorias de Contas",
     "billCategoriesHint": "Adicione categorias extras para Contas, além das já existentes.",
     "shoppingCategories": "Categorias de Compras",
     "shoppingCategoriesHint": "Adicione categorias extras para Compras, além das já existentes.",
     "addCategory": "Adicionar",
     "noCustomCategories": "Nenhuma categoria personalizada ainda.",
-    "categoryPlaceholder": "Nome da categoria"
+    "categoryPlaceholder": "Nome da categoria",
+    "categoryInUseConfirm_one": "{{count}} conta usa essa categoria. Ela vai continuar funcionando, mas perde a etiqueta de categoria. Remover mesmo assim?",
+    "categoryInUseConfirm_other": "{{count}} contas usam essa categoria. Elas vão continuar funcionando, mas perdem a etiqueta de categoria. Remover mesmo assim?",
+    "categoryRemoveError": "Não foi possível remover a categoria. Tente de novo.",
+    "transferAdmin": "Transferir administração",
+    "transferAdminHint": "Passe os direitos de admin para outro morador. Você vira um morador comum.",
+    "noOtherMembers": "Nenhum outro morador pra transferir ainda.",
+    "transfer": "Transferir",
+    "transferAdminConfirm": "Tornar {{name}} o admin? Você vai perder os direitos de admin e virar um morador comum.",
+    "transferAdminError": "Não foi possível transferir a administração. Tente de novo."
   }
 }

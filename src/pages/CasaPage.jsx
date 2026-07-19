@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import InviteCodeCard from '../components/InviteCodeCard'
+import AddressCard from '../components/AddressCard'
 import MemberListItem from '../components/MemberListItem'
 import WifiCard from '../components/WifiCard'
 import PaymentInfoList from '../components/PaymentInfoList'
@@ -96,6 +97,8 @@ export default function CasaPage() {
       )}
 
       <h1 className="text-xl font-semibold text-gray-900">{house.name}</h1>
+
+      <AddressCard />
 
       <InviteCodeCard inviteCode={house.inviteCode} canManage={isAdmin} onRegenerate={regenerateInviteCode} />
 
