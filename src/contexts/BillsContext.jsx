@@ -101,6 +101,38 @@ export function BillsProvider({ children }) {
     await refresh()
   }
 
+  async function updateBill(billId, bill) {
+    const existing = bills.find((current) => current.id === billId)
+
+    const shares = bill.participantIds.map((userId) => {
+      const newShare = bill.shares[userId]
+      const previousShare = existing?.shares[userId]
+      const keepPaid = Boolean(previousShare?.paid)
+
+      return {
+        user_id: userId,
+        amount: newShare.amount,
+        percentage: newShare.percentage ?? null,
+        paid: keepPaid,
+        paid_at: keepPaid ? previousShare.paidAt : null,
+      }
+    })
+
+    const { error } = await supabase.rpc('update_bill', {
+      p_bill_id: billId,
+      p_title: bill.title,
+      p_category: bill.category,
+      p_total_amount: bill.totalAmount,
+      p_due_date: bill.dueDate,
+      p_recurrence: bill.recurrence,
+      p_split_type: bill.splitType,
+      p_shares: shares,
+    })
+
+    if (error) throw error
+    await refresh()
+  }
+
   async function toggleParticipantPaid(billId, userId) {
     const bill = bills.find((current) => current.id === billId)
     if (!bill) return
@@ -119,7 +151,7 @@ export function BillsProvider({ children }) {
     await refresh()
   }
 
-  const value = useMemo(() => ({ bills, addBill, toggleParticipantPaid }), [bills])
+  const value = useMemo(() => ({ bills, addBill, updateBill, toggleParticipantPaid }), [bills])
 
   return <BillsContext.Provider value={value}>{children}</BillsContext.Provider>
 }

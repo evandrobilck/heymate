@@ -96,6 +96,9 @@
   },
   "billsPage": {
     "addBill": "Adicionar conta",
+    "editBill": "Editar conta",
+    "edit": "Editar",
+    "saveChanges": "Salvar alterações",
     "close": "Fechar",
     "titleLabel": "Título",
     "categoryLabel": "Categoria",

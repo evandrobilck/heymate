@@ -8,22 +8,44 @@ import { formatCurrency } from '../utils/formatCurrency'
 
 const SPLIT_TYPES = ['equal', 'percentage', 'exact']
 
-export default function AddBillForm({ onClose }) {
+export default function AddBillForm({ onClose, bill = null }) {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
-  const { addBill } = useBills()
+  const { addBill, updateBill } = useBills()
+  const isEditing = Boolean(bill)
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
+  // Include past members who are already on the bill being edited, so
+  // editing doesn't silently drop an ex-roommate's share.
+  const memberOptions = isEditing
+    ? [
+        ...activeMembers,
+        ...bill.participantIds
+          .filter((id) => !activeMembers.some((member) => member.id === id))
+          .map((id) => house.members.find((member) => member.id === id))
+          .filter(Boolean),
+      ]
+    : activeMembers
 
-  const [title, setTitle] = useState('')
-  const [category, setCategory] = useState(billCategories[0].id)
-  const [totalAmount, setTotalAmount] = useState('')
-  const [dueDate, setDueDate] = useState('')
-  const [recurrence, setRecurrence] = useState('none')
-  const [splitType, setSplitType] = useState('equal')
-  const [participantIds, setParticipantIds] = useState(activeMembers.map((member) => member.id))
-  const [percentages, setPercentages] = useState({})
-  const [exactAmounts, setExactAmounts] = useState({})
+  const [title, setTitle] = useState(bill?.title ?? '')
+  const [category, setCategory] = useState(bill?.category ?? billCategories[0].id)
+  const [totalAmount, setTotalAmount] = useState(bill ? String(bill.totalAmount) : '')
+  const [dueDate, setDueDate] = useState(bill?.dueDate ?? '')
+  const [recurrence, setRecurrence] = useState(bill?.recurrence ?? 'none')
+  const [splitType, setSplitType] = useState(bill?.splitType ?? 'equal')
+  const [participantIds, setParticipantIds] = useState(
+    bill ? bill.participantIds : activeMembers.map((member) => member.id)
+  )
+  const [percentages, setPercentages] = useState(
+    bill?.splitType === 'percentage'
+      ? Object.fromEntries(bill.participantIds.map((id) => [id, String(bill.shares[id].percentage ?? '')]))
+      : {}
+  )
+  const [exactAmounts, setExactAmounts] = useState(
+    bill?.splitType === 'exact'
+      ? Object.fromEntries(bill.participantIds.map((id) => [id, String(bill.shares[id].amount ?? '')]))
+      : {}
+  )
 
   const amountValue = Number(totalAmount) || 0
 
@@ -62,7 +84,7 @@ export default function AddBillForm({ onClose }) {
       )
     }
 
-    addBill({
+    const payload = {
       title: title.trim(),
       category,
       totalAmount: amountValue,
@@ -71,7 +93,13 @@ export default function AddBillForm({ onClose }) {
       splitType,
       participantIds,
       shares,
-    })
+    }
+
+    if (isEditing) {
+      updateBill(bill.id, payload)
+    } else {
+      addBill(payload)
+    }
 
     onClose()
   }
@@ -80,7 +108,9 @@ export default function AddBillForm({ onClose }) {
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4">
       <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-900">{t('billsPage.addBill')}</h2>
+          <h2 className="text-base font-semibold text-gray-900">
+            {isEditing ? t('billsPage.editBill') : t('billsPage.addBill')}
+          </h2>
           <button type="button" onClick={onClose} className="text-sm text-gray-400">
             {t('billsPage.close')}
           </button>
@@ -159,7 +189,7 @@ export default function AddBillForm({ onClose }) {
           <div>
             <label className="text-xs font-medium text-gray-600">{t('billsPage.participantsLabel')}</label>
             <ul className="mt-1 space-y-2">
-              {activeMembers.map((member) => {
+              {memberOptions.map((member) => {
                 const checked = participantIds.includes(member.id)
                 return (
                   <li key={member.id} className="flex items-center gap-2">
@@ -251,7 +281,7 @@ export default function AddBillForm({ onClose }) {
             disabled={!isValid}
             className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white disabled:opacity-40"
           >
-            {t('billsPage.save')}
+            {isEditing ? t('billsPage.saveChanges') : t('billsPage.save')}
           </button>
         </form>
       </div>

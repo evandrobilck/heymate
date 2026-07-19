@@ -8,6 +8,7 @@ export default function ContasPage() {
   const { t } = useTranslation()
   const { bills } = useBills()
   const [showForm, setShowForm] = useState(false)
+  const [editingBill, setEditingBill] = useState(null)
 
   const pendingBills = bills.filter((bill) => bill.participantIds.some((id) => !bill.shares[id].paid))
   const paidBills = bills.filter((bill) => bill.participantIds.every((id) => bill.shares[id].paid))
@@ -29,7 +30,7 @@ export default function ContasPage() {
         <h2 className="text-sm font-semibold text-gray-900">{t('billsPage.pendingTitle')}</h2>
         {pendingBills.length === 0 && <p className="text-sm text-gray-400">{t('billsPage.noPending')}</p>}
         {pendingBills.map((bill) => (
-          <BillCard key={bill.id} bill={bill} />
+          <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
         ))}
       </div>
 
@@ -37,12 +38,13 @@ export default function ContasPage() {
         <div className="mt-6 space-y-3">
           <h2 className="text-sm font-semibold text-gray-900">{t('billsPage.paidTitle')}</h2>
           {paidBills.map((bill) => (
-            <BillCard key={bill.id} bill={bill} />
+            <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
           ))}
         </div>
       )}
 
       {showForm && <AddBillForm onClose={() => setShowForm(false)} />}
+      {editingBill && <AddBillForm bill={editingBill} onClose={() => setEditingBill(null)} />}
     </div>
   )
 }

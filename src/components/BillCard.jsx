@@ -7,7 +7,7 @@ import { billCategories } from '../services/mockData'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 
-export default function BillCard({ bill }) {
+export default function BillCard({ bill, onEdit }) {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const { house, isAdmin } = useHouse()
@@ -20,6 +20,7 @@ export default function BillCard({ bill }) {
     share: bill.shares[id],
   }))
   const isFullyPaid = participants.every(({ share }) => share.paid)
+  const canEdit = bill.createdBy === user.id || isAdmin
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4">
@@ -54,39 +55,52 @@ export default function BillCard({ bill }) {
       </button>
 
       {expanded && (
-        <ul className="mt-3 space-y-2 border-t border-gray-100 pt-3">
-          {participants.map(({ member, share }) => {
-            const canToggle = member.id === user.id || isAdmin
-            return (
-              <li key={member.id} className="flex items-center justify-between text-sm">
-                <div>
-                  <p className="text-gray-800">{member.name}</p>
-                  <p className="text-xs text-gray-500">
-                    {formatCurrency(share.amount, i18n.language)}
-                    {share.paid && share.paidAt
-                      ? ` · ${t('billsPage.paidOn', { date: formatDate(share.paidAt, i18n.language) })}`
-                      : ''}
-                  </p>
-                </div>
-                {canToggle ? (
-                  <button
-                    type="button"
-                    onClick={() => toggleParticipantPaid(bill.id, member.id)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${
-                      share.paid ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                    }`}
-                  >
-                    {share.paid ? t('billsPage.paid') : t('billsPage.markPaid')}
-                  </button>
-                ) : (
-                  <span className={`text-xs font-medium ${share.paid ? 'text-green-600' : 'text-gray-400'}`}>
-                    {share.paid ? t('billsPage.paid') : t('billsPage.pending')}
-                  </span>
-                )}
-              </li>
-            )
-          })}
-        </ul>
+        <div className="mt-3 border-t border-gray-100 pt-3">
+          {canEdit && (
+            <div className="mb-2 flex justify-end">
+              <button
+                type="button"
+                onClick={onEdit}
+                className="text-xs font-medium text-purple-600 hover:text-purple-700"
+              >
+                {t('billsPage.edit')}
+              </button>
+            </div>
+          )}
+          <ul className="space-y-2">
+            {participants.map(({ member, share }) => {
+              const canToggle = member.id === user.id || isAdmin
+              return (
+                <li key={member.id} className="flex items-center justify-between text-sm">
+                  <div>
+                    <p className="text-gray-800">{member.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {formatCurrency(share.amount, i18n.language)}
+                      {share.paid && share.paidAt
+                        ? ` · ${t('billsPage.paidOn', { date: formatDate(share.paidAt, i18n.language) })}`
+                        : ''}
+                    </p>
+                  </div>
+                  {canToggle ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleParticipantPaid(bill.id, member.id)}
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${
+                        share.paid ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                      }`}
+                    >
+                      {share.paid ? t('billsPage.paid') : t('billsPage.markPaid')}
+                    </button>
+                  ) : (
+                    <span className={`text-xs font-medium ${share.paid ? 'text-green-600' : 'text-gray-400'}`}>
+                      {share.paid ? t('billsPage.paid') : t('billsPage.pending')}
+                    </span>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       )}
     </div>
   )
