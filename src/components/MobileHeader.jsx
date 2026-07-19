@@ -9,7 +9,7 @@ export default function MobileHeader() {
 
   return (
     <header className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 md:hidden">
-      <p className="text-base font-semibold text-purple-600">{t('app.name')}</p>
+      <img src="/logo-purple.svg" alt={t('app.name')} className="h-6 w-auto" />
       <Link to="/perfil" aria-label={t('profilePage.title')}>
         <Avatar name={user.name} avatarUrl={user.avatarUrl} size="sm" />
       </Link>
