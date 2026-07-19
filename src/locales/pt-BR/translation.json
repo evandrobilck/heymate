@@ -59,6 +59,9 @@
     "since": "Desde {{date}}",
     "period": "{{start}} – {{end}}",
     "remove": "Marcar como saída",
+    "makeAdmin": "Tornar admin",
+    "makeAdminConfirm": "Tornar este morador admin? Ele vai poder gerenciar os moradores e o código de convite.",
+    "makeAdminError": "Não foi possível tornar este morador admin. Tente de novo.",
     "leaveHouse": "Sair desta casa",
     "leaveConfirm": "Tem certeza que quer sair desta casa? Você vai precisar de um código de convite pra entrar em outra.",
     "leaveError": "Não foi possível sair da casa. Tente de novo."

@@ -11,13 +11,23 @@ import CustomFieldsCard from '../components/CustomFieldsCard'
 export default function CasaPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const { house, isAdmin, markMemberAsLeft, regenerateInviteCode, leaveHouse } = useHouse()
+  const { house, isAdmin, markMemberAsLeft, makeAdmin, regenerateInviteCode, leaveHouse } = useHouse()
   const navigate = useNavigate()
 
   if (!house) return null
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
   const pastMembers = house.members.filter((member) => member.leftAt)
+
+  async function handleMakeAdmin(memberId) {
+    if (!window.confirm(t('housePage.makeAdminConfirm'))) return
+    try {
+      await makeAdmin(memberId)
+    } catch (err) {
+      console.error(err)
+      alert(t('housePage.makeAdminError'))
+    }
+  }
 
   async function handleLeaveHouse() {
     if (!window.confirm(t('housePage.leaveConfirm'))) return
@@ -45,6 +55,7 @@ export default function CasaPage() {
               member={member}
               canManage={isAdmin && member.id !== user.id}
               onMarkAsLeft={markMemberAsLeft}
+              onMakeAdmin={handleMakeAdmin}
             />
           ))}
         </ul>

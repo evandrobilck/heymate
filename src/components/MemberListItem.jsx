@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import Avatar from './Avatar'
 import { formatDate } from '../utils/formatDate'
 
-export default function MemberListItem({ member, isPast = false, canManage = false, onMarkAsLeft }) {
+export default function MemberListItem({ member, isPast = false, canManage = false, onMarkAsLeft, onMakeAdmin }) {
   const { t, i18n } = useTranslation()
 
   return (
@@ -26,6 +26,15 @@ export default function MemberListItem({ member, isPast = false, canManage = fal
             : t('housePage.since', { date: formatDate(member.joinedAt, i18n.language) })}
         </p>
       </div>
+      {canManage && member.role !== 'admin' && (
+        <button
+          type="button"
+          onClick={() => onMakeAdmin(member.id)}
+          className="shrink-0 text-xs font-medium text-gray-400 hover:text-purple-600"
+        >
+          {t('housePage.makeAdmin')}
+        </button>
+      )}
       {canManage && (
         <button
           type="button"

@@ -59,6 +59,9 @@
     "since": "Since {{date}}",
     "period": "{{start}} – {{end}}",
     "remove": "Mark as left",
+    "makeAdmin": "Make admin",
+    "makeAdminConfirm": "Make this roommate an admin? They'll be able to manage members and the invite code.",
+    "makeAdminError": "Couldn't make this roommate an admin. Try again.",
     "leaveHouse": "Leave this house",
     "leaveConfirm": "Are you sure you want to leave this house? You'll need an invite code to join another one.",
     "leaveError": "Couldn't leave the house. Try again."

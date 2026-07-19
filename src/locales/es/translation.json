@@ -59,6 +59,9 @@
     "since": "Desde {{date}}",
     "period": "{{start}} – {{end}}",
     "remove": "Marcar como salida",
+    "makeAdmin": "Hacer admin",
+    "makeAdminConfirm": "¿Hacer admin a este compañero? Podrá gestionar los compañeros y el código de invitación.",
+    "makeAdminError": "No pudimos hacer admin a este compañero. Intenta de nuevo.",
     "leaveHouse": "Salir de esta casa",
     "leaveConfirm": "¿Seguro que quieres salir de esta casa? Vas a necesitar un código de invitación para unirte a otra.",
     "leaveError": "No pudimos salir de la casa. Intenta de nuevo."
