@@ -10,7 +10,10 @@ export default function TaskListItem({ task }) {
   const { house } = useHouse()
   const { toggleTaskCompleted } = useTasks()
 
-  const assignee = task.assigneeId ? house.members.find((member) => member.id === task.assigneeId) : null
+  const assignees = task.assigneeIds
+    .map((id) => house.members.find((member) => member.id === id))
+    .filter(Boolean)
+  const assigneeLabel = assignees.length > 0 ? assignees.map((member) => member.name).join(', ') : t('tasksPage.general')
   const completedByMember = task.completedBy
     ? house.members.find((member) => member.id === task.completedBy)
     : null
@@ -45,7 +48,7 @@ export default function TaskListItem({ task }) {
           {task.title}
         </p>
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-gray-500">
-          <span>{assignee ? assignee.name : t('tasksPage.general')}</span>
+          <span>{assigneeLabel}</span>
           {task.recurrence !== 'none' && <span>· {t(`recurrence.${task.recurrence}`)}</span>}
           {!task.completed && task.dueDate && (
             <span>· {t('tasksPage.dueOn', { date: formatDate(task.dueDate, i18n.language) })}</span>

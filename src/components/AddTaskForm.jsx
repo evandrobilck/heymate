@@ -14,12 +14,18 @@ export default function AddTaskForm({ onClose }) {
   const activeMembers = house.members.filter((member) => !member.leftAt)
 
   const [title, setTitle] = useState('')
-  const [assigneeId, setAssigneeId] = useState('')
+  const [assigneeIds, setAssigneeIds] = useState([])
   const [recurrence, setRecurrence] = useState('none')
   const [dueDate, setDueDate] = useState('')
   const [notify, setNotify] = useState(false)
 
   const isValid = title.trim() !== ''
+
+  function toggleAssignee(memberId) {
+    setAssigneeIds((prev) =>
+      prev.includes(memberId) ? prev.filter((id) => id !== memberId) : [...prev, memberId]
+    )
+  }
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -27,7 +33,7 @@ export default function AddTaskForm({ onClose }) {
 
     addTask({
       title: title.trim(),
-      assigneeId: assigneeId || null,
+      assigneeIds,
       recurrence,
       dueDate: dueDate || null,
       notify,
@@ -60,18 +66,20 @@ export default function AddTaskForm({ onClose }) {
 
           <div>
             <label className="text-xs font-medium text-gray-600">{t('tasksPage.assigneeLabel')}</label>
-            <select
-              value={assigneeId}
-              onChange={(event) => setAssigneeId(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
-            >
-              <option value="">{t('tasksPage.general')}</option>
+            <p className="mt-0.5 text-xs text-gray-400">{t('tasksPage.assigneeHint')}</p>
+            <ul className="mt-1 space-y-2">
               {activeMembers.map((member) => (
-                <option key={member.id} value={member.id}>
-                  {member.name}
-                </option>
+                <li key={member.id} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={assigneeIds.includes(member.id)}
+                    onChange={() => toggleAssignee(member.id)}
+                    className="h-4 w-4 rounded border-gray-300 text-purple-600"
+                  />
+                  <span className="text-sm text-gray-800">{member.name}</span>
+                </li>
               ))}
-            </select>
+            </ul>
           </div>
 
           <div>

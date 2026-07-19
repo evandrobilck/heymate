@@ -133,6 +133,7 @@
     "close": "Close",
     "titleLabel": "Task",
     "assigneeLabel": "Assigned to",
+    "assigneeHint": "Pick one or more roommates. Leave everyone unchecked for a general task.",
     "general": "Everyone",
     "recurrenceLabel": "Recurrence",
     "notifyLabel": "Notify assignee",

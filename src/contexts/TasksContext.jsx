@@ -8,7 +8,7 @@ function mapTaskRow(row) {
   return {
     id: row.id,
     title: row.title,
-    assigneeId: row.assignee_id,
+    assigneeIds: (row.task_assignees ?? []).map((assignee) => assignee.user_id),
     recurrence: row.recurrence,
     dueDate: row.due_date,
     notify: row.notify,
@@ -31,7 +31,7 @@ export function TasksProvider({ children }) {
 
     const { data, error } = await supabase
       .from('tasks')
-      .select('*')
+      .select('*, task_assignees(user_id)')
       .eq('house_id', house.id)
       .order('created_at', { ascending: false })
 
@@ -57,6 +57,7 @@ export function TasksProvider({ children }) {
         { event: '*', schema: 'public', table: 'tasks', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_assignees' }, () => refresh())
       .subscribe()
 
     return () => {
@@ -65,17 +66,29 @@ export function TasksProvider({ children }) {
   }, [house?.id, refresh])
 
   async function addTask(task) {
-    const { error } = await supabase.from('tasks').insert({
-      house_id: house.id,
-      title: task.title,
-      assignee_id: task.assigneeId,
-      recurrence: task.recurrence,
-      due_date: task.dueDate,
-      notify: task.notify,
-      created_by: task.createdBy,
-    })
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert({
+        house_id: house.id,
+        title: task.title,
+        recurrence: task.recurrence,
+        due_date: task.dueDate,
+        notify: task.notify,
+        created_by: task.createdBy,
+      })
+      .select()
+      .single()
 
     if (error) throw error
+
+    if (task.assigneeIds.length > 0) {
+      const { error: assigneesError } = await supabase
+        .from('task_assignees')
+        .insert(task.assigneeIds.map((userId) => ({ task_id: data.id, user_id: userId })))
+
+      if (assigneesError) throw assigneesError
+    }
+
     await refresh()
   }
 
