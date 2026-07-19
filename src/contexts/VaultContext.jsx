@@ -24,7 +24,7 @@ export function VaultProvider({ children }) {
       memberIds.length
         ? supabase
             .from('profiles')
-            .select('id, phone, pay_id, bank_details, emergency_contact_name, emergency_contact_phone')
+            .select('id, email, phone, pay_id, bank_details, emergency_contact_name, emergency_contact_phone')
             .in('id', memberIds)
         : Promise.resolve({ data: [] }),
       supabase
@@ -37,6 +37,7 @@ export function VaultProvider({ children }) {
     const memberPayments = {}
     ;(profileRows ?? []).forEach((row) => {
       memberPayments[row.id] = {
+        email: row.email ?? '',
         phone: row.phone ?? '',
         payId: row.pay_id ?? '',
         bankDetails: row.bank_details ?? '',

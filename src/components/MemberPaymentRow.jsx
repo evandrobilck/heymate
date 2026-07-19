@@ -5,6 +5,7 @@ import { useVault } from '../contexts/VaultContext'
 import Avatar from './Avatar'
 
 const EMPTY_INFO = {
+  email: '',
   phone: '',
   payId: '',
   bankDetails: '',
@@ -34,6 +35,7 @@ export default function MemberPaymentRow({ member }) {
       </div>
 
       <div className="mt-2 space-y-1 pl-11 text-xs text-gray-600">
+        <p>{t('profilePage.email')}: {info.email || '—'}</p>
         <p>{t('profilePage.phone')}: {info.phone || '—'}</p>
         <p>{t('vaultPage.payIdLabel')}: {info.payId || '—'}</p>
         <p>{t('vaultPage.bankDetailsLabel')}: {info.bankDetails || '—'}</p>
