@@ -23,7 +23,7 @@ export const billCategories = [
   { id: 'other', labelKey: 'billCategories.other', icon: '📄' },
 ]
 
-export const recurrenceOptions = ['none', 'weekly', 'monthly', 'yearly']
+export const recurrenceOptions = ['none', 'weekly', 'biweekly', 'monthly', 'yearly']
 
 export const mockBills = [
   {

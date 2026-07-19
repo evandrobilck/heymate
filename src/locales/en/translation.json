@@ -79,6 +79,7 @@
     "none": "One-time",
     "daily": "Daily",
     "weekly": "Weekly",
+    "biweekly": "Every 2 weeks",
     "monthly": "Monthly",
     "yearly": "Yearly"
   },
