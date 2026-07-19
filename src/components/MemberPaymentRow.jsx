@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useVault } from '../contexts/VaultContext'
 import Avatar from './Avatar'
-import MaskedValue from './MaskedValue'
 
 const EMPTY_INFO = {
   phone: '',
@@ -36,12 +35,8 @@ export default function MemberPaymentRow({ member }) {
 
       <div className="mt-2 space-y-1 pl-11 text-xs text-gray-600">
         <p>{t('profilePage.phone')}: {info.phone || '—'}</p>
-        <p>
-          {t('vaultPage.payIdLabel')}: <MaskedValue value={info.payId} />
-        </p>
-        <p>
-          {t('vaultPage.bankDetailsLabel')}: <MaskedValue value={info.bankDetails} />
-        </p>
+        <p>{t('vaultPage.payIdLabel')}: {info.payId || '—'}</p>
+        <p>{t('vaultPage.bankDetailsLabel')}: {info.bankDetails || '—'}</p>
         <p>{t('profilePage.emergencyContact')}: {emergencyContact || '—'}</p>
       </div>
     </li>

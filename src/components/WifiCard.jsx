@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHouse } from '../contexts/HouseContext'
 import { useVault } from '../contexts/VaultContext'
-import MaskedValue from './MaskedValue'
 
 export default function WifiCard() {
   const { t } = useTranslation()
@@ -70,7 +69,7 @@ export default function WifiCard() {
             {t('vaultPage.wifiNameLabel')}: <span className="font-medium text-gray-900">{vault.wifi.name}</span>
           </p>
           <p className="text-gray-600">
-            {t('vaultPage.wifiPasswordLabel')}: <MaskedValue value={vault.wifi.password} />
+            {t('vaultPage.wifiPasswordLabel')}: <span className="font-medium text-gray-900">{vault.wifi.password || '—'}</span>
           </p>
         </div>
       )}
