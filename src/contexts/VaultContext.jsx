@@ -22,7 +22,10 @@ export function VaultProvider({ children }) {
     const [{ data: wifiRow }, { data: profileRows }, { data: fieldRows }] = await Promise.all([
       supabase.from('house_wifi').select('*').eq('house_id', house.id).maybeSingle(),
       memberIds.length
-        ? supabase.from('profiles').select('id, pay_id, bank_details').in('id', memberIds)
+        ? supabase
+            .from('profiles')
+            .select('id, phone, pay_id, bank_details, emergency_contact_name, emergency_contact_phone')
+            .in('id', memberIds)
         : Promise.resolve({ data: [] }),
       supabase
         .from('vault_custom_fields')
@@ -33,7 +36,13 @@ export function VaultProvider({ children }) {
 
     const memberPayments = {}
     ;(profileRows ?? []).forEach((row) => {
-      memberPayments[row.id] = { payId: row.pay_id ?? '', bankDetails: row.bank_details ?? '' }
+      memberPayments[row.id] = {
+        phone: row.phone ?? '',
+        payId: row.pay_id ?? '',
+        bankDetails: row.bank_details ?? '',
+        emergencyContactName: row.emergency_contact_name ?? '',
+        emergencyContactPhone: row.emergency_contact_phone ?? '',
+      }
     })
 
     setVault({

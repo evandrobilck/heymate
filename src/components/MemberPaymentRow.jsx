@@ -5,12 +5,22 @@ import { useVault } from '../contexts/VaultContext'
 import Avatar from './Avatar'
 import MaskedValue from './MaskedValue'
 
+const EMPTY_INFO = {
+  phone: '',
+  payId: '',
+  bankDetails: '',
+  emergencyContactName: '',
+  emergencyContactPhone: '',
+}
+
 export default function MemberPaymentRow({ member }) {
   const { t } = useTranslation()
   const { user } = useAuth()
   const { vault } = useVault()
-  const info = vault.memberPayments[member.id] ?? { payId: '', bankDetails: '' }
+  const info = vault.memberPayments[member.id] ?? EMPTY_INFO
   const isSelf = member.id === user.id
+
+  const emergencyContact = [info.emergencyContactName, info.emergencyContactPhone].filter(Boolean).join(' · ')
 
   return (
     <li className="rounded-xl border border-gray-200 bg-white p-3">
@@ -25,12 +35,14 @@ export default function MemberPaymentRow({ member }) {
       </div>
 
       <div className="mt-2 space-y-1 pl-11 text-xs text-gray-600">
+        <p>{t('profilePage.phone')}: {info.phone || '—'}</p>
         <p>
           {t('vaultPage.payIdLabel')}: <MaskedValue value={info.payId} />
         </p>
         <p>
           {t('vaultPage.bankDetailsLabel')}: <MaskedValue value={info.bankDetails} />
         </p>
+        <p>{t('profilePage.emergencyContact')}: {emergencyContact || '—'}</p>
       </div>
     </li>
   )
