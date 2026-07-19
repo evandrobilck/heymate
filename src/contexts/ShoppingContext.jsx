@@ -100,7 +100,45 @@ export function ShoppingProvider({ children }) {
     await refresh()
   }
 
-  const value = useMemo(() => ({ items, addItem, recordPurchase }), [items])
+  async function renameItem(itemId, name) {
+    const { error } = await supabase.from('shopping_items').update({ name }).eq('id', itemId)
+    if (error) throw error
+    await refresh()
+  }
+
+  async function deleteItem(itemId) {
+    const { error } = await supabase.rpc('delete_shopping_item', { p_item_id: itemId })
+    if (error) throw error
+    await refresh()
+  }
+
+  async function updatePurchase(itemId, purchase) {
+    const shares = purchase.participantIds.map((userId) => ({
+      user_id: userId,
+      amount: purchase.shares[userId].amount,
+      percentage: purchase.shares[userId].percentage ?? null,
+      paid: purchase.shares[userId].paid ?? false,
+      paid_at: purchase.shares[userId].paidAt ?? null,
+    }))
+
+    const { error } = await supabase.rpc('update_purchase', {
+      p_item_id: itemId,
+      p_title: purchase.title,
+      p_category: purchase.category,
+      p_total_amount: purchase.totalAmount,
+      p_buyer_id: purchase.buyerId,
+      p_split_type: purchase.splitType,
+      p_shares: shares,
+    })
+
+    if (error) throw error
+    await refresh()
+  }
+
+  const value = useMemo(
+    () => ({ items, addItem, recordPurchase, renameItem, deleteItem, updatePurchase }),
+    [items]
+  )
 
   return <ShoppingContext.Provider value={value}>{children}</ShoppingContext.Provider>
 }

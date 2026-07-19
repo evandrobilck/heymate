@@ -175,10 +175,14 @@
     "addedBy": "Added by {{name}}",
     "markBought": "Mark as bought",
     "recordPurchase": "Record purchase",
+    "editPurchase": "Edit purchase",
     "buyerLabel": "Who bought it",
     "you": "You",
     "confirmBought": "Save purchase",
-    "boughtBy": "Bought by {{name}} · {{date}}"
+    "boughtBy": "Bought by {{name}} · {{date}}",
+    "deleteConfirm": "Delete this item? This can't be undone.",
+    "deletePurchaseConfirm": "Delete this purchase? This also removes its linked bill for everyone. This can't be undone.",
+    "deleteError": "Couldn't delete the item. Try again."
   },
   "calendarPage": {
     "prevMonth": "Previous month",

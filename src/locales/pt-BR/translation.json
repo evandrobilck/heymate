@@ -175,10 +175,14 @@
     "addedBy": "Adicionado por {{name}}",
     "markBought": "Marcar como comprado",
     "recordPurchase": "Registrar compra",
+    "editPurchase": "Editar compra",
     "buyerLabel": "Quem comprou",
     "you": "Você",
     "confirmBought": "Salvar compra",
-    "boughtBy": "Comprado por {{name}} · {{date}}"
+    "boughtBy": "Comprado por {{name}} · {{date}}",
+    "deleteConfirm": "Apagar este item? Essa ação não pode ser desfeita.",
+    "deletePurchaseConfirm": "Apagar esta compra? Isso também remove a conta vinculada, pra todo mundo. Essa ação não pode ser desfeita.",
+    "deleteError": "Não foi possível apagar o item. Tente de novo."
   },
   "calendarPage": {
     "prevMonth": "Mês anterior",

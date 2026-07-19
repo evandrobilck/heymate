@@ -11,14 +11,26 @@ import { formatCurrency } from '../utils/formatCurrency'
 const SPLIT_TYPES = ['equal', 'percentage', 'exact']
 const PURCHASE_CATEGORIES = billCategories.filter((cat) => cat.id === 'groceries' || cat.id === 'other')
 
-export default function RecordPurchaseForm({ item, onClose }) {
+export default function RecordPurchaseForm({ item, bill = null, onClose }) {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const { house } = useHouse()
-  const { recordPurchase } = useShopping()
+  const { recordPurchase, updatePurchase } = useShopping()
   const { customShoppingCategories, hiddenCategoryIds } = useCategories()
+  const isEditing = Boolean(bill)
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
+  // Include past members who are already on the purchase being edited, so
+  // editing doesn't silently drop an ex-roommate's share.
+  const memberOptions = isEditing
+    ? [
+        ...activeMembers,
+        ...bill.participantIds
+          .filter((id) => !activeMembers.some((member) => member.id === id))
+          .map((id) => house.members.find((member) => member.id === id))
+          .filter(Boolean),
+      ]
+    : activeMembers
 
   const visiblePurchaseCategories = PURCHASE_CATEGORIES.filter((cat) => !hiddenCategoryIds.includes(cat.id))
   const pickablePurchaseCategories =
@@ -26,14 +38,26 @@ export default function RecordPurchaseForm({ item, onClose }) {
       ? visiblePurchaseCategories
       : PURCHASE_CATEGORIES
 
-  const [title, setTitle] = useState(item.name)
-  const [category, setCategory] = useState(pickablePurchaseCategories[0]?.id ?? customShoppingCategories[0]?.id ?? 'groceries')
-  const [totalAmount, setTotalAmount] = useState('')
-  const [buyerId, setBuyerId] = useState(user.id)
-  const [splitType, setSplitType] = useState('equal')
-  const [participantIds, setParticipantIds] = useState(activeMembers.map((member) => member.id))
-  const [percentages, setPercentages] = useState({})
-  const [exactAmounts, setExactAmounts] = useState({})
+  const [title, setTitle] = useState(bill?.title ?? item.name)
+  const [category, setCategory] = useState(
+    bill?.category ?? pickablePurchaseCategories[0]?.id ?? customShoppingCategories[0]?.id ?? 'groceries'
+  )
+  const [totalAmount, setTotalAmount] = useState(bill ? String(bill.totalAmount) : '')
+  const [buyerId, setBuyerId] = useState(bill?.createdBy ?? user.id)
+  const [splitType, setSplitType] = useState(bill?.splitType ?? 'equal')
+  const [participantIds, setParticipantIds] = useState(
+    bill ? bill.participantIds : activeMembers.map((member) => member.id)
+  )
+  const [percentages, setPercentages] = useState(
+    bill?.splitType === 'percentage'
+      ? Object.fromEntries(bill.participantIds.map((id) => [id, String(bill.shares[id].percentage ?? '')]))
+      : {}
+  )
+  const [exactAmounts, setExactAmounts] = useState(
+    bill?.splitType === 'exact'
+      ? Object.fromEntries(bill.participantIds.map((id) => [id, String(bill.shares[id].amount ?? '')]))
+      : {}
+  )
 
   const amountValue = Number(totalAmount) || 0
 
@@ -71,24 +95,44 @@ export default function RecordPurchaseForm({ item, onClose }) {
       )
     }
 
-    // The buyer already paid at checkout, so their own share starts settled.
-    if (shares[buyerId]) {
-      shares[buyerId] = {
-        ...shares[buyerId],
-        paid: true,
-        paidAt: new Date().toISOString().slice(0, 10),
-      }
-    }
+    if (isEditing) {
+      // Preserve existing paid status for participants who remain, same as
+      // editing a regular bill.
+      participantIds.forEach((id) => {
+        const previousShare = bill.shares[id]
+        const keepPaid = Boolean(previousShare?.paid)
+        shares[id] = { ...shares[id], paid: keepPaid, paidAt: keepPaid ? previousShare.paidAt : null }
+      })
 
-    recordPurchase(item.id, {
-      title: title.trim(),
-      category,
-      totalAmount: amountValue,
-      buyerId,
-      splitType,
-      participantIds,
-      shares,
-    })
+      updatePurchase(item.id, {
+        title: title.trim(),
+        category,
+        totalAmount: amountValue,
+        buyerId,
+        splitType,
+        participantIds,
+        shares,
+      })
+    } else {
+      // The buyer already paid at checkout, so their own share starts settled.
+      if (shares[buyerId]) {
+        shares[buyerId] = {
+          ...shares[buyerId],
+          paid: true,
+          paidAt: new Date().toISOString().slice(0, 10),
+        }
+      }
+
+      recordPurchase(item.id, {
+        title: title.trim(),
+        category,
+        totalAmount: amountValue,
+        buyerId,
+        splitType,
+        participantIds,
+        shares,
+      })
+    }
 
     onClose()
   }
@@ -97,7 +141,9 @@ export default function RecordPurchaseForm({ item, onClose }) {
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4">
       <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-900">{t('shoppingPage.recordPurchase')}</h2>
+          <h2 className="text-base font-semibold text-gray-900">
+            {isEditing ? t('shoppingPage.editPurchase') : t('shoppingPage.recordPurchase')}
+          </h2>
           <button type="button" onClick={onClose} className="text-sm text-gray-400">
             {t('billsPage.close')}
           </button>
@@ -182,7 +228,7 @@ export default function RecordPurchaseForm({ item, onClose }) {
           <div>
             <label className="text-xs font-medium text-gray-600">{t('billsPage.participantsLabel')}</label>
             <ul className="mt-1 space-y-2">
-              {activeMembers.map((member) => {
+              {memberOptions.map((member) => {
                 const checked = participantIds.includes(member.id)
                 return (
                   <li key={member.id} className="flex items-center gap-2">
@@ -274,7 +320,7 @@ export default function RecordPurchaseForm({ item, onClose }) {
             disabled={!isValid}
             className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white disabled:opacity-40"
           >
-            {t('shoppingPage.confirmBought')}
+            {isEditing ? t('billsPage.saveChanges') : t('shoppingPage.confirmBought')}
           </button>
         </form>
       </div>
