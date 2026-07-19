@@ -171,9 +171,10 @@
     "noPending": "Nothing on the list. Add something!",
     "addedBy": "Added by {{name}}",
     "markBought": "Mark as bought",
-    "pricePlaceholder": "Price",
-    "confirmBought": "Confirm",
-    "cancel": "Cancel",
+    "recordPurchase": "Record purchase",
+    "buyerLabel": "Who bought it",
+    "you": "You",
+    "confirmBought": "Save purchase",
     "boughtBy": "Bought by {{name}} · {{date}}"
   },
   "calendarPage": {

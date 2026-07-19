@@ -77,20 +77,30 @@ export function ShoppingProvider({ children }) {
     await refresh()
   }
 
-  async function markAsBought(itemId, price) {
-    const { error } = await supabase.rpc('mark_item_bought', {
+  async function recordPurchase(itemId, purchase) {
+    const shares = purchase.participantIds.map((userId) => ({
+      user_id: userId,
+      amount: purchase.shares[userId].amount,
+      percentage: purchase.shares[userId].percentage ?? null,
+      paid: purchase.shares[userId].paid ?? false,
+      paid_at: purchase.shares[userId].paidAt ?? null,
+    }))
+
+    const { error } = await supabase.rpc('record_purchase', {
       p_item_id: itemId,
-      p_price: price,
+      p_title: purchase.title,
+      p_category: purchase.category,
+      p_total_amount: purchase.totalAmount,
+      p_buyer_id: purchase.buyerId,
+      p_split_type: purchase.splitType,
+      p_shares: shares,
     })
 
-    if (error) {
-      console.error(error)
-      return
-    }
+    if (error) throw error
     await refresh()
   }
 
-  const value = useMemo(() => ({ items, addItem, markAsBought }), [items])
+  const value = useMemo(() => ({ items, addItem, recordPurchase }), [items])
 
   return <ShoppingContext.Provider value={value}>{children}</ShoppingContext.Provider>
 }

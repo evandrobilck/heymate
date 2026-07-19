@@ -1,28 +1,17 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHouse } from '../contexts/HouseContext'
-import { useShopping } from '../contexts/ShoppingContext'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
+import RecordPurchaseForm from './RecordPurchaseForm'
 
 export default function ShoppingListItem({ item }) {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
-  const { markAsBought } = useShopping()
-  const [entering, setEntering] = useState(false)
-  const [price, setPrice] = useState('')
+  const [recording, setRecording] = useState(false)
 
   const addedByMember = house.members.find((member) => member.id === item.addedBy)
   const boughtByMember = item.boughtBy ? house.members.find((member) => member.id === item.boughtBy) : null
-
-  function handleConfirm(event) {
-    event.preventDefault()
-    const value = Number(price)
-    if (!value || value <= 0) return
-    markAsBought(item.id, value)
-    setEntering(false)
-    setPrice('')
-  }
 
   if (item.bought) {
     return (
@@ -59,7 +48,7 @@ export default function ShoppingListItem({ item }) {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={() => setEntering((prev) => !prev)}
+          onClick={() => setRecording(true)}
           aria-label={t('shoppingPage.markBought')}
           className="h-5 w-5 shrink-0 rounded-full border-2 border-gray-300"
         />
@@ -69,26 +58,7 @@ export default function ShoppingListItem({ item }) {
         </div>
       </div>
 
-      {entering && (
-        <form onSubmit={handleConfirm} className="mt-3 flex items-center gap-2">
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            autoFocus
-            value={price}
-            onChange={(event) => setPrice(event.target.value)}
-            placeholder={t('shoppingPage.pricePlaceholder')}
-            className="w-24 rounded-lg border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-purple-500"
-          />
-          <button type="submit" className="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-medium text-white">
-            {t('shoppingPage.confirmBought')}
-          </button>
-          <button type="button" onClick={() => setEntering(false)} className="text-xs text-gray-400">
-            {t('shoppingPage.cancel')}
-          </button>
-        </form>
-      )}
+      {recording && <RecordPurchaseForm item={item} onClose={() => setRecording(false)} />}
     </li>
   )
 }

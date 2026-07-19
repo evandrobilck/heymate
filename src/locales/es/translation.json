@@ -171,9 +171,10 @@
     "noPending": "Lista vacía. ¡Agrega algo!",
     "addedBy": "Agregado por {{name}}",
     "markBought": "Marcar como comprado",
-    "pricePlaceholder": "Precio",
-    "confirmBought": "Confirmar",
-    "cancel": "Cancelar",
+    "recordPurchase": "Registrar compra",
+    "buyerLabel": "Quién lo compró",
+    "you": "Tú",
+    "confirmBought": "Guardar compra",
     "boughtBy": "Comprado por {{name}} · {{date}}"
   },
   "calendarPage": {
