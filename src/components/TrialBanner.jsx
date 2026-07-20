@@ -25,7 +25,7 @@ export default function TrialBanner() {
       await startCheckout()
     } catch (err) {
       console.error(err)
-      setError(t('subscription.subscribeError'))
+      setError(`${t('subscription.subscribeError')} (${err.message})`)
       setSubmitting(false)
     }
   }

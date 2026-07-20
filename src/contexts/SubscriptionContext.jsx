@@ -4,6 +4,21 @@ import { useHouse } from './HouseContext'
 
 const SubscriptionContext = createContext(null)
 
+// supabase.functions.invoke() only gives a generic error on non-2xx
+// responses — the actual reason (which our edge functions send as plain
+// text) is on error.context, a Response we still need to read.
+async function readFunctionError(error) {
+  if (error?.context?.text) {
+    try {
+      const text = await error.context.text()
+      if (text) return text
+    } catch {
+      // fall through to the generic message below
+    }
+  }
+  return error?.message ?? String(error)
+}
+
 function mapSubscriptionRow(row) {
   if (!row) return null
   return {
@@ -73,7 +88,7 @@ export function SubscriptionProvider({ children }) {
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { house_id: house.id },
     })
-    if (error) throw error
+    if (error) throw new Error(await readFunctionError(error))
     window.location.href = data.url
   }
 
@@ -84,7 +99,7 @@ export function SubscriptionProvider({ children }) {
     const { error } = await supabase.functions.invoke('cancel-subscription', {
       body: { house_id: house.id },
     })
-    if (error) throw error
+    if (error) throw new Error(await readFunctionError(error))
     await refresh()
   }
 

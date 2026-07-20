@@ -43,7 +43,7 @@ export default function SubscriptionCard() {
       await startCheckout()
     } catch (err) {
       console.error(err)
-      setActionError(t('subscription.subscribeError'))
+      setActionError(`${t('subscription.subscribeError')} (${err.message})`)
       setSubmitting(false)
     }
   }
@@ -56,7 +56,7 @@ export default function SubscriptionCard() {
       await cancelSubscription()
     } catch (err) {
       console.error(err)
-      setActionError(t('subscription.cancelError'))
+      setActionError(`${t('subscription.cancelError')} (${err.message})`)
     } finally {
       setSubmitting(false)
     }
