@@ -1,7 +1,11 @@
-// Runs once a day (via pg_cron, see migration 0020) and emails every house
+// Runs once an hour (via pg_cron, see migration 0023) and emails every house
 // member who has something due *today*: a task assigned to them with
 // "notify" checked, or their unpaid share of a bill (including recurring
 // bill occurrences projected onto today, same logic as the calendar page).
+// Bills and tasks without a specific notify_time go out at DEFAULT_HOUR, the
+// house's traditional morning reminder; a task with notify_time only goes
+// out once the local clock reaches that hour, e.g. "take out the trash"
+// set to fire at 19:00 instead of first thing in the morning.
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
@@ -12,12 +16,19 @@ const FROM_EMAIL = 'HeyFlat <onboarding@resend.dev>'
 // Notifications are timed for the house's market (Australia) rather than UTC,
 // so "today" matches what members actually see due on the calendar.
 const TIMEZONE = 'Australia/Sydney'
+const DEFAULT_HOUR = 8
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY)
 
 function todayKey(): string {
   // en-CA formats as YYYY-MM-DD.
   return new Intl.DateTimeFormat('en-CA', { timeZone: TIMEZONE }).format(new Date())
+}
+
+function currentLocalHour(): number {
+  return Number(
+    new Intl.DateTimeFormat('en-US', { timeZone: TIMEZONE, hour: 'numeric', hourCycle: 'h23' }).format(new Date())
+  )
 }
 
 // --- Recurrence math, ported from src/utils/recurrence.js -----------------
@@ -186,22 +197,31 @@ async function release(entityType: 'task' | 'bill', entityId: string, occurrence
 Deno.serve(async () => {
   try {
     const today = todayKey()
+    const currentHour = currentLocalHour()
     let sent = 0
     const errors: string[] = []
 
-    const { data: tasks, error: tasksError } = await supabase
+    const { data: allNotifyTasks, error: tasksError } = await supabase
       .from('tasks')
-      .select('id, title, house_id, task_assignees(user_id)')
+      .select('id, title, house_id, notify_time, task_assignees(user_id)')
       .eq('notify', true)
       .eq('completed', false)
       .eq('due_date', today)
     if (tasksError) throw tasksError
 
-    const { data: bills, error: billsError } = await supabase
-      .from('bills')
-      .select(
-        'id, title, total_amount, due_date, recurrence, recurrence_until, house_id, bill_occurrence_exceptions(occurrence_date), bill_shares(user_id, amount, paid)'
-      )
+    const tasks = (allNotifyTasks ?? []).filter((task) => {
+      const hour = task.notify_time ? Number(task.notify_time.split(':')[0]) : DEFAULT_HOUR
+      return hour === currentHour
+    })
+
+    const { data: bills, error: billsError } =
+      currentHour === DEFAULT_HOUR
+        ? await supabase
+            .from('bills')
+            .select(
+              'id, title, total_amount, due_date, recurrence, recurrence_until, house_id, bill_occurrence_exceptions(occurrence_date), bill_shares(user_id, amount, paid)'
+            )
+        : { data: [], error: null }
     if (billsError) throw billsError
 
     const dueBills = (bills ?? []).filter((bill) =>

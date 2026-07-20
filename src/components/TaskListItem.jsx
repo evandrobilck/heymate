@@ -96,7 +96,9 @@ export default function TaskListItem({ task }) {
             {!task.completed && task.dueDate && (
               <span>· {t('tasksPage.dueOn', { date: formatDate(task.dueDate, i18n.language) })}</span>
             )}
-            {task.notify && <span aria-label={t('tasksPage.notifyOn')}>🔔</span>}
+            {task.notify && (
+              <span aria-label={t('tasksPage.notifyOn')}>🔔{task.notifyTime ? ` ${task.notifyTime}` : ''}</span>
+            )}
           </div>
           {task.completed && completedByMembers.length > 0 && (
             <p className="mt-0.5 text-xs text-green-600">

@@ -154,6 +154,8 @@
     "general": "Everyone",
     "recurrenceLabel": "Recurrence",
     "notifyLabel": "Notify assignee",
+    "notifyTimeLabel": "Notify at time",
+    "notifyTimeHint": "Optional. E.g. 7pm for tasks that can only be done at night, like taking out the trash.",
     "save": "Save task",
     "todoTitle": "To do",
     "doneTitle": "Done",

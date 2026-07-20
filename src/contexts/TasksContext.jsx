@@ -12,6 +12,7 @@ function mapTaskRow(row) {
     recurrence: row.recurrence,
     dueDate: row.due_date,
     notify: row.notify,
+    notifyTime: row.notify_time ? row.notify_time.slice(0, 5) : null,
     completed: row.completed,
     completedByIds: (row.task_completers ?? []).map((completer) => completer.user_id),
     completedAt: row.completed_at,
@@ -79,6 +80,7 @@ export function TasksProvider({ children }) {
         recurrence: task.recurrence,
         due_date: task.dueDate,
         notify: task.notify,
+        notify_time: task.notifyTime,
         created_by: task.createdBy,
       })
       .select()
@@ -105,6 +107,7 @@ export function TasksProvider({ children }) {
         recurrence: task.recurrence,
         due_date: task.dueDate,
         notify: task.notify,
+        notify_time: task.notifyTime,
       })
       .eq('id', taskId)
 

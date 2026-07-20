@@ -154,6 +154,8 @@
     "general": "Todos",
     "recurrenceLabel": "Recurrencia",
     "notifyLabel": "Notificar al responsable",
+    "notifyTimeLabel": "Notificar a la hora",
+    "notifyTimeHint": "Opcional. Ej.: 19:00 para tareas que solo se pueden hacer de noche, como sacar la basura.",
     "save": "Guardar tarea",
     "todoTitle": "Por hacer",
     "doneTitle": "Hechas",
