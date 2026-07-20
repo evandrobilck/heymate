@@ -9,7 +9,7 @@ const WARNING_THRESHOLD_DAYS = 5
 export default function TrialBanner() {
   const { t } = useTranslation()
   const { isAdmin } = useHouse()
-  const { subscription, simulateSubscribe } = useSubscription()
+  const { subscription, startCheckout } = useSubscription()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -22,11 +22,10 @@ export default function TrialBanner() {
     setError('')
     setSubmitting(true)
     try {
-      await simulateSubscribe()
+      await startCheckout()
     } catch (err) {
       console.error(err)
       setError(t('subscription.subscribeError'))
-    } finally {
       setSubmitting(false)
     }
   }

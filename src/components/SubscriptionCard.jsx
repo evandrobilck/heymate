@@ -27,7 +27,7 @@ function formatFullDate(isoString, locale) {
 
 export default function SubscriptionCard() {
   const { t, i18n } = useTranslation()
-  const { subscription, loading, simulateSubscribe, simulateCancel } = useSubscription()
+  const { subscription, loading, startCheckout, cancelSubscription } = useSubscription()
   const [actionError, setActionError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -40,11 +40,10 @@ export default function SubscriptionCard() {
     setActionError('')
     setSubmitting(true)
     try {
-      await simulateSubscribe()
+      await startCheckout()
     } catch (err) {
       console.error(err)
       setActionError(t('subscription.subscribeError'))
-    } finally {
       setSubmitting(false)
     }
   }
@@ -54,7 +53,7 @@ export default function SubscriptionCard() {
     setActionError('')
     setSubmitting(true)
     try {
-      await simulateCancel()
+      await cancelSubscription()
     } catch (err) {
       console.error(err)
       setActionError(t('subscription.cancelError'))

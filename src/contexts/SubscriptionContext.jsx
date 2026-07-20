@@ -65,35 +65,31 @@ export function SubscriptionProvider({ children }) {
     }
   }, [house?.id, refresh])
 
-  // Simulates what a successful Stripe checkout would do — no payment provider wired up yet.
-  async function simulateSubscribe() {
+  // Starts a real Stripe Checkout session (test mode) and redirects the
+  // browser there. The subscription row itself is only updated once Stripe
+  // confirms payment via the stripe-webhook edge function.
+  async function startCheckout() {
     if (!house?.id) return
-    const periodEnd = new Date()
-    periodEnd.setDate(periodEnd.getDate() + 30)
-
-    const { error } = await supabase
-      .from('house_subscriptions')
-      .update({ status: 'active', current_period_end: periodEnd.toISOString(), canceled_at: null })
-      .eq('house_id', house.id)
-
+    const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+      body: { house_id: house.id },
+    })
     if (error) throw error
-    await refresh()
+    window.location.href = data.url
   }
 
-  // Simulates what a Stripe cancellation webhook would do.
-  async function simulateCancel() {
+  // Cancels the subscription in Stripe (test mode). house_subscriptions is
+  // updated by stripe-webhook once Stripe confirms the cancellation.
+  async function cancelSubscription() {
     if (!house?.id) return
-    const { error } = await supabase
-      .from('house_subscriptions')
-      .update({ status: 'canceled', canceled_at: new Date().toISOString() })
-      .eq('house_id', house.id)
-
+    const { error } = await supabase.functions.invoke('cancel-subscription', {
+      body: { house_id: house.id },
+    })
     if (error) throw error
     await refresh()
   }
 
   const value = useMemo(
-    () => ({ subscription, loading, simulateSubscribe, simulateCancel }),
+    () => ({ subscription, loading, startCheckout, cancelSubscription }),
     [subscription, loading]
   )
 

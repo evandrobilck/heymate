@@ -10,7 +10,7 @@ function BlockedScreen() {
   const { t, i18n } = useTranslation()
   const { logout } = useAuth()
   const { house, isAdmin } = useHouse()
-  const { subscription, simulateSubscribe } = useSubscription()
+  const { subscription, startCheckout } = useSubscription()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -21,11 +21,10 @@ function BlockedScreen() {
     setError('')
     setSubmitting(true)
     try {
-      await simulateSubscribe()
+      await startCheckout()
     } catch (err) {
       console.error(err)
       setError(t('subscription.subscribeError'))
-    } finally {
       setSubmitting(false)
     }
   }
