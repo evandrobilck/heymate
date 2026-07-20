@@ -96,6 +96,7 @@
     "rent": "Rent",
     "utilities": "Energy",
     "water": "Water",
+    "gas": "Gas",
     "internet": "Internet",
     "groceries": "Groceries",
     "other": "Other"

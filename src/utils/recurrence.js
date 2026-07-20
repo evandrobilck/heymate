@@ -10,6 +10,11 @@ function addMonths(date, months) {
 }
 
 function stepAnchor(anchor, recurrence, steps) {
+  if (recurrence === 'daily') {
+    const d = new Date(anchor)
+    d.setDate(d.getDate() + steps)
+    return d
+  }
   if (recurrence === 'weekly') {
     const d = new Date(anchor)
     d.setDate(d.getDate() + 7 * steps)

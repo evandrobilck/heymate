@@ -48,6 +48,14 @@ export default function CalendarioPage() {
       })
     })
     tasks.forEach((task) => {
+      if (task.recurrence && task.recurrence !== 'none') {
+        const occurrences = getRecurrenceOccurrencesInRange(task.dueDate, task.recurrence, rangeStartKey, rangeEndKey)
+        occurrences.forEach((day) => {
+          if (!map[day]) map[day] = []
+          map[day].push({ type: 'task', id: task.id, title: task.title, completed: task.completed })
+        })
+        return
+      }
       const day = task.completed ? task.completedAt : task.dueDate
       if (!day) return
       if (!map[day]) map[day] = []
