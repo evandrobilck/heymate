@@ -2,6 +2,7 @@ const SIZE_CLASSES = {
   sm: 'h-8 w-8 text-xs',
   md: 'h-10 w-10 text-sm',
   lg: 'h-16 w-16 text-lg',
+  xl: 'h-24 w-24 text-2xl',
 }
 
 export default function Avatar({ name, size = 'md', avatarUrl }) {

@@ -46,7 +46,17 @@
   },
   "home": {
     "greeting": "Hola, {{name}}",
-    "house": "Estás en {{houseName}}"
+    "house": "Estás en {{houseName}}",
+    "viewFullCalendar": "Ver calendario completo",
+    "youOweTitle": "Tú debes",
+    "owedToYouTitle": "Te deben",
+    "allSettled": "Todo saldado.",
+    "nextBillTitle": "Próxima cuenta a vencer",
+    "noUpcomingBills": "Sin cuentas próximas.",
+    "overdue": "Atrasada",
+    "upcomingTasksTitle": "Tus próximas tareas",
+    "noUpcomingTasks": "Nada pendiente por ahora.",
+    "noDueDate": "Sin fecha"
   },
   "housePage": {
     "addressTitle": "Dirección",

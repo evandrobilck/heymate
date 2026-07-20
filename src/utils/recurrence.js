@@ -73,3 +73,31 @@ export function getRecurrenceOccurrencesInRange(
 
   return results
 }
+
+// The next occurrence on or after `fromKey`, searching up to a year ahead.
+export function getNextOccurrenceOnOrAfter(
+  dueDateKey,
+  recurrence,
+  fromKey,
+  recurrenceUntil = null,
+  excludedDates = []
+) {
+  if (!dueDateKey) return null
+
+  if (!recurrence || recurrence === 'none') {
+    return dueDateKey >= fromKey ? dueDateKey : null
+  }
+
+  const [year, month, day] = fromKey.split('-').map(Number)
+  const horizon = toDayKey(new Date(year, month - 1, day + 366))
+  const occurrences = getRecurrenceOccurrencesInRange(
+    dueDateKey,
+    recurrence,
+    fromKey,
+    horizon,
+    recurrenceUntil,
+    excludedDates
+  )
+  if (occurrences.length === 0) return null
+  return occurrences.slice().sort()[0]
+}

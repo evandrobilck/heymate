@@ -25,62 +25,65 @@ export default function RoommateOfMonthCard() {
   const leaders = leaderboard.filter((entry) => entry.count === topCount)
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
-      <p className="text-sm font-semibold text-gray-900">🏆 {t('roommateOfMonth.title')}</p>
-      <p className="text-xs text-gray-500">{formatMonth(monthKey, i18n.language)}</p>
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <div className="bg-gradient-to-br from-purple-600 to-purple-800 px-5 py-6 text-center text-white">
+        <p className="text-sm font-medium text-purple-100">🏆 {t('roommateOfMonth.title')}</p>
+        <p className="text-xs text-purple-200">{formatMonth(monthKey, i18n.language)}</p>
 
-      {leaders.length === 0 && <p className="mt-3 text-sm text-gray-400">{t('roommateOfMonth.empty')}</p>}
+        {leaders.length === 0 && <p className="mt-4 text-sm text-purple-100">{t('roommateOfMonth.empty')}</p>}
 
-      {leaders.length === 1 && (
-        <div className="mt-3 flex items-center gap-3">
-          <Avatar name={leaders[0].member.name} avatarUrl={leaders[0].member.avatarUrl} />
-          <div>
-            <p className="text-sm font-medium text-gray-900">{leaders[0].member.name}</p>
-            <p className="text-xs text-gray-500">
-              {t('roommateOfMonth.taskCount', { count: leaders[0].count })}
-            </p>
+        {leaders.length === 1 && (
+          <div className="mt-4 flex flex-col items-center gap-2">
+            <Avatar name={leaders[0].member.name} avatarUrl={leaders[0].member.avatarUrl} size="xl" />
+            <p className="text-base font-semibold">{leaders[0].member.name}</p>
+            <p className="text-sm text-purple-100">{t('roommateOfMonth.taskCount', { count: leaders[0].count })}</p>
           </div>
-        </div>
-      )}
+        )}
 
-      {leaders.length > 1 && (
-        <div className="mt-3 space-y-2">
-          <p className="text-xs font-medium text-amber-600">{t('roommateOfMonth.tie')}</p>
-          {leaders.map(({ member, count }) => (
-            <div key={member.id} className="flex items-center gap-3">
-              <Avatar name={member.name} avatarUrl={member.avatarUrl} size="sm" />
-              <div>
-                <p className="text-sm font-medium text-gray-900">{member.name}</p>
-                <p className="text-xs text-gray-500">{t('roommateOfMonth.taskCount', { count })}</p>
-              </div>
+        {leaders.length > 1 && (
+          <div className="mt-4">
+            <p className="text-xs font-medium text-amber-300">{t('roommateOfMonth.tie')}</p>
+            <div className="mt-3 flex flex-wrap justify-center gap-4">
+              {leaders.map(({ member, count }) => (
+                <div key={member.id} className="flex flex-col items-center gap-1.5">
+                  <Avatar name={member.name} avatarUrl={member.avatarUrl} size="lg" />
+                  <p className="text-sm font-medium">{member.name}</p>
+                  <p className="text-xs text-purple-100">{t('roommateOfMonth.taskCount', { count })}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
-      <button
-        type="button"
-        onClick={() => setShowHallOfFame((prev) => !prev)}
-        className="mt-3 text-xs font-medium text-purple-600"
-      >
-        {showHallOfFame ? t('roommateOfMonth.hideHallOfFame') : t('roommateOfMonth.viewHallOfFame')}
-      </button>
+      <div className="p-3 text-center">
+        <button
+          type="button"
+          onClick={() => setShowHallOfFame((prev) => !prev)}
+          className="text-xs font-medium text-purple-600"
+        >
+          {showHallOfFame ? t('roommateOfMonth.hideHallOfFame') : t('roommateOfMonth.viewHallOfFame')}
+        </button>
 
-      {showHallOfFame && (
-        <ul className="mt-2 space-y-2 border-t border-gray-100 pt-2">
-          {mockHallOfFame.map((entry) => {
-            const winner = house.members.find((member) => member.id === entry.winnerId)
-            return (
-              <li key={entry.month} className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">{formatMonth(entry.month, i18n.language)}</span>
-                <span className="font-medium text-gray-900">
-                  {winner?.name} · {t('roommateOfMonth.taskCount', { count: entry.taskCount })}
-                </span>
-              </li>
-            )
-          })}
-        </ul>
-      )}
+        {showHallOfFame && (
+          <ul className="mt-2 space-y-2 border-t border-gray-100 pt-2 text-left">
+            {mockHallOfFame.length === 0 && (
+              <li className="text-sm text-gray-400">{t('roommateOfMonth.empty')}</li>
+            )}
+            {mockHallOfFame.map((entry) => {
+              const winner = house.members.find((member) => member.id === entry.winnerId)
+              return (
+                <li key={entry.month} className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">{formatMonth(entry.month, i18n.language)}</span>
+                  <span className="font-medium text-gray-900">
+                    {winner?.name} · {t('roommateOfMonth.taskCount', { count: entry.taskCount })}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }

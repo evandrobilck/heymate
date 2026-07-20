@@ -2,6 +2,10 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import RoommateOfMonthCard from '../components/RoommateOfMonthCard'
+import HomeCalendarCard from '../components/HomeCalendarCard'
+import HomeBalanceCards from '../components/HomeBalanceCards'
+import NextBillCard from '../components/NextBillCard'
+import UpcomingTasksCard from '../components/UpcomingTasksCard'
 
 export default function HomePage() {
   const { t } = useTranslation()
@@ -18,6 +22,16 @@ export default function HomePage() {
       </div>
 
       <RoommateOfMonthCard />
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <HomeCalendarCard />
+        <HomeBalanceCards />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <NextBillCard />
+        <UpcomingTasksCard />
+      </div>
     </div>
   )
 }
