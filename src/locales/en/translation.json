@@ -143,6 +143,7 @@
   },
   "tasksPage": {
     "addTask": "Add task",
+    "editTask": "Edit task",
     "close": "Close",
     "titleLabel": "Task",
     "assigneeLabel": "Assigned to",
@@ -160,7 +161,9 @@
     "notifyOn": "Notifications on",
     "completedBy": "Done by {{name}} · {{date}}",
     "dueDateLabel": "Due date (optional)",
-    "dueOn": "Due {{date}}"
+    "dueOn": "Due {{date}}",
+    "deleteConfirm": "Delete this task? This can't be undone.",
+    "deleteError": "Couldn't delete the task. Try again."
   },
   "roommateOfMonth": {
     "title": "Roommate of the month",

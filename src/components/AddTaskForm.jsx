@@ -5,19 +5,31 @@ import { useHouse } from '../contexts/HouseContext'
 import { useTasks } from '../contexts/TasksContext'
 import { taskRecurrenceOptions } from '../services/mockData'
 
-export default function AddTaskForm({ onClose }) {
+export default function AddTaskForm({ onClose, task = null }) {
   const { t } = useTranslation()
   const { user } = useAuth()
   const { house } = useHouse()
-  const { addTask } = useTasks()
+  const { addTask, updateTask } = useTasks()
+  const isEditing = Boolean(task)
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
+  // Include past members already assigned to the task being edited, so
+  // editing doesn't silently drop an ex-roommate's assignment.
+  const memberOptions = isEditing
+    ? [
+        ...activeMembers,
+        ...task.assigneeIds
+          .filter((id) => !activeMembers.some((member) => member.id === id))
+          .map((id) => house.members.find((member) => member.id === id))
+          .filter(Boolean),
+      ]
+    : activeMembers
 
-  const [title, setTitle] = useState('')
-  const [assigneeIds, setAssigneeIds] = useState([])
-  const [recurrence, setRecurrence] = useState('none')
-  const [dueDate, setDueDate] = useState('')
-  const [notify, setNotify] = useState(false)
+  const [title, setTitle] = useState(task?.title ?? '')
+  const [assigneeIds, setAssigneeIds] = useState(task?.assigneeIds ?? [])
+  const [recurrence, setRecurrence] = useState(task?.recurrence ?? 'none')
+  const [dueDate, setDueDate] = useState(task?.dueDate ?? '')
+  const [notify, setNotify] = useState(task?.notify ?? false)
 
   const isValid = title.trim() !== ''
 
@@ -31,14 +43,19 @@ export default function AddTaskForm({ onClose }) {
     event.preventDefault()
     if (!isValid) return
 
-    addTask({
+    const payload = {
       title: title.trim(),
       assigneeIds,
       recurrence,
       dueDate: dueDate || null,
       notify,
-      createdBy: user.id,
-    })
+    }
+
+    if (isEditing) {
+      updateTask(task.id, payload)
+    } else {
+      addTask({ ...payload, createdBy: user.id })
+    }
 
     onClose()
   }
@@ -47,7 +64,9 @@ export default function AddTaskForm({ onClose }) {
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4">
       <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-900">{t('tasksPage.addTask')}</h2>
+          <h2 className="text-base font-semibold text-gray-900">
+            {isEditing ? t('tasksPage.editTask') : t('tasksPage.addTask')}
+          </h2>
           <button type="button" onClick={onClose} className="text-sm text-gray-400">
             {t('tasksPage.close')}
           </button>
@@ -68,7 +87,7 @@ export default function AddTaskForm({ onClose }) {
             <label className="text-xs font-medium text-gray-600">{t('tasksPage.assigneeLabel')}</label>
             <p className="mt-0.5 text-xs text-gray-400">{t('tasksPage.assigneeHint')}</p>
             <ul className="mt-1 space-y-2">
-              {activeMembers.map((member) => (
+              {memberOptions.map((member) => (
                 <li key={member.id} className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -122,7 +141,7 @@ export default function AddTaskForm({ onClose }) {
             disabled={!isValid}
             className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white disabled:opacity-40"
           >
-            {t('tasksPage.save')}
+            {isEditing ? t('billsPage.saveChanges') : t('tasksPage.save')}
           </button>
         </form>
       </div>

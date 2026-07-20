@@ -143,6 +143,7 @@
   },
   "tasksPage": {
     "addTask": "Agregar tarea",
+    "editTask": "Editar tarea",
     "close": "Cerrar",
     "titleLabel": "Tarea",
     "assigneeLabel": "Responsables",
@@ -160,7 +161,9 @@
     "notifyOn": "Notificaciones activas",
     "completedBy": "Hecha por {{name}} · {{date}}",
     "dueDateLabel": "Vencimiento (opcional)",
-    "dueOn": "Vence {{date}}"
+    "dueOn": "Vence {{date}}",
+    "deleteConfirm": "¿Eliminar esta tarea? Esta acción no se puede deshacer.",
+    "deleteError": "No se pudo eliminar la tarea. Intenta de nuevo."
   },
   "roommateOfMonth": {
     "title": "Compañero del mes",

@@ -4,14 +4,16 @@ import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useTasks } from '../contexts/TasksContext'
 import { formatDate } from '../utils/formatDate'
+import AddTaskForm from './AddTaskForm'
 
 export default function TaskListItem({ task }) {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const { house } = useHouse()
-  const { markTaskDone, markTaskUndone } = useTasks()
+  const { markTaskDone, markTaskUndone, deleteTask } = useTasks()
   const [pickingCompleters, setPickingCompleters] = useState(false)
   const [completedByIds, setCompletedByIds] = useState([user.id])
+  const [editing, setEditing] = useState(false)
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
   const assignees = task.assigneeIds
@@ -42,6 +44,16 @@ export default function TaskListItem({ task }) {
     if (completedByIds.length === 0) return
     markTaskDone(task.id, completedByIds)
     setPickingCompleters(false)
+  }
+
+  async function handleDelete() {
+    if (!window.confirm(t('tasksPage.deleteConfirm'))) return
+    try {
+      await deleteTask(task.id)
+    } catch (err) {
+      console.error(err)
+      alert(t('tasksPage.deleteError'))
+    }
   }
 
   return (
@@ -127,6 +139,27 @@ export default function TaskListItem({ task }) {
           </div>
         </form>
       )}
+
+      {!pickingCompleters && (
+        <div className="mt-2 flex justify-end gap-3 border-t border-gray-100 pt-2">
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="text-xs font-medium text-gray-400 hover:text-purple-600"
+          >
+            {t('vaultPage.edit')}
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="text-xs font-medium text-gray-400 hover:text-red-600"
+          >
+            {t('vaultPage.remove')}
+          </button>
+        </div>
+      )}
+
+      {editing && <AddTaskForm task={task} onClose={() => setEditing(false)} />}
     </li>
   )
 }

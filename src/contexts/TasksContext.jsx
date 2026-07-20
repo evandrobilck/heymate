@@ -93,6 +93,39 @@ export function TasksProvider({ children }) {
     await refresh()
   }
 
+  async function updateTask(taskId, task) {
+    const { error } = await supabase
+      .from('tasks')
+      .update({
+        title: task.title,
+        recurrence: task.recurrence,
+        due_date: task.dueDate,
+        notify: task.notify,
+      })
+      .eq('id', taskId)
+
+    if (error) throw error
+
+    const { error: deleteError } = await supabase.from('task_assignees').delete().eq('task_id', taskId)
+    if (deleteError) throw deleteError
+
+    if (task.assigneeIds.length > 0) {
+      const { error: assigneesError } = await supabase
+        .from('task_assignees')
+        .insert(task.assigneeIds.map((userId) => ({ task_id: taskId, user_id: userId })))
+
+      if (assigneesError) throw assigneesError
+    }
+
+    await refresh()
+  }
+
+  async function deleteTask(taskId) {
+    const { error } = await supabase.from('tasks').delete().eq('id', taskId)
+    if (error) throw error
+    await refresh()
+  }
+
   async function markTaskDone(taskId, completedByIds) {
     const { error } = await supabase
       .from('tasks')
@@ -122,7 +155,10 @@ export function TasksProvider({ children }) {
     await refresh()
   }
 
-  const value = useMemo(() => ({ tasks, addTask, markTaskDone, markTaskUndone }), [tasks])
+  const value = useMemo(
+    () => ({ tasks, addTask, updateTask, deleteTask, markTaskDone, markTaskUndone }),
+    [tasks]
+  )
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
 }

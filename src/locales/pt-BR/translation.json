@@ -143,6 +143,7 @@
   },
   "tasksPage": {
     "addTask": "Adicionar tarefa",
+    "editTask": "Editar tarefa",
     "close": "Fechar",
     "titleLabel": "Tarefa",
     "assigneeLabel": "Responsáveis",
@@ -160,7 +161,9 @@
     "notifyOn": "Notificações ativas",
     "completedBy": "Feita por {{name}} · {{date}}",
     "dueDateLabel": "Vencimento (opcional)",
-    "dueOn": "Vence {{date}}"
+    "dueOn": "Vence {{date}}",
+    "deleteConfirm": "Apagar esta tarefa? Essa ação não pode ser desfeita.",
+    "deleteError": "Não foi possível apagar a tarefa. Tente de novo."
   },
   "roommateOfMonth": {
     "title": "Morador do mês",
