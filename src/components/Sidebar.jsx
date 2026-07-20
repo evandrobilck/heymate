@@ -12,7 +12,7 @@ export default function Sidebar() {
   const visibleTabs = NAV_TABS.filter((tab) => !tab.adminOnly || isAdmin)
 
   return (
-    <nav className="hidden h-svh w-60 shrink-0 flex-col border-r border-gray-200 bg-white md:flex">
+    <nav className="hidden h-svh w-60 shrink-0 flex-col border-r border-gray-200 bg-surface md:flex">
       <div className="px-5 py-6">
         <img src="/logo-purple.svg" alt={t('app.name')} className="h-11 w-auto" />
         <p className="mt-2 truncate text-base font-bold text-gray-700">{house.name}</p>

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import './i18n'
+import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider } from './contexts/AuthContext'
 import { HouseProvider } from './contexts/HouseContext'
 import { SubscriptionProvider } from './contexts/SubscriptionContext'
@@ -17,6 +18,7 @@ import App from './App.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
+      <ThemeProvider>
       <AuthProvider>
         <HouseProvider>
           <SubscriptionProvider>
@@ -36,6 +38,7 @@ createRoot(document.getElementById('root')).render(
           </SubscriptionProvider>
         </HouseProvider>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </StrictMode>,
 )

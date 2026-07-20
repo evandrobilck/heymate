@@ -9,7 +9,7 @@ export default function PaymentInfoList() {
   const activeMembers = house.members.filter((member) => !member.leftAt)
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-surface p-4">
       <p className="text-sm font-semibold text-gray-900">💳 {t('vaultPage.paymentsTitle')}</p>
       <ul className="mt-3 space-y-2">
         {activeMembers.map((member) => (

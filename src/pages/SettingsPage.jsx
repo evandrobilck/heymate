@@ -144,7 +144,7 @@ export default function SettingsPage() {
 
       <SubscriptionCard />
 
-      <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
         <p className="text-sm font-semibold text-gray-900">{t('settingsPage.housePhoto')}</p>
         <div className="flex items-center gap-4">
           {house.photoUrl ? (
@@ -166,7 +166,7 @@ export default function SettingsPage() {
         {photoError && <p className="text-sm text-red-600">{photoError}</p>}
       </div>
 
-      <form onSubmit={handleSaveName} className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+      <form onSubmit={handleSaveName} className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
         <p className="text-sm font-semibold text-gray-900">{t('settingsPage.houseName')}</p>
         <input
           type="text"
@@ -184,7 +184,7 @@ export default function SettingsPage() {
         </button>
       </form>
 
-      <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
         <p className="text-sm font-semibold text-gray-900">{t('settingsPage.currency')}</p>
         <div className="flex flex-wrap gap-2">
           {currencyOptions.map((code) => (
@@ -205,7 +205,7 @@ export default function SettingsPage() {
         {currencyError && <p className="text-sm text-red-600">{currencyError}</p>}
       </div>
 
-      <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
         <div>
           <p className="text-sm font-semibold text-gray-900">{t('settingsPage.builtInCategories')}</p>
           <p className="text-xs text-gray-400">{t('settingsPage.builtInCategoriesHint')}</p>
@@ -249,7 +249,7 @@ export default function SettingsPage() {
         onRemove={handleRemoveShoppingCategory}
       />
 
-      <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
         <div>
           <p className="text-sm font-semibold text-gray-900">{t('settingsPage.transferAdmin')}</p>
           <p className="text-xs text-gray-400">{t('settingsPage.transferAdminHint')}</p>

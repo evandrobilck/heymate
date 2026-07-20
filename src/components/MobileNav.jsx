@@ -30,7 +30,7 @@ export default function MobileNav() {
             className="fixed inset-0 z-10 md:hidden"
             onClick={() => setShowMore(false)}
           />
-          <div className="fixed inset-x-3 bottom-[4.75rem] z-20 rounded-2xl border border-gray-200 bg-white p-2 shadow-lg md:hidden">
+          <div className="fixed inset-x-3 bottom-[4.75rem] z-20 rounded-2xl border border-gray-200 bg-surface p-2 shadow-lg md:hidden">
             <ul className="grid grid-cols-4 gap-1">
               {moreTabs.map(({ to, labelKey, Icon }) => (
                 <li key={to}>
@@ -53,7 +53,7 @@ export default function MobileNav() {
         </>
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-10 flex border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)] md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-10 flex border-t border-gray-200 bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
         <ul className="flex w-full justify-between px-1">
           {primaryTabs.map(({ to, labelKey, Icon }) => (
             <li key={to} className="flex-1">

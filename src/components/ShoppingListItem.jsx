@@ -48,7 +48,7 @@ export default function ShoppingListItem({ item }) {
     const canEditPurchase = linkedBill && (linkedBill.createdBy === user.id || isAdmin)
 
     return (
-      <li className="rounded-xl border border-gray-200 bg-white p-3">
+      <li className="rounded-xl border border-gray-200 bg-surface p-3">
         <div className="flex items-center gap-3">
           <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
             <svg
@@ -104,7 +104,7 @@ export default function ShoppingListItem({ item }) {
   }
 
   return (
-    <li className="rounded-xl border border-gray-200 bg-white p-3">
+    <li className="rounded-xl border border-gray-200 bg-surface p-3">
       <div className="flex items-center gap-3">
         <button
           type="button"

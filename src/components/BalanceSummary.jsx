@@ -26,13 +26,13 @@ export default function BalanceSummary() {
   return (
     <div className="mb-4 space-y-3">
       {totalOwedToYou > 0 && (
-        <div className="rounded-xl border border-green-200 bg-green-50 p-4">
-          <p className="text-sm font-semibold text-green-800">
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-950/40">
+          <p className="text-sm font-semibold text-green-800 dark:text-green-300">
             {t('billsPage.owedToYouTotal', { amount: formatCurrency(totalOwedToYou, i18n.language, house.currency) })}
           </p>
           <ul className="mt-2 space-y-1">
             {owedToYou.map(({ memberId, amount }) => (
-              <li key={memberId} className="text-sm text-green-700">
+              <li key={memberId} className="text-sm text-green-700 dark:text-green-400">
                 {t('billsPage.owesYou', {
                   name: memberName(memberId),
                   amount: formatCurrency(amount, i18n.language, house.currency),
@@ -44,13 +44,13 @@ export default function BalanceSummary() {
       )}
 
       {totalYouOwe > 0 && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <p className="text-sm font-semibold text-amber-800">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/40">
+          <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
             {t('billsPage.youOweTotal', { amount: formatCurrency(totalYouOwe, i18n.language, house.currency) })}
           </p>
           <ul className="mt-2 space-y-1">
             {youOwe.map(({ memberId, amount }) => (
-              <li key={memberId} className="text-sm text-amber-700">
+              <li key={memberId} className="text-sm text-amber-700 dark:text-amber-400">
                 {t('billsPage.youOweMember', {
                   name: memberName(memberId),
                   amount: formatCurrency(amount, i18n.language, house.currency),

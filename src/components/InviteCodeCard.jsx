@@ -14,7 +14,7 @@ export default function InviteCodeCard({ inviteCode, canManage, onRegenerate }) 
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-surface p-4">
       <p className="text-sm font-semibold text-gray-900">{t('housePage.inviteTitle')}</p>
       <p className="mt-1 text-xs text-gray-500">{t('housePage.inviteHint')}</p>
 

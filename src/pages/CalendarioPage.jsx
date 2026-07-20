@@ -161,10 +161,10 @@ export default function CalendarioPage() {
                   <span>{cell.day}</span>
                   <span className="flex h-1.5 gap-0.5">
                     {hasBill && (
-                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-brand-500'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-surface' : 'bg-brand-500'}`} />
                     )}
                     {hasTask && (
-                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-blue-500'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-surface' : 'bg-blue-500'}`} />
                     )}
                   </span>
                 </button>
@@ -182,7 +182,7 @@ export default function CalendarioPage() {
               {selectedEvents.map((event) => (
                 <li
                   key={`${event.type}-${event.id}`}
-                  className="rounded-xl border border-gray-200 bg-white p-3"
+                  className="rounded-xl border border-gray-200 bg-surface p-3"
                 >
                   <div className="flex items-center gap-3">
                     <span

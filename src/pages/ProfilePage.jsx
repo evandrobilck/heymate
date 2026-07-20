@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
+import { useTheme } from '../contexts/ThemeContext'
 import Avatar from '../components/Avatar'
 
 const LANGUAGE_LABELS = {
@@ -15,6 +16,7 @@ export default function ProfilePage() {
   const { t } = useTranslation()
   const { user, updateProfile, uploadAvatar, logout } = useAuth()
   const { language, setLanguage, supportedLanguages } = useLanguage()
+  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
 
   const [name, setName] = useState(user.name)
@@ -77,7 +79,7 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <h1 className="text-xl font-semibold text-gray-900">{t('profilePage.title')}</h1>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
+      <div className="rounded-xl border border-gray-200 bg-surface p-4">
         <div className="flex items-center gap-4">
           <Avatar name={user.name} avatarUrl={user.avatarUrl} size="lg" />
           <label className="cursor-pointer text-sm font-medium text-brand-600 hover:text-brand-700">
@@ -93,7 +95,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
         <p className="text-sm font-semibold text-gray-900">{t('profilePage.language')}</p>
         <div className="flex gap-2">
           {supportedLanguages.map((lang) => (
@@ -111,8 +113,32 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
+        <p className="text-sm font-semibold text-gray-900">{t('profilePage.theme')}</p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => theme === 'dark' && toggleTheme()}
+            className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
+              theme === 'light' ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
+            }`}
+          >
+            ☀️ {t('profilePage.themeLight')}
+          </button>
+          <button
+            type="button"
+            onClick={() => theme === 'light' && toggleTheme()}
+            className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
+              theme === 'dark' ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
+            }`}
+          >
+            🌙 {t('profilePage.themeDark')}
+          </button>
+        </div>
+      </div>
+
       <form onSubmit={handleSave} className="space-y-4">
-        <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+        <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
           <p className="text-sm font-semibold text-gray-900">{t('profilePage.basicInfo')}</p>
 
           <div>
@@ -146,7 +172,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+        <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
           <p className="text-sm font-semibold text-gray-900">{t('profilePage.paymentInfo')}</p>
 
           <div>
@@ -170,7 +196,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+        <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
           <p className="text-sm font-semibold text-gray-900">{t('profilePage.emergencyContact')}</p>
 
           <div>

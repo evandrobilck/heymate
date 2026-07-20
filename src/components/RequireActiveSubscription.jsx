@@ -31,7 +31,7 @@ function BlockedScreen() {
 
   return (
     <div className="flex min-h-svh items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-surface p-8 text-center shadow-sm">
         <span className="text-3xl">🔒</span>
         <h1 className="mt-3 text-lg font-semibold text-gray-900">
           {trialExpired ? t('subscription.trialExpiredTitle') : t('subscription.canceledTitle')}

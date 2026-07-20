@@ -31,7 +31,7 @@ export default function TrialBanner() {
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 md:px-8">
+    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300 md:px-8">
       <p>
         {t('subscription.daysRemaining', { count: daysLeft })} — {t('subscription.trialEndingBanner')}
       </p>
@@ -40,12 +40,12 @@ export default function TrialBanner() {
           type="button"
           onClick={handleSubscribe}
           disabled={submitting}
-          className="font-semibold text-amber-900 underline hover:no-underline disabled:opacity-40"
+          className="font-semibold text-amber-900 underline hover:no-underline disabled:opacity-40 dark:text-amber-200"
         >
           {t('subscription.subscribeButton')}
         </button>
       ) : (
-        <span className="text-xs text-amber-700">{t('subscription.nonAdminBlockedHint')}</span>
+        <span className="text-xs text-amber-700 dark:text-amber-400">{t('subscription.nonAdminBlockedHint')}</span>
       )}
       {error && <p className="w-full text-xs text-red-600">{error}</p>}
     </div>

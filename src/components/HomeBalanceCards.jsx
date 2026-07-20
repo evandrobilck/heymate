@@ -10,8 +10,18 @@ import Avatar from './Avatar'
 function BalanceCard({ title, total, entries, tone, emptyLabel, memberName, findMember, currency, locale }) {
   const toneClasses =
     tone === 'positive'
-      ? { border: 'border-green-200', bg: 'bg-green-50', text: 'text-green-800', amount: 'text-green-700' }
-      : { border: 'border-amber-200', bg: 'bg-amber-50', text: 'text-amber-800', amount: 'text-amber-700' }
+      ? {
+          border: 'border-green-200 dark:border-green-800',
+          bg: 'bg-green-50 dark:bg-green-950/40',
+          text: 'text-green-800 dark:text-green-300',
+          amount: 'text-green-700 dark:text-green-400',
+        }
+      : {
+          border: 'border-amber-200 dark:border-amber-800',
+          bg: 'bg-amber-50 dark:bg-amber-950/40',
+          text: 'text-amber-800 dark:text-amber-300',
+          amount: 'text-amber-700 dark:text-amber-400',
+        }
 
   return (
     <div className={`rounded-xl border ${toneClasses.border} ${toneClasses.bg} p-4`}>

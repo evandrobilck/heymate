@@ -28,7 +28,7 @@ export default function BillCard({ bill, onEdit }) {
   const canEdit = bill.createdBy === user.id || isAdmin
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-surface p-4">
       <button
         type="button"
         onClick={() => setExpanded((prev) => !prev)}
@@ -91,7 +91,9 @@ export default function BillCard({ bill, onEdit }) {
                       type="button"
                       onClick={() => toggleParticipantPaid(bill.id, member.id)}
                       className={`rounded-full px-3 py-1 text-xs font-medium ${
-                        share.paid ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                        share.paid
+                          ? 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-400'
+                          : 'bg-gray-100 text-gray-500'
                       }`}
                     >
                       {share.paid ? t('billsPage.paid') : t('billsPage.markPaid')}

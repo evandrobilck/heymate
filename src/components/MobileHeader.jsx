@@ -8,7 +8,7 @@ export default function MobileHeader() {
   const { user } = useAuth()
 
   return (
-    <header className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 md:hidden">
+    <header className="flex items-center justify-between border-b border-gray-200 bg-surface px-4 py-3 md:hidden">
       <img src="/logo-purple.svg" alt={t('app.name')} className="h-6 w-auto" />
       <Link to="/perfil" aria-label={t('profilePage.title')}>
         <Avatar name={user.name} avatarUrl={user.avatarUrl} size="sm" />

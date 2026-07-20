@@ -25,7 +25,7 @@ export default function RoommateOfMonthCard() {
   const leaders = leaderboard.filter((entry) => entry.count === topCount)
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-surface">
       <div className="bg-gradient-to-br from-brand-600 to-brand-800 px-5 py-6 text-center text-white">
         <p className="text-sm font-medium text-brand-100">🏆 {t('roommateOfMonth.title')}</p>
         <p className="text-xs text-brand-200">{formatMonth(monthKey, i18n.language)}</p>

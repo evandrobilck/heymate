@@ -5,10 +5,10 @@ import { formatCurrency } from '../utils/formatCurrency'
 import { getDaysRemaining, isTrialExpired } from '../utils/subscriptionStatus'
 
 const STATUS_STYLES = {
-  trialing: 'bg-blue-50 text-blue-700',
-  active: 'bg-green-50 text-green-700',
+  trialing: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400',
+  active: 'bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-400',
   canceled: 'bg-gray-100 text-gray-500',
-  past_due: 'bg-red-50 text-red-700',
+  past_due: 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400',
 }
 
 const STATUS_LABEL_KEYS = {
@@ -63,7 +63,7 @@ export default function SubscriptionCard() {
   }
 
   return (
-    <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+    <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-900">{t('subscription.title')}</p>
         <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[status] ?? STATUS_STYLES.canceled}`}>

@@ -40,7 +40,7 @@ function endOfMonth(date) {
 
 function MetricCard({ label, children, sub }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-surface p-4">
       <p className="text-xs font-medium text-gray-500">{label}</p>
       {children}
       {sub && <p className="mt-1 text-xs text-gray-400">{sub}</p>}
@@ -247,7 +247,7 @@ export default function GastosPage() {
               return (
                 <div
                   key={category.id}
-                  className="min-w-[150px] shrink-0 rounded-xl border border-gray-200 bg-white p-3"
+                  className="min-w-[150px] shrink-0 rounded-xl border border-gray-200 bg-surface p-3"
                 >
                   <p className="flex items-center gap-1.5 text-xs font-medium text-gray-500">
                     <span>{category.icon}</span>
@@ -265,7 +265,7 @@ export default function GastosPage() {
       </div>
 
       {categoryData.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-4">
+        <div className="rounded-xl border border-gray-200 bg-surface p-4">
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -281,7 +281,7 @@ export default function GastosPage() {
         </div>
       )}
 
-      <div className="rounded-xl border border-gray-200 bg-white p-4">
+      <div className="rounded-xl border border-gray-200 bg-surface p-4">
         <p className="text-sm font-semibold text-gray-900">{t('expensesPage.monthlyComparison')}</p>
         <div className="mt-2 h-48">
           <ResponsiveContainer width="100%" height="100%">

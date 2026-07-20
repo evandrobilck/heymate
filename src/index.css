@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-50: #f4ecff;
   --color-brand-100: #e7d9ff;
@@ -11,6 +13,33 @@
   --color-brand-700: #5c09d1;
   --color-brand-800: #4a08a7;
   --color-brand-900: #3a0782;
+
+  /* Card/container surface — kept separate from `white` so button labels
+     (text-white) never get swept up by the dark-mode override below. */
+  --color-surface: #ffffff;
+}
+
+/* Dark mode works by re-pointing the neutral gray ramp + surface color to
+   dark equivalents, instead of adding a `dark:` variant to every className.
+   This is safe because the app consistently uses light shades (50-300) for
+   backgrounds/borders and dark shades (400-900) for text — see the
+   'Editar interface' pass notes. Brand/status accent colors (500-700, the
+   solid buttons) are deliberately left untouched since they already read
+   fine on both light and dark surfaces. */
+.dark {
+  --color-surface: #1c2431;
+  --color-gray-50: #0f1521;
+  --color-gray-100: #1c2431;
+  --color-gray-200: #2d3846;
+  --color-gray-300: #47536e;
+  --color-gray-400: #8b96a8;
+  --color-gray-500: #9aa5b5;
+  --color-gray-600: #b7c0cc;
+  --color-gray-700: #d3d9e0;
+  --color-gray-800: #e8ebee;
+  --color-gray-900: #f5f6f8;
+  --color-brand-50: #29204a;
+  --color-brand-100: #392c63;
 }
 
 html,
@@ -21,6 +50,9 @@ body,
 
 body {
   margin: 0;
+  background-color: var(--color-gray-50);
+  color: var(--color-gray-900);
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 @keyframes modal-backdrop-in {

@@ -23,7 +23,7 @@ export default function MemberPaymentRow({ member }) {
   const emergencyContact = [info.emergencyContactName, info.emergencyContactPhone].filter(Boolean).join(' · ')
 
   return (
-    <li className="rounded-xl border border-gray-200 bg-white p-3">
+    <li className="rounded-xl border border-gray-200 bg-surface p-3">
       <div className="flex items-center gap-3">
         <Avatar name={member.name} avatarUrl={member.avatarUrl} size="sm" />
         <p className="flex-1 text-sm font-medium text-gray-900">{member.name}</p>

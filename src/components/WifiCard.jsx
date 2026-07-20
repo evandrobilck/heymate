@@ -24,7 +24,7 @@ export default function WifiCard() {
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
+    <div className="rounded-xl border border-gray-200 bg-surface p-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-900">📶 {t('vaultPage.wifiTitle')}</p>
         {isAdmin && !editing && (

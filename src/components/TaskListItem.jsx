@@ -57,7 +57,7 @@ export default function TaskListItem({ task }) {
   }
 
   return (
-    <li className="rounded-xl border border-gray-200 bg-white p-3">
+    <li className="rounded-xl border border-gray-200 bg-surface p-3">
       <div className="flex items-start gap-3">
         <button
           type="button"
