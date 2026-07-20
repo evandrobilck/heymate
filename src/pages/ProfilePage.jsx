@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useTheme } from '../contexts/ThemeContext'
+import { useToast } from '../contexts/ToastContext'
 import Avatar from '../components/Avatar'
 
 const LANGUAGE_LABELS = {
@@ -17,6 +18,7 @@ export default function ProfilePage() {
   const { user, updateProfile, uploadAvatar, logout } = useAuth()
   const { language, setLanguage, supportedLanguages } = useLanguage()
   const { theme, toggleTheme } = useTheme()
+  const showToast = useToast()
   const navigate = useNavigate()
 
   const [name, setName] = useState(user.name)
@@ -46,6 +48,7 @@ export default function ProfilePage() {
         emergencyContactPhone: emergencyContactPhone.trim(),
       })
       setSaved(true)
+      showToast(t('profilePage.saved'))
       setTimeout(() => setSaved(false), 2000)
     } catch (err) {
       console.error(err)
@@ -62,6 +65,7 @@ export default function ProfilePage() {
     setError('')
     try {
       await uploadAvatar(file)
+      showToast(t('profilePage.saved'))
     } catch (err) {
       console.error(err)
       setError(t('profilePage.photoError'))

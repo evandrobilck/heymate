@@ -58,6 +58,7 @@ export default function SettingsPage() {
     try {
       await renameHouse(name.trim())
       setSavedName(true)
+      showToast(t('profilePage.saved'))
       setTimeout(() => setSavedName(false), 2000)
     } catch (err) {
       console.error(err)
@@ -74,6 +75,7 @@ export default function SettingsPage() {
     setPhotoError('')
     try {
       await uploadHousePhoto(file)
+      showToast(t('profilePage.saved'))
     } catch (err) {
       console.error(err)
       setPhotoError(t('settingsPage.photoError'))
@@ -86,6 +88,7 @@ export default function SettingsPage() {
     setCurrencyError('')
     try {
       await updateHouseCurrency(code)
+      showToast(t('profilePage.saved'))
     } catch (err) {
       console.error(err)
       setCurrencyError(t('settingsPage.currencyError'))
