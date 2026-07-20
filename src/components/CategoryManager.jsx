@@ -22,7 +22,7 @@ export default function CategoryManager({ title, hint, categories, onAdd, onRemo
           {hint && <p className="text-xs text-gray-400">{hint}</p>}
         </div>
         {!adding && (
-          <button type="button" onClick={() => setAdding(true)} className="text-xs font-medium text-purple-600">
+          <button type="button" onClick={() => setAdding(true)} className="text-xs font-medium text-brand-600">
             {t('settingsPage.addCategory')}
           </button>
         )}
@@ -56,9 +56,9 @@ export default function CategoryManager({ title, hint, categories, onAdd, onRemo
             value={label}
             onChange={(event) => setLabel(event.target.value)}
             placeholder={t('settingsPage.categoryPlaceholder')}
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
           />
-          <button type="submit" className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-medium text-white">
+          <button type="submit" className="rounded-lg bg-brand-600 px-3 py-2 text-xs font-medium text-white">
             {t('vaultPage.save')}
           </button>
           <button

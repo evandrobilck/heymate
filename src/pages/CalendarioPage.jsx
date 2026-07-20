@@ -155,12 +155,12 @@ export default function CalendarioPage() {
                   }}
                   className={`flex flex-col items-center gap-0.5 rounded-lg py-1.5 text-xs ${
                     !cell.inCurrentMonth ? 'text-gray-300' : 'text-gray-700'
-                  } ${isSelected ? 'bg-purple-600 text-white' : isToday ? 'bg-purple-50' : ''}`}
+                  } ${isSelected ? 'bg-brand-600 text-white' : isToday ? 'bg-brand-50' : ''}`}
                 >
                   <span>{cell.day}</span>
                   <span className="flex h-1.5 gap-0.5">
                     {hasBill && (
-                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-purple-500'}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-brand-500'}`} />
                     )}
                     {hasTask && (
                       <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-blue-500'}`} />
@@ -185,7 +185,7 @@ export default function CalendarioPage() {
                 >
                   <div className="flex items-center gap-3">
                     <span
-                      className={`h-2 w-2 shrink-0 rounded-full ${event.type === 'bill' ? 'bg-purple-500' : 'bg-blue-500'}`}
+                      className={`h-2 w-2 shrink-0 rounded-full ${event.type === 'bill' ? 'bg-brand-500' : 'bg-blue-500'}`}
                     />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-900">{event.title}</p>

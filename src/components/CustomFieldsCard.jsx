@@ -25,7 +25,7 @@ export default function CustomFieldsCard() {
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-900">📝 {t('vaultPage.customFieldsTitle')}</p>
         {isAdmin && !adding && (
-          <button type="button" onClick={() => setAdding(true)} className="text-xs font-medium text-purple-600">
+          <button type="button" onClick={() => setAdding(true)} className="text-xs font-medium text-brand-600">
             {t('vaultPage.addField')}
           </button>
         )}
@@ -64,17 +64,17 @@ export default function CustomFieldsCard() {
             value={label}
             onChange={(event) => setLabel(event.target.value)}
             placeholder={t('vaultPage.fieldLabelPlaceholder')}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
           />
           <input
             type="text"
             value={value}
             onChange={(event) => setValue(event.target.value)}
             placeholder={t('vaultPage.fieldValuePlaceholder')}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
           />
           <div className="flex gap-2">
-            <button type="submit" className="flex-1 rounded-lg bg-purple-600 py-2 text-xs font-medium text-white">
+            <button type="submit" className="flex-1 rounded-lg bg-brand-600 py-2 text-xs font-medium text-white">
               {t('vaultPage.save')}
             </button>
             <button

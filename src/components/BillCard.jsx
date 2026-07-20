@@ -66,7 +66,7 @@ export default function BillCard({ bill, onEdit }) {
               <button
                 type="button"
                 onClick={onEdit}
-                className="text-xs font-medium text-purple-600 hover:text-purple-700"
+                className="text-xs font-medium text-brand-600 hover:text-brand-700"
               >
                 {t('billsPage.edit')}
               </button>

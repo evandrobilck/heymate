@@ -33,7 +33,7 @@ export default function MemberListItem({
         <div className="flex items-center gap-2">
           <p className="truncate text-sm font-medium text-gray-900">{member.name}</p>
           {member.role === 'admin' && (
-            <span className="shrink-0 rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-medium text-purple-700">
+            <span className="shrink-0 rounded-full bg-brand-100 px-2 py-0.5 text-[10px] font-medium text-brand-700">
               {t('housePage.admin')}
             </span>
           )}
@@ -45,9 +45,9 @@ export default function MemberListItem({
               type="date"
               value={dateValue}
               onChange={(event) => setDateValue(event.target.value)}
-              className="rounded-lg border border-gray-300 px-2 py-1 text-xs outline-none focus:border-purple-500"
+              className="rounded-lg border border-gray-300 px-2 py-1 text-xs outline-none focus:border-brand-500"
             />
-            <button type="submit" className="text-xs font-medium text-purple-600">
+            <button type="submit" className="text-xs font-medium text-brand-600">
               {t('vaultPage.save')}
             </button>
             <button type="button" onClick={handleCancelDate} className="text-xs font-medium text-gray-400">
@@ -66,7 +66,7 @@ export default function MemberListItem({
               <button
                 type="button"
                 onClick={() => setEditingDate(true)}
-                className="ml-2 text-xs font-medium text-purple-600 hover:text-purple-700"
+                className="ml-2 text-xs font-medium text-brand-600 hover:text-brand-700"
               >
                 {t('housePage.editJoinDate')}
               </button>
@@ -78,7 +78,7 @@ export default function MemberListItem({
         <button
           type="button"
           onClick={() => onMakeAdmin(member.id)}
-          className="shrink-0 text-xs font-medium text-gray-400 hover:text-purple-600"
+          className="shrink-0 text-xs font-medium text-gray-400 hover:text-brand-600"
         >
           {t('housePage.makeAdmin')}
         </button>

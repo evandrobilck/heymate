@@ -58,7 +58,7 @@ export default function HomeCalendarCard() {
     <div className="rounded-xl border border-gray-200 bg-white p-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold capitalize text-gray-900">{monthLabel}</p>
-        <Link to="/calendario" className="text-xs font-medium text-purple-600 hover:text-purple-700">
+        <Link to="/calendario" className="text-xs font-medium text-brand-600 hover:text-brand-700">
           {t('home.viewFullCalendar')}
         </Link>
       </div>
@@ -80,11 +80,11 @@ export default function HomeCalendarCard() {
               to="/calendario"
               className={`flex flex-col items-center gap-0.5 rounded-lg py-1.5 text-xs ${
                 !cell.inCurrentMonth ? 'text-gray-300' : 'text-gray-700'
-              } ${isToday ? 'bg-purple-50 font-semibold text-purple-700' : ''}`}
+              } ${isToday ? 'bg-brand-50 font-semibold text-brand-700' : ''}`}
             >
               <span>{cell.day}</span>
               <span className="flex h-1.5 gap-0.5">
-                {events?.bill && <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />}
+                {events?.bill && <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />}
                 {events?.task && <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />}
               </span>
             </Link>

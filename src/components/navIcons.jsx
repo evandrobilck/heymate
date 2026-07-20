@@ -71,6 +71,16 @@ export function SettingsIcon(props) {
   )
 }
 
+export function MoreIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
 export const NAV_TABS = [
   { to: '/home', labelKey: 'nav.home', Icon: HomeIcon },
   { to: '/contas', labelKey: 'nav.accounts', Icon: AccountsIcon },

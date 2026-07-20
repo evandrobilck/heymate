@@ -25,7 +25,7 @@ export default function Avatar({ name, size = 'md', avatarUrl }) {
 
   return (
     <div
-      className={`flex ${SIZE_CLASSES[size]} shrink-0 items-center justify-center rounded-full bg-purple-100 font-semibold text-purple-700`}
+      className={`flex ${SIZE_CLASSES[size]} shrink-0 items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-700`}
     >
       {initials}
     </div>

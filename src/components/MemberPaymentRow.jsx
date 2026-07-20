@@ -28,7 +28,7 @@ export default function MemberPaymentRow({ member }) {
         <Avatar name={member.name} avatarUrl={member.avatarUrl} size="sm" />
         <p className="flex-1 text-sm font-medium text-gray-900">{member.name}</p>
         {isSelf && (
-          <Link to="/perfil" className="text-xs font-medium text-purple-600">
+          <Link to="/perfil" className="text-xs font-medium text-brand-600">
             {t('vaultPage.editInProfile')}
           </Link>
         )}

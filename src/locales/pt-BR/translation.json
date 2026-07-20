@@ -12,7 +12,8 @@
     "calendar": "Calendário",
     "house": "Casa",
     "settings": "Configurações",
-    "editProfile": "Editar perfil"
+    "editProfile": "Editar perfil",
+    "more": "Mais"
   },
   "auth": {
     "login": "Entrar",

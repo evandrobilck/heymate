@@ -79,7 +79,7 @@ export default function AddTaskForm({ onClose, task = null }) {
               type="text"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
 
@@ -93,7 +93,7 @@ export default function AddTaskForm({ onClose, task = null }) {
                     type="checkbox"
                     checked={assigneeIds.includes(member.id)}
                     onChange={() => toggleAssignee(member.id)}
-                    className="h-4 w-4 rounded border-gray-300 text-purple-600"
+                    className="h-4 w-4 rounded border-gray-300 text-brand-600"
                   />
                   <span className="text-sm text-gray-800">{member.name}</span>
                 </li>
@@ -106,7 +106,7 @@ export default function AddTaskForm({ onClose, task = null }) {
             <select
               value={recurrence}
               onChange={(event) => setRecurrence(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             >
               {taskRecurrenceOptions.map((option) => (
                 <option key={option} value={option}>
@@ -122,7 +122,7 @@ export default function AddTaskForm({ onClose, task = null }) {
               type="date"
               value={dueDate}
               onChange={(event) => setDueDate(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
 
@@ -131,7 +131,7 @@ export default function AddTaskForm({ onClose, task = null }) {
               type="checkbox"
               checked={notify}
               onChange={(event) => setNotify(event.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-purple-600"
+              className="h-4 w-4 rounded border-gray-300 text-brand-600"
             />
             {t('tasksPage.notifyLabel')}
           </label>
@@ -139,7 +139,7 @@ export default function AddTaskForm({ onClose, task = null }) {
           <button
             type="submit"
             disabled={!isValid}
-            className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white disabled:opacity-40"
+            className="w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white disabled:opacity-40"
           >
             {isEditing ? t('billsPage.saveChanges') : t('tasksPage.save')}
           </button>

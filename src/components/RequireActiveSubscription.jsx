@@ -50,7 +50,7 @@ function BlockedScreen() {
             type="button"
             onClick={handleSubscribe}
             disabled={submitting}
-            className="mt-6 w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-40"
+            className="mt-6 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
           >
             {t('subscription.subscribeButton')}
           </button>

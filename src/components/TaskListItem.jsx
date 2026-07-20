@@ -64,7 +64,7 @@ export default function TaskListItem({ task }) {
           onClick={handleCircleClick}
           aria-label={t('tasksPage.markDone')}
           className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-            task.completed ? 'border-purple-600 bg-purple-600 text-white' : 'border-gray-300'
+            task.completed ? 'border-brand-600 bg-brand-600 text-white' : 'border-gray-300'
           }`}
         >
           {task.completed && (
@@ -115,7 +115,7 @@ export default function TaskListItem({ task }) {
                   type="checkbox"
                   checked={completedByIds.includes(member.id)}
                   onChange={() => toggleCompleter(member.id)}
-                  className="h-4 w-4 rounded border-gray-300 text-purple-600"
+                  className="h-4 w-4 rounded border-gray-300 text-brand-600"
                 />
                 <span className="text-sm text-gray-800">{member.name}</span>
               </li>
@@ -125,7 +125,7 @@ export default function TaskListItem({ task }) {
             <button
               type="submit"
               disabled={completedByIds.length === 0}
-              className="flex-1 rounded-lg bg-purple-600 py-2 text-xs font-medium text-white disabled:opacity-40"
+              className="flex-1 rounded-lg bg-brand-600 py-2 text-xs font-medium text-white disabled:opacity-40"
             >
               {t('tasksPage.confirmDone')}
             </button>
@@ -145,7 +145,7 @@ export default function TaskListItem({ task }) {
           <button
             type="button"
             onClick={() => setEditing(true)}
-            className="text-xs font-medium text-gray-400 hover:text-purple-600"
+            className="text-xs font-medium text-gray-400 hover:text-brand-600"
           >
             {t('vaultPage.edit')}
           </button>

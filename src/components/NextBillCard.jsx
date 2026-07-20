@@ -35,7 +35,7 @@ export default function NextBillCard() {
     <div className="rounded-xl border border-gray-200 bg-white p-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-900">{t('home.upcomingBillsTitle')}</p>
-        <Link to="/contas" className="text-xs font-medium text-purple-600 hover:text-purple-700">
+        <Link to="/contas" className="text-xs font-medium text-brand-600 hover:text-brand-700">
           {t('home.viewUpcomingBills')}
         </Link>
       </div>
@@ -49,7 +49,7 @@ export default function NextBillCard() {
             return (
               <li key={bill.id}>
                 <Link to="/contas" className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-50 text-lg">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-lg">
                     {category?.icon ?? '📄'}
                   </span>
                   <div className="min-w-0 flex-1">

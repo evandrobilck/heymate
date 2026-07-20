@@ -151,7 +151,7 @@ export default function GastosPage() {
         <button
           type="button"
           onClick={handleExport}
-          className="rounded-lg border border-purple-300 px-4 py-2 text-sm font-medium text-purple-600 hover:bg-purple-50"
+          className="rounded-lg border border-brand-300 px-4 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50"
         >
           {t('expensesPage.export')}
         </button>
@@ -164,7 +164,7 @@ export default function GastosPage() {
             type="date"
             value={periodStart}
             onChange={(event) => setPeriodStart(event.target.value)}
-            className="mt-1 block rounded-lg border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-purple-500"
+            className="mt-1 block rounded-lg border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-brand-500"
           />
         </div>
         <div>
@@ -173,7 +173,7 @@ export default function GastosPage() {
             type="date"
             value={periodEnd}
             onChange={(event) => setPeriodEnd(event.target.value)}
-            className="mt-1 block rounded-lg border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-purple-500"
+            className="mt-1 block rounded-lg border border-gray-300 px-2 py-1.5 text-sm outline-none focus:border-brand-500"
           />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -182,7 +182,7 @@ export default function GastosPage() {
               key={preset}
               type="button"
               onClick={() => applyPreset(preset)}
-              className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-purple-300 hover:text-purple-600"
+              className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-brand-300 hover:text-brand-600"
             >
               {t(`expensesPage.${preset}`)}
             </button>

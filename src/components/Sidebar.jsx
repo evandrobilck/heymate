@@ -25,7 +25,7 @@ export default function Sidebar() {
               to={to}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50'
+                  isActive ? 'bg-brand-50 text-brand-700' : 'text-gray-600 hover:bg-gray-50'
                 }`
               }
             >
@@ -39,7 +39,7 @@ export default function Sidebar() {
       <NavLink
         to="/perfil"
         className={({ isActive }) =>
-          `flex items-center gap-3 border-t border-gray-100 px-5 py-4 ${isActive ? 'bg-purple-50' : 'hover:bg-gray-50'}`
+          `flex items-center gap-3 border-t border-gray-100 px-5 py-4 ${isActive ? 'bg-brand-50' : 'hover:bg-gray-50'}`
         }
       >
         <Avatar name={user.name} avatarUrl={user.avatarUrl} size="sm" />

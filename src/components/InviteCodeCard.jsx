@@ -20,13 +20,13 @@ export default function InviteCodeCard({ inviteCode, canManage, onRegenerate }) 
 
       <div className="mt-3 flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2">
         <span className="font-mono text-sm tracking-widest text-gray-900">{inviteCode}</span>
-        <button type="button" onClick={() => copy(inviteCode, 'code')} className="text-xs font-medium text-purple-600">
+        <button type="button" onClick={() => copy(inviteCode, 'code')} className="text-xs font-medium text-brand-600">
           {copied === 'code' ? t('housePage.copied') : t('housePage.copyCode')}
         </button>
       </div>
 
       <div className="mt-2 flex items-center justify-between">
-        <button type="button" onClick={() => copy(inviteLink, 'link')} className="text-xs font-medium text-purple-600">
+        <button type="button" onClick={() => copy(inviteLink, 'link')} className="text-xs font-medium text-brand-600">
           {copied === 'link' ? t('housePage.copied') : t('housePage.copyLink')}
         </button>
 

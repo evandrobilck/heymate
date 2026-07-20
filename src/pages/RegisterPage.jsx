@@ -55,7 +55,7 @@ export default function RegisterPage() {
           onChange={(event) => setName(event.target.value)}
           placeholder={t('auth.name')}
           required
-          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-purple-500"
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
         />
         <input
           type="email"
@@ -63,7 +63,7 @@ export default function RegisterPage() {
           onChange={(event) => setEmail(event.target.value)}
           placeholder={t('auth.email')}
           required
-          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-purple-500"
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
         />
         <input
           type="password"
@@ -72,13 +72,13 @@ export default function RegisterPage() {
           placeholder={t('auth.password')}
           required
           minLength={6}
-          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-purple-500"
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
         />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-40"
+          className="w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
         >
           {submitting ? t('auth.registering') : t('auth.register')}
         </button>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
 
       <p className="mt-6 text-sm text-gray-500">
         {t('auth.haveAccount')}{' '}
-        <Link to="/login" className="font-medium text-purple-600">
+        <Link to="/login" className="font-medium text-brand-600">
           {t('auth.login')}
         </Link>
       </p>

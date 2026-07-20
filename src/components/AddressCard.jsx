@@ -24,7 +24,7 @@ export default function AddressCard() {
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-900">📍 {t('housePage.addressTitle')}</p>
         {isAdmin && !editing && (
-          <button type="button" onClick={() => setEditing(true)} className="text-xs font-medium text-purple-600">
+          <button type="button" onClick={() => setEditing(true)} className="text-xs font-medium text-brand-600">
             {t('vaultPage.edit')}
           </button>
         )}
@@ -37,10 +37,10 @@ export default function AddressCard() {
             value={address}
             onChange={(event) => setAddress(event.target.value)}
             placeholder={t('housePage.addressPlaceholder')}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
           />
           <div className="flex gap-2">
-            <button type="submit" className="flex-1 rounded-lg bg-purple-600 py-2 text-xs font-medium text-white">
+            <button type="submit" className="flex-1 rounded-lg bg-brand-600 py-2 text-xs font-medium text-white">
               {t('vaultPage.save')}
             </button>
             <button

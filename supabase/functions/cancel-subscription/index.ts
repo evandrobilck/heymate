@@ -15,7 +15,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY)
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, content-type',
+  'Access-Control-Allow-Headers': 'authorization, content-type, apikey, x-client-info',
 }
 
 Deno.serve(async (req) => {

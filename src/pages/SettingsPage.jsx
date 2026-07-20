@@ -152,7 +152,7 @@ export default function SettingsPage() {
           ) : (
             <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-gray-100 text-3xl">🏠</div>
           )}
-          <label className="cursor-pointer text-sm font-medium text-purple-600 hover:text-purple-700">
+          <label className="cursor-pointer text-sm font-medium text-brand-600 hover:text-brand-700">
             {uploadingPhoto ? t('profilePage.uploading') : t('settingsPage.changePhoto')}
             <input
               type="file"
@@ -172,13 +172,13 @@ export default function SettingsPage() {
           type="text"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
         />
         {nameError && <p className="text-sm text-red-600">{nameError}</p>}
         <button
           type="submit"
           disabled={savingName}
-          className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-40"
+          className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
         >
           {savingName ? t('profilePage.saving') : savedName ? t('profilePage.saved') : t('profilePage.save')}
         </button>
@@ -194,7 +194,7 @@ export default function SettingsPage() {
               onClick={() => handleChangeCurrency(code)}
               className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
                 house.currency === code
-                  ? 'border-purple-500 bg-purple-50 text-purple-700'
+                  ? 'border-brand-500 bg-brand-50 text-brand-700'
                   : 'border-gray-200 text-gray-600'
               }`}
             >
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={() => handleToggleBuiltInCategory(cat.id, hidden)}
-                  className={`text-xs font-medium ${hidden ? 'text-gray-400' : 'text-purple-600'}`}
+                  className={`text-xs font-medium ${hidden ? 'text-gray-400' : 'text-brand-600'}`}
                 >
                   {hidden ? t('settingsPage.showCategory') : t('settingsPage.hideCategory')}
                 </button>
@@ -261,7 +261,7 @@ export default function SettingsPage() {
             <select
               value={transferTarget}
               onChange={(event) => setTransferTarget(event.target.value)}
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             >
               {otherActiveMembers.map((member) => (
                 <option key={member.id} value={member.id}>
@@ -272,7 +272,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleTransferAdmin}
-              className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
+              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
             >
               {t('settingsPage.transfer')}
             </button>

@@ -23,7 +23,7 @@ export default function UpcomingTasksCard() {
     <div className="rounded-xl border border-gray-200 bg-white p-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-900">{t('home.upcomingTasksTitle')}</p>
-        <Link to="/tarefas" className="text-xs font-medium text-purple-600 hover:text-purple-700">
+        <Link to="/tarefas" className="text-xs font-medium text-brand-600 hover:text-brand-700">
           {t('home.viewUpcomingTasks')}
         </Link>
       </div>

@@ -156,7 +156,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
               type="text"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
 
@@ -170,7 +170,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
                   onClick={() => setCategory(cat.id)}
                   className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium ${
                     category === cat.id
-                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
                       : 'border-gray-200 text-gray-600'
                   }`}
                 >
@@ -185,7 +185,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
                   onClick={() => setCategory(cat.id)}
                   className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium ${
                     category === cat.id
-                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
                       : 'border-gray-200 text-gray-600'
                   }`}
                 >
@@ -206,7 +206,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
                 autoFocus
                 value={totalAmount}
                 onChange={(event) => setTotalAmount(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
               />
             </div>
             <div>
@@ -214,7 +214,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
               <select
                 value={buyerId}
                 onChange={(event) => setBuyerId(event.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
               >
                 {activeMembers.map((member) => (
                   <option key={member.id} value={member.id}>
@@ -236,7 +236,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
                       type="checkbox"
                       checked={checked}
                       onChange={() => toggleParticipant(member.id)}
-                      className="h-4 w-4 rounded border-gray-300 text-purple-600"
+                      className="h-4 w-4 rounded border-gray-300 text-brand-600"
                     />
                     <span className="flex-1 text-sm text-gray-800">{member.name}</span>
 
@@ -283,7 +283,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
                   onClick={() => setSplitType(type)}
                   className={`flex-1 rounded-lg border px-2 py-2 text-xs font-medium ${
                     splitType === type
-                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
                       : 'border-gray-200 text-gray-600'
                   }`}
                 >
@@ -318,7 +318,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
           <button
             type="submit"
             disabled={!isValid}
-            className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white disabled:opacity-40"
+            className="w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white disabled:opacity-40"
           >
             {isEditing ? t('billsPage.saveChanges') : t('shoppingPage.confirmBought')}
           </button>

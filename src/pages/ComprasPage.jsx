@@ -30,12 +30,12 @@ export default function ComprasPage() {
           value={newItemName}
           onChange={(event) => setNewItemName(event.target.value)}
           placeholder={t('shoppingPage.addPlaceholder')}
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
         />
         <button
           type="submit"
           disabled={!newItemName.trim()}
-          className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+          className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
         >
           {t('shoppingPage.add')}
         </button>

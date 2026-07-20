@@ -80,7 +80,7 @@ export default function ProfilePage() {
       <div className="rounded-xl border border-gray-200 bg-white p-4">
         <div className="flex items-center gap-4">
           <Avatar name={user.name} avatarUrl={user.avatarUrl} size="lg" />
-          <label className="cursor-pointer text-sm font-medium text-purple-600 hover:text-purple-700">
+          <label className="cursor-pointer text-sm font-medium text-brand-600 hover:text-brand-700">
             {uploadingPhoto ? t('profilePage.uploading') : t('profilePage.changePhoto')}
             <input
               type="file"
@@ -102,7 +102,7 @@ export default function ProfilePage() {
               type="button"
               onClick={() => setLanguage(lang)}
               className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-                language === lang ? 'border-purple-500 bg-purple-50 text-purple-700' : 'border-gray-200 text-gray-600'
+                language === lang ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
               }`}
             >
               {LANGUAGE_LABELS[lang]}
@@ -121,7 +121,7 @@ export default function ProfilePage() {
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
 
@@ -141,7 +141,7 @@ export default function ProfilePage() {
               type="tel"
               value={phone}
               onChange={(event) => setPhone(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function ProfilePage() {
               type="text"
               value={payId}
               onChange={(event) => setPayId(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
 
@@ -165,7 +165,7 @@ export default function ProfilePage() {
               type="text"
               value={bankDetails}
               onChange={(event) => setBankDetails(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function ProfilePage() {
               type="text"
               value={emergencyContactName}
               onChange={(event) => setEmergencyContactName(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
 
@@ -189,7 +189,7 @@ export default function ProfilePage() {
               type="tel"
               value={emergencyContactPhone}
               onChange={(event) => setEmergencyContactPhone(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-purple-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
         </div>
@@ -199,7 +199,7 @@ export default function ProfilePage() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-40"
+          className="w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
         >
           {saving ? t('profilePage.saving') : saved ? t('profilePage.saved') : t('profilePage.save')}
         </button>

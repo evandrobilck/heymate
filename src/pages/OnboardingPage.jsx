@@ -56,7 +56,7 @@ export default function OnboardingPage() {
           type="button"
           onClick={() => setMode('create')}
           className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-            mode === 'create' ? 'border-purple-500 bg-purple-50 text-purple-700' : 'border-gray-200 text-gray-600'
+            mode === 'create' ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
           }`}
         >
           {t('onboarding.createTab')}
@@ -65,7 +65,7 @@ export default function OnboardingPage() {
           type="button"
           onClick={() => setMode('join')}
           className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-            mode === 'join' ? 'border-purple-500 bg-purple-50 text-purple-700' : 'border-gray-200 text-gray-600'
+            mode === 'join' ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
           }`}
         >
           {t('onboarding.joinTab')}
@@ -81,13 +81,13 @@ export default function OnboardingPage() {
             value={houseName}
             onChange={(event) => setHouseName(event.target.value)}
             placeholder={t('onboarding.houseNamePlaceholder')}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-purple-500"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
           />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-40"
+            className="w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
           >
             {t('onboarding.createButton')}
           </button>
@@ -101,13 +101,13 @@ export default function OnboardingPage() {
             value={inviteCode}
             onChange={(event) => setInviteCode(event.target.value)}
             placeholder={t('onboarding.codePlaceholder')}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm uppercase outline-none focus:border-purple-500"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm uppercase outline-none focus:border-brand-500"
           />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg bg-purple-600 py-2.5 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-40"
+            className="w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
           >
             {t('onboarding.joinButton')}
           </button>

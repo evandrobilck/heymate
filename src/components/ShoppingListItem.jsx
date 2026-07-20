@@ -50,7 +50,7 @@ export default function ShoppingListItem({ item }) {
     return (
       <li className="rounded-xl border border-gray-200 bg-white p-3">
         <div className="flex items-center gap-3">
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-600 text-white">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -82,7 +82,7 @@ export default function ShoppingListItem({ item }) {
             <button
               type="button"
               onClick={() => setEditingPurchase(true)}
-              className="text-xs font-medium text-purple-600 hover:text-purple-700"
+              className="text-xs font-medium text-brand-600 hover:text-brand-700"
             >
               {t('billsPage.edit')}
             </button>
@@ -120,9 +120,9 @@ export default function ShoppingListItem({ item }) {
                 autoFocus
                 value={nameValue}
                 onChange={(event) => setNameValue(event.target.value)}
-                className="flex-1 rounded-lg border border-gray-300 px-2 py-1 text-sm outline-none focus:border-purple-500"
+                className="flex-1 rounded-lg border border-gray-300 px-2 py-1 text-sm outline-none focus:border-brand-500"
               />
-              <button type="submit" className="text-xs font-medium text-purple-600">
+              <button type="submit" className="text-xs font-medium text-brand-600">
                 {t('vaultPage.save')}
               </button>
               <button type="button" onClick={handleCancelRename} className="text-xs font-medium text-gray-400">
@@ -141,7 +141,7 @@ export default function ShoppingListItem({ item }) {
             <button
               type="button"
               onClick={() => setRenaming(true)}
-              className="text-xs font-medium text-gray-400 hover:text-purple-600"
+              className="text-xs font-medium text-gray-400 hover:text-brand-600"
             >
               {t('vaultPage.edit')}
             </button>
