@@ -170,7 +170,11 @@ export default function SettingsPage() {
             />
           </label>
         </div>
-        {photoError && <p className="text-sm text-red-600">{photoError}</p>}
+        {photoError && (
+          <p role="alert" className="text-sm text-red-600">
+            {photoError}
+          </p>
+        )}
       </div>
 
       <form onSubmit={handleSaveName} className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
@@ -179,9 +183,15 @@ export default function SettingsPage() {
           type="text"
           value={name}
           onChange={(event) => setName(event.target.value)}
+          aria-invalid={Boolean(nameError)}
+          aria-describedby={nameError ? 'house-name-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
         />
-        {nameError && <p className="text-sm text-red-600">{nameError}</p>}
+        {nameError && (
+          <p id="house-name-error" role="alert" className="text-sm text-red-600">
+            {nameError}
+          </p>
+        )}
         <button
           type="submit"
           disabled={savingName}
@@ -209,7 +219,11 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
-        {currencyError && <p className="text-sm text-red-600">{currencyError}</p>}
+        {currencyError && (
+          <p role="alert" className="text-sm text-red-600">
+            {currencyError}
+          </p>
+        )}
       </div>
 
       <div className="space-y-3 rounded-xl border border-gray-200 bg-surface p-4">
@@ -237,7 +251,11 @@ export default function SettingsPage() {
             )
           })}
         </ul>
-        {categoryToggleError && <p className="text-sm text-red-600">{categoryToggleError}</p>}
+        {categoryToggleError && (
+          <p role="alert" className="text-sm text-red-600">
+            {categoryToggleError}
+          </p>
+        )}
       </div>
 
       <CategoryManager
@@ -268,6 +286,7 @@ export default function SettingsPage() {
             <select
               value={transferTarget}
               onChange={(event) => setTransferTarget(event.target.value)}
+              aria-describedby={transferError ? 'transfer-admin-error' : undefined}
               className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             >
               {otherActiveMembers.map((member) => (
@@ -285,7 +304,11 @@ export default function SettingsPage() {
             </button>
           </div>
         )}
-        {transferError && <p className="text-sm text-red-600">{transferError}</p>}
+        {transferError && (
+          <p id="transfer-admin-error" role="alert" className="text-sm text-red-600">
+            {transferError}
+          </p>
+        )}
       </div>
     </div>
   )

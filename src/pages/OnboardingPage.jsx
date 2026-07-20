@@ -81,9 +81,15 @@ export default function OnboardingPage() {
             value={houseName}
             onChange={(event) => setHouseName(event.target.value)}
             placeholder={t('onboarding.houseNamePlaceholder')}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'create-house-error' : undefined}
             className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && (
+            <p id="create-house-error" role="alert" className="text-sm text-red-600">
+              {error}
+            </p>
+          )}
           <button
             type="submit"
             disabled={submitting}
@@ -101,9 +107,15 @@ export default function OnboardingPage() {
             value={inviteCode}
             onChange={(event) => setInviteCode(event.target.value)}
             placeholder={t('onboarding.codePlaceholder')}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'join-house-error' : undefined}
             className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm uppercase outline-none focus:border-brand-500"
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && (
+            <p id="join-house-error" role="alert" className="text-sm text-red-600">
+              {error}
+            </p>
+          )}
           <button
             type="submit"
             disabled={submitting}

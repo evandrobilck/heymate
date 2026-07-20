@@ -55,6 +55,8 @@ export default function RegisterPage() {
           onChange={(event) => setName(event.target.value)}
           placeholder={t('auth.name')}
           required
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? 'register-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
         />
         <input
@@ -63,6 +65,8 @@ export default function RegisterPage() {
           onChange={(event) => setEmail(event.target.value)}
           placeholder={t('auth.email')}
           required
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? 'register-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
         />
         <input
@@ -72,9 +76,15 @@ export default function RegisterPage() {
           placeholder={t('auth.password')}
           required
           minLength={6}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? 'register-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && (
+          <p id="register-error" role="alert" className="text-sm text-red-600">
+            {error}
+          </p>
+        )}
         <button
           type="submit"
           disabled={submitting}
