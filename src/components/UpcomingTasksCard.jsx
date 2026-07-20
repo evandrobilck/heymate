@@ -21,7 +21,12 @@ export default function UpcomingTasksCard() {
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4">
-      <p className="text-sm font-semibold text-gray-900">{t('home.upcomingTasksTitle')}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-gray-900">{t('home.upcomingTasksTitle')}</p>
+        <Link to="/tarefas" className="text-xs font-medium text-purple-600 hover:text-purple-700">
+          {t('home.viewUpcomingTasks')}
+        </Link>
+      </div>
 
       {upcoming.length === 0 ? (
         <p className="mt-3 text-sm text-gray-400">{t('home.noUpcomingTasks')}</p>

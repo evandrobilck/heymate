@@ -51,10 +51,12 @@
     "youOweTitle": "Você deve",
     "owedToYouTitle": "Devem a você",
     "allSettled": "Tudo quitado.",
-    "nextBillTitle": "Próxima conta a vencer",
+    "upcomingBillsTitle": "Próximas contas",
+    "viewUpcomingBills": "Ver próximas contas",
     "noUpcomingBills": "Nenhuma conta por vir.",
     "overdue": "Atrasada",
     "upcomingTasksTitle": "Suas próximas tarefas",
+    "viewUpcomingTasks": "Ver próximas tarefas",
     "noUpcomingTasks": "Nada na sua fila agora.",
     "noDueDate": "Sem data marcada"
   },

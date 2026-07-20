@@ -51,10 +51,12 @@
     "youOweTitle": "You owe",
     "owedToYouTitle": "Owed to you",
     "allSettled": "All settled up.",
-    "nextBillTitle": "Next bill due",
+    "upcomingBillsTitle": "Upcoming bills",
+    "viewUpcomingBills": "View upcoming bills",
     "noUpcomingBills": "No upcoming bills.",
     "overdue": "Overdue",
     "upcomingTasksTitle": "Your next tasks",
+    "viewUpcomingTasks": "View upcoming tasks",
     "noUpcomingTasks": "Nothing on your plate right now.",
     "noDueDate": "No due date"
   },

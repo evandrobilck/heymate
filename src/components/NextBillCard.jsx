@@ -14,10 +14,10 @@ export default function NextBillCard() {
   const { house } = useHouse()
   const { bills } = useBills()
 
-  const next = useMemo(() => {
+  const upcoming = useMemo(() => {
     const todayKey = toDayKey(new Date())
 
-    const candidates = bills
+    return bills
       .filter((bill) => bill.participantIds.some((id) => !bill.shares[id].paid))
       .map((bill) => {
         const date =
@@ -28,33 +28,44 @@ export default function NextBillCard() {
       })
       .filter(Boolean)
       .sort((a, b) => a.date.localeCompare(b.date))
-
-    return candidates[0] ?? null
+      .slice(0, 3)
   }, [bills])
-
-  const category = next && billCategories.find((cat) => cat.id === next.bill.category)
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4">
-      <p className="text-sm font-semibold text-gray-900">{t('home.nextBillTitle')}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-gray-900">{t('home.upcomingBillsTitle')}</p>
+        <Link to="/contas" className="text-xs font-medium text-purple-600 hover:text-purple-700">
+          {t('home.viewUpcomingBills')}
+        </Link>
+      </div>
 
-      {!next ? (
+      {upcoming.length === 0 ? (
         <p className="mt-3 text-sm text-gray-400">{t('home.noUpcomingBills')}</p>
       ) : (
-        <Link to="/contas" className="mt-3 flex items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-50 text-lg">
-            {category?.icon ?? '📄'}
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-gray-900">{next.bill.title}</p>
-            <p className={`text-xs ${next.overdue ? 'font-medium text-red-600' : 'text-gray-500'}`}>
-              {next.overdue ? t('home.overdue') : t('billsPage.dueOn', { date: formatDate(next.date, i18n.language) })}
-            </p>
-          </div>
-          <span className="text-sm font-semibold text-gray-900">
-            {formatCurrency(next.bill.totalAmount, i18n.language, house.currency)}
-          </span>
-        </Link>
+        <ul className="mt-3 space-y-3">
+          {upcoming.map(({ bill, date, overdue }) => {
+            const category = billCategories.find((cat) => cat.id === bill.category)
+            return (
+              <li key={bill.id}>
+                <Link to="/contas" className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-50 text-lg">
+                    {category?.icon ?? '📄'}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-gray-900">{bill.title}</p>
+                    <p className={`text-xs ${overdue ? 'font-medium text-red-600' : 'text-gray-500'}`}>
+                      {overdue ? t('home.overdue') : t('billsPage.dueOn', { date: formatDate(date, i18n.language) })}
+                    </p>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {formatCurrency(bill.totalAmount, i18n.language, house.currency)}
+                  </span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
       )}
     </div>
   )
