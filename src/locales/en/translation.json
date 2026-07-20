@@ -305,5 +305,25 @@
     "transfer": "Transfer",
     "transferAdminConfirm": "Make {{name}} the admin? You'll lose admin rights and become a regular member.",
     "transferAdminError": "Couldn't transfer admin rights. Try again."
+  },
+  "subscription": {
+    "title": "Subscription",
+    "simulationNote": "Simulation — not connected to Stripe yet. No real charge happens here.",
+    "statusTrialing": "Free trial",
+    "statusActive": "Active",
+    "statusCanceled": "Canceled",
+    "statusPastDue": "Payment due",
+    "trialEndsOn": "Trial ends {{date}}",
+    "daysRemaining_one": "{{count}} day left",
+    "daysRemaining_other": "{{count}} days left",
+    "renewsOn": "Renews {{date}}",
+    "canceledOn": "Canceled {{date}}",
+    "priceLabel": "{{price}} per month, per house",
+    "subscribeButton": "Simulate subscribing",
+    "cancelButton": "Cancel subscription (simulation)",
+    "reactivateButton": "Simulate new subscription",
+    "subscribeError": "Couldn't simulate the subscription. Try again.",
+    "cancelError": "Couldn't cancel the subscription. Try again.",
+    "cancelConfirm": "Cancel this house's simulated subscription?"
   }
 }

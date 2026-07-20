@@ -7,6 +7,7 @@ import { useBills } from '../contexts/BillsContext'
 import { useCategories } from '../contexts/CategoriesContext'
 import { billCategories, currencyOptions } from '../services/mockData'
 import CategoryManager from '../components/CategoryManager'
+import SubscriptionCard from '../components/SubscriptionCard'
 
 export default function SettingsPage() {
   const { t } = useTranslation()
@@ -140,6 +141,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold text-gray-900">{t('settingsPage.title')}</h1>
+
+      <SubscriptionCard />
 
       <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
         <p className="text-sm font-semibold text-gray-900">{t('settingsPage.housePhoto')}</p>

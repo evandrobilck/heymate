@@ -305,5 +305,25 @@
     "transfer": "Transferir",
     "transferAdminConfirm": "Tornar {{name}} o admin? Você vai perder os direitos de admin e virar um morador comum.",
     "transferAdminError": "Não foi possível transferir a administração. Tente de novo."
+  },
+  "subscription": {
+    "title": "Assinatura",
+    "simulationNote": "Simulação — ainda não conectado ao Stripe. Nenhuma cobrança real acontece aqui.",
+    "statusTrialing": "Em teste grátis",
+    "statusActive": "Ativa",
+    "statusCanceled": "Cancelada",
+    "statusPastDue": "Pagamento pendente",
+    "trialEndsOn": "Teste termina em {{date}}",
+    "daysRemaining_one": "{{count}} dia restante",
+    "daysRemaining_other": "{{count}} dias restantes",
+    "renewsOn": "Renova em {{date}}",
+    "canceledOn": "Cancelada em {{date}}",
+    "priceLabel": "{{price}} por mês, por casa",
+    "subscribeButton": "Simular assinatura",
+    "cancelButton": "Cancelar assinatura (simulação)",
+    "reactivateButton": "Simular nova assinatura",
+    "subscribeError": "Não foi possível simular a assinatura. Tente de novo.",
+    "cancelError": "Não foi possível cancelar a assinatura. Tente de novo.",
+    "cancelConfirm": "Cancelar a assinatura simulada desta casa?"
   }
 }

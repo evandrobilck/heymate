@@ -5,6 +5,7 @@ import './index.css'
 import './i18n'
 import { AuthProvider } from './contexts/AuthContext'
 import { HouseProvider } from './contexts/HouseContext'
+import { SubscriptionProvider } from './contexts/SubscriptionContext'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { CategoriesProvider } from './contexts/CategoriesContext'
 import { BillsProvider } from './contexts/BillsContext'
@@ -18,19 +19,21 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <AuthProvider>
         <HouseProvider>
-          <LanguageProvider>
-            <CategoriesProvider>
-              <BillsProvider>
-                <ShoppingProvider>
-                  <TasksProvider>
-                    <VaultProvider>
-                      <App />
-                    </VaultProvider>
-                  </TasksProvider>
-                </ShoppingProvider>
-              </BillsProvider>
-            </CategoriesProvider>
-          </LanguageProvider>
+          <SubscriptionProvider>
+            <LanguageProvider>
+              <CategoriesProvider>
+                <BillsProvider>
+                  <ShoppingProvider>
+                    <TasksProvider>
+                      <VaultProvider>
+                        <App />
+                      </VaultProvider>
+                    </TasksProvider>
+                  </ShoppingProvider>
+                </BillsProvider>
+              </CategoriesProvider>
+            </LanguageProvider>
+          </SubscriptionProvider>
         </HouseProvider>
       </AuthProvider>
     </BrowserRouter>
