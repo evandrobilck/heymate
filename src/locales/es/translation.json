@@ -324,6 +324,13 @@
     "reactivateButton": "Simular nueva suscripción",
     "subscribeError": "No pudimos simular la suscripción. Intenta de nuevo.",
     "cancelError": "No pudimos cancelar la suscripción. Intenta de nuevo.",
-    "cancelConfirm": "¿Cancelar la suscripción simulada de esta casa?"
+    "cancelConfirm": "¿Cancelar la suscripción simulada de esta casa?",
+    "trialExpiredLabel": "Prueba gratis vencida",
+    "trialExpiredTitle": "Tu prueba gratis terminó",
+    "trialExpiredBody": "Los 30 días gratis de {{houseName}} llegaron a su fin. Suscríbete para seguir usando HeyFlat.",
+    "canceledTitle": "Suscripción cancelada",
+    "canceledBody": "La suscripción de {{houseName}} está cancelada. Reactívala para seguir usando HeyFlat.",
+    "nonAdminBlockedHint": "Pídele al admin de la casa que reactive la suscripción.",
+    "trialEndingBanner": "tu prueba gratis está por terminar."
   }
 }

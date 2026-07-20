@@ -324,6 +324,13 @@
     "reactivateButton": "Simulate new subscription",
     "subscribeError": "Couldn't simulate the subscription. Try again.",
     "cancelError": "Couldn't cancel the subscription. Try again.",
-    "cancelConfirm": "Cancel this house's simulated subscription?"
+    "cancelConfirm": "Cancel this house's simulated subscription?",
+    "trialExpiredLabel": "Free trial expired",
+    "trialExpiredTitle": "Your free trial is over",
+    "trialExpiredBody": "{{houseName}}'s 30-day free trial has ended. Subscribe to keep using HeyFlat.",
+    "canceledTitle": "Subscription canceled",
+    "canceledBody": "{{houseName}}'s subscription is canceled. Reactivate it to keep using HeyFlat.",
+    "nonAdminBlockedHint": "Ask the house admin to reactivate the subscription.",
+    "trialEndingBanner": "your free trial is ending soon."
   }
 }

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import RequireAuth from './components/RequireAuth'
 import RequireHouse from './components/RequireHouse'
+import RequireActiveSubscription from './components/RequireActiveSubscription'
 import RedirectIfAuthenticated from './components/RedirectIfAuthenticated'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -49,7 +50,9 @@ export default function App() {
         element={
           <RequireAuth>
             <RequireHouse>
-              <Layout />
+              <RequireActiveSubscription>
+                <Layout />
+              </RequireActiveSubscription>
             </RequireHouse>
           </RequireAuth>
         }

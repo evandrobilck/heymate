@@ -324,6 +324,13 @@
     "reactivateButton": "Simular nova assinatura",
     "subscribeError": "Não foi possível simular a assinatura. Tente de novo.",
     "cancelError": "Não foi possível cancelar a assinatura. Tente de novo.",
-    "cancelConfirm": "Cancelar a assinatura simulada desta casa?"
+    "cancelConfirm": "Cancelar a assinatura simulada desta casa?",
+    "trialExpiredLabel": "Teste grátis expirado",
+    "trialExpiredTitle": "Seu teste grátis acabou",
+    "trialExpiredBody": "Os 30 dias grátis de {{houseName}} chegaram ao fim. Assine para continuar usando o HeyFlat.",
+    "canceledTitle": "Assinatura cancelada",
+    "canceledBody": "A assinatura de {{houseName}} está cancelada. Reative para continuar usando o HeyFlat.",
+    "nonAdminBlockedHint": "Peça para o admin da casa reativar a assinatura.",
+    "trialEndingBanner": "seu teste grátis está acabando."
   }
 }

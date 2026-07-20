@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '../contexts/SubscriptionContext'
 import { formatCurrency } from '../utils/formatCurrency'
+import { getDaysRemaining, isTrialExpired } from '../utils/subscriptionStatus'
 
 const STATUS_STYLES = {
   trialing: 'bg-blue-50 text-blue-700',
@@ -22,12 +23,6 @@ function formatFullDate(isoString, locale) {
   return new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', year: 'numeric' }).format(
     new Date(isoString)
   )
-}
-
-function daysUntil(isoString) {
-  if (!isoString) return 0
-  const diffMs = new Date(isoString).getTime() - Date.now()
-  return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)))
 }
 
 export default function SubscriptionCard() {
@@ -81,10 +76,13 @@ export default function SubscriptionCard() {
 
       <p className="text-sm text-gray-600">{t('subscription.priceLabel', { price })}</p>
 
-      {status === 'trialing' && (
+      {status === 'trialing' && isTrialExpired(subscription) && (
+        <p className="text-sm font-medium text-red-600">{t('subscription.trialExpiredLabel')}</p>
+      )}
+      {status === 'trialing' && !isTrialExpired(subscription) && (
         <p className="text-sm text-gray-600">
           {t('subscription.trialEndsOn', { date: formatFullDate(trialEndsAt, i18n.language) })} ·{' '}
-          {t('subscription.daysRemaining', { count: daysUntil(trialEndsAt) })}
+          {t('subscription.daysRemaining', { count: getDaysRemaining(trialEndsAt) })}
         </p>
       )}
       {status === 'active' && currentPeriodEnd && (
