@@ -7,6 +7,7 @@ import { useCategories } from '../contexts/CategoriesContext'
 import { billCategories } from '../services/mockData'
 import { computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
 import { formatCurrency } from '../utils/formatCurrency'
+import Modal from './Modal'
 
 const SPLIT_TYPES = ['equal', 'percentage', 'exact']
 const PURCHASE_CATEGORIES = billCategories.filter((cat) => cat.id === 'groceries' || cat.id === 'other')
@@ -138,8 +139,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+    <Modal>
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold text-gray-900">
             {isEditing ? t('shoppingPage.editPurchase') : t('shoppingPage.recordPurchase')}
@@ -323,7 +323,6 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
             {isEditing ? t('billsPage.saveChanges') : t('shoppingPage.confirmBought')}
           </button>
         </form>
-      </div>
-    </div>
+    </Modal>
   )
 }

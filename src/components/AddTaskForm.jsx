@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useTasks } from '../contexts/TasksContext'
 import { taskRecurrenceOptions } from '../services/mockData'
+import Modal from './Modal'
 
 export default function AddTaskForm({ onClose, task = null }) {
   const { t } = useTranslation()
@@ -61,8 +62,7 @@ export default function AddTaskForm({ onClose, task = null }) {
   }
 
   return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+    <Modal>
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold text-gray-900">
             {isEditing ? t('tasksPage.editTask') : t('tasksPage.addTask')}
@@ -144,7 +144,6 @@ export default function AddTaskForm({ onClose, task = null }) {
             {isEditing ? t('billsPage.saveChanges') : t('tasksPage.save')}
           </button>
         </form>
-      </div>
-    </div>
+    </Modal>
   )
 }

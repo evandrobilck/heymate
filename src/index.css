@@ -22,3 +22,31 @@ body,
 body {
   margin: 0;
 }
+
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
+.modal-backdrop {
+  animation: modal-backdrop-in 0.2s ease-out;
+}
+
+.modal-card {
+  animation: modal-card-in 0.25s cubic-bezier(0.21, 0.47, 0.32, 0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal-card {
+    animation: none;
+  }
+}
