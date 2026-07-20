@@ -7,6 +7,7 @@ import { getMonthGrid, toDayKey } from '../utils/calendar'
 import { getRecurrenceOccurrencesInRange } from '../utils/recurrence'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
+import EmptyState from '../components/EmptyState'
 
 const WEEKDAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 
@@ -175,7 +176,7 @@ export default function CalendarioPage() {
         <div className="flex-1">
           <p className="text-sm font-semibold text-gray-900">{formatDate(selectedDay, i18n.language)}</p>
           {selectedEvents.length === 0 ? (
-            <p className="mt-2 text-sm text-gray-400">{t('calendarPage.noEvents')}</p>
+            <EmptyState icon="📅" message={t('calendarPage.noEvents')} />
           ) : (
             <ul className="mt-2 space-y-2">
               {selectedEvents.map((event) => (

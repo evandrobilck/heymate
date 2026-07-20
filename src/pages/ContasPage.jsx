@@ -5,6 +5,7 @@ import BillCard from '../components/BillCard'
 import AddBillForm from '../components/AddBillForm'
 import BalanceSummary from '../components/BalanceSummary'
 import SkeletonRows from '../components/SkeletonRows'
+import EmptyState from '../components/EmptyState'
 
 export default function ContasPage() {
   const { t } = useTranslation()
@@ -38,7 +39,7 @@ export default function ContasPage() {
           <SkeletonRows />
         ) : (
           <>
-            {pendingBills.length === 0 && <p className="text-sm text-gray-400">{t('billsPage.noPending')}</p>}
+            {pendingBills.length === 0 && <EmptyState icon="🎉" message={t('billsPage.noPending')} />}
             {pendingBills.map((bill) => (
               <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
             ))}

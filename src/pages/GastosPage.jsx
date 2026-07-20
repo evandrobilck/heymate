@@ -17,6 +17,7 @@ import { downloadCsv } from '../utils/exportCsv'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 import { formatMonth } from '../utils/leaderboard'
+import EmptyState from '../components/EmptyState'
 
 const CATEGORY_COLORS = {
   rent: '#a855f7',
@@ -139,7 +140,7 @@ export default function GastosPage() {
     return (
       <div>
         <h1 className="text-xl font-semibold text-gray-900">{t('nav.expenses')}</h1>
-        <p className="mt-4 text-sm text-gray-400">{t('expensesPage.empty')}</p>
+        <EmptyState icon="📊" message={t('expensesPage.empty')} />
       </div>
     )
   }
@@ -238,7 +239,7 @@ export default function GastosPage() {
       <div>
         <p className="text-sm font-semibold text-gray-900">{t('expensesPage.byCategory')}</p>
         {categoryData.length === 0 ? (
-          <p className="mt-2 text-sm text-gray-400">{t('expensesPage.noneInPeriod')}</p>
+          <EmptyState icon="📊" message={t('expensesPage.noneInPeriod')} />
         ) : (
           <div className="mt-2 flex gap-3 overflow-x-auto pb-1">
             {categoryData.map((category) => {

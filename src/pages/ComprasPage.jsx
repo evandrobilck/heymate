@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useShopping } from '../contexts/ShoppingContext'
 import ShoppingListItem from '../components/ShoppingListItem'
 import SkeletonRows from '../components/SkeletonRows'
+import EmptyState from '../components/EmptyState'
 
 export default function ComprasPage() {
   const { t } = useTranslation()
@@ -48,7 +49,7 @@ export default function ComprasPage() {
           <SkeletonRows />
         ) : (
           <>
-            {pendingItems.length === 0 && <p className="text-sm text-gray-400">{t('shoppingPage.noPending')}</p>}
+            {pendingItems.length === 0 && <EmptyState icon="🛒" message={t('shoppingPage.noPending')} />}
             <ul className="space-y-2">
               {pendingItems.map((item) => (
                 <ShoppingListItem key={item.id} item={item} />

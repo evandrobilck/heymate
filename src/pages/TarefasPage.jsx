@@ -4,6 +4,7 @@ import { useTasks } from '../contexts/TasksContext'
 import TaskListItem from '../components/TaskListItem'
 import AddTaskForm from '../components/AddTaskForm'
 import SkeletonRows from '../components/SkeletonRows'
+import EmptyState from '../components/EmptyState'
 
 export default function TarefasPage() {
   const { t } = useTranslation()
@@ -32,7 +33,7 @@ export default function TarefasPage() {
           <SkeletonRows />
         ) : (
           <>
-            {pendingTasks.length === 0 && <p className="text-sm text-gray-400">{t('tasksPage.noPending')}</p>}
+            {pendingTasks.length === 0 && <EmptyState icon="🎉" message={t('tasksPage.noPending')} />}
             <ul className="space-y-2">
               {pendingTasks.map((task) => (
                 <TaskListItem key={task.id} task={task} />

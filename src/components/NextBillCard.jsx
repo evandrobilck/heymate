@@ -41,7 +41,7 @@ export default function NextBillCard() {
       </div>
 
       {upcoming.length === 0 ? (
-        <p className="mt-3 text-sm text-gray-400">{t('home.noUpcomingBills')}</p>
+        <p className="mt-3 text-sm text-gray-400">🎉 {t('home.noUpcomingBills')}</p>
       ) : (
         <ul className="mt-3 space-y-3">
           {upcoming.map(({ bill, date, overdue }) => {

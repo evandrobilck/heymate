@@ -29,7 +29,7 @@ export default function UpcomingTasksCard() {
       </div>
 
       {upcoming.length === 0 ? (
-        <p className="mt-3 text-sm text-gray-400">{t('home.noUpcomingTasks')}</p>
+        <p className="mt-3 text-sm text-gray-400">🎉 {t('home.noUpcomingTasks')}</p>
       ) : (
         <ul className="mt-3 space-y-3">
           {upcoming.map((task) => (
