@@ -5,7 +5,7 @@ import MobileNav from './MobileNav'
 
 export default function Layout() {
   return (
-    <div className="flex min-h-svh flex-col bg-gray-50 md:flex-row">
+    <div className="flex h-svh flex-col overflow-hidden bg-gray-50 md:flex-row">
       <Sidebar />
       <MobileHeader />
       <main className="flex-1 overflow-y-auto">
