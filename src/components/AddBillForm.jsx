@@ -147,7 +147,7 @@ export default function AddBillForm({ onClose, bill = null }) {
                   onClick={() => setCategory(cat.id)}
                   className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium ${
                     category === cat.id
-                      ? 'border-brand-500 bg-brand-50 text-brand-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white'
                       : 'border-gray-200 text-gray-600'
                   }`}
                 >
@@ -162,7 +162,7 @@ export default function AddBillForm({ onClose, bill = null }) {
                   onClick={() => setCategory(cat.id)}
                   className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium ${
                     category === cat.id
-                      ? 'border-brand-500 bg-brand-50 text-brand-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white'
                       : 'border-gray-200 text-gray-600'
                   }`}
                 >
@@ -269,7 +269,7 @@ export default function AddBillForm({ onClose, bill = null }) {
                   onClick={() => setSplitType(type)}
                   className={`flex-1 rounded-lg border px-2 py-2 text-xs font-medium ${
                     splitType === type
-                      ? 'border-brand-500 bg-brand-50 text-brand-700'
+                      ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white'
                       : 'border-gray-200 text-gray-600'
                   }`}
                 >

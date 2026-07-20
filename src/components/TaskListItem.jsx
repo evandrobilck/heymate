@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useTasks } from '../contexts/TasksContext'
+import { useToast } from '../contexts/ToastContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { formatDate } from '../utils/formatDate'
 import AddTaskForm from './AddTaskForm'
 
@@ -11,6 +13,8 @@ export default function TaskListItem({ task }) {
   const { user } = useAuth()
   const { house } = useHouse()
   const { markTaskDone, markTaskUndone, deleteTask } = useTasks()
+  const showToast = useToast()
+  const confirm = useConfirm()
   const [pickingCompleters, setPickingCompleters] = useState(false)
   const [completedByIds, setCompletedByIds] = useState([user.id])
   const [editing, setEditing] = useState(false)
@@ -47,12 +51,12 @@ export default function TaskListItem({ task }) {
   }
 
   async function handleDelete() {
-    if (!window.confirm(t('tasksPage.deleteConfirm'))) return
+    if (!(await confirm(t('tasksPage.deleteConfirm')))) return
     try {
       await deleteTask(task.id)
     } catch (err) {
       console.error(err)
-      alert(t('tasksPage.deleteError'))
+      showToast(t('tasksPage.deleteError'))
     }
   }
 

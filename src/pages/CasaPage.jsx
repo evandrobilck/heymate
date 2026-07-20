@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
+import { useToast } from '../contexts/ToastContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import InviteCodeCard from '../components/InviteCodeCard'
 import AddressCard from '../components/AddressCard'
 import MemberListItem from '../components/MemberListItem'
@@ -24,6 +26,8 @@ export default function CasaPage() {
     deleteHouse,
   } = useHouse()
   const navigate = useNavigate()
+  const showToast = useToast()
+  const confirm = useConfirm()
 
   if (!house) return null
 
@@ -31,12 +35,12 @@ export default function CasaPage() {
   const pastMembers = house.members.filter((member) => member.leftAt)
 
   async function handleMakeAdmin(memberId) {
-    if (!window.confirm(t('housePage.makeAdminConfirm'))) return
+    if (!(await confirm(t('housePage.makeAdminConfirm')))) return
     try {
       await makeAdmin(memberId)
     } catch (err) {
       console.error(err)
-      alert(t('housePage.makeAdminError'))
+      showToast(t('housePage.makeAdminError'))
     }
   }
 
@@ -45,28 +49,28 @@ export default function CasaPage() {
       await updateMemberJoinedAt(memberId, joinedAt)
     } catch (err) {
       console.error(err)
-      alert(t('housePage.editJoinDateError'))
+      showToast(t('housePage.editJoinDateError'))
     }
   }
 
   async function handleLeaveHouse() {
-    if (!window.confirm(t('housePage.leaveConfirm'))) return
+    if (!(await confirm(t('housePage.leaveConfirm')))) return
     try {
       await leaveHouse()
       navigate('/onboarding')
     } catch (err) {
       console.error(err)
-      alert(t('housePage.leaveError'))
+      showToast(t('housePage.leaveError'))
     }
   }
 
   async function handleResetData() {
-    if (!window.confirm(t('housePage.resetDataConfirm'))) return
+    if (!(await confirm(t('housePage.resetDataConfirm')))) return
     try {
       await resetHouseData()
     } catch (err) {
       console.error(err)
-      alert(t('housePage.resetDataError'))
+      showToast(t('housePage.resetDataError'))
     }
   }
 
@@ -74,7 +78,7 @@ export default function CasaPage() {
     const typed = window.prompt(t('housePage.deleteHouseConfirmPrompt', { name: house.name }))
     if (typed === null) return
     if (typed !== house.name) {
-      alert(t('housePage.deleteHouseNameMismatch'))
+      showToast(t('housePage.deleteHouseNameMismatch'))
       return
     }
     try {
@@ -82,7 +86,7 @@ export default function CasaPage() {
       navigate('/onboarding')
     } catch (err) {
       console.error(err)
-      alert(t('housePage.deleteHouseError'))
+      showToast(t('housePage.deleteHouseError'))
     }
   }
 

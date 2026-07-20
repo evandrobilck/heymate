@@ -30,6 +30,13 @@ const CATEGORY_COLORS = {
 }
 const CUSTOM_CATEGORY_COLOR = '#f97316'
 
+const CHART_TOOLTIP_STYLE = {
+  backgroundColor: 'var(--color-surface)',
+  border: '1px solid var(--color-gray-200)',
+  borderRadius: 8,
+  fontSize: 12,
+}
+
 function startOfMonth(date) {
   return new Date(date.getFullYear(), date.getMonth(), 1)
 }
@@ -274,7 +281,11 @@ export default function GastosPage() {
                     <Cell key={entry.id} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => formatCurrency(value, i18n.language, house.currency)} />
+                <Tooltip
+                  formatter={(value) => formatCurrency(value, i18n.language, house.currency)}
+                  contentStyle={CHART_TOOLTIP_STYLE}
+                  labelStyle={{ color: 'var(--color-gray-700)' }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -286,11 +297,20 @@ export default function GastosPage() {
         <div className="mt-2 h-48">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-              <XAxis dataKey="label" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={40} />
-              <Tooltip formatter={(value) => formatCurrency(value, i18n.language, house.currency)} />
-              <Bar dataKey="total" fill="#9333ea" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-gray-200)" />
+              <XAxis
+                dataKey="label"
+                tick={{ fontSize: 10, fill: 'var(--color-gray-500)' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis tick={{ fontSize: 10, fill: 'var(--color-gray-500)' }} axisLine={false} tickLine={false} width={40} />
+              <Tooltip
+                formatter={(value) => formatCurrency(value, i18n.language, house.currency)}
+                contentStyle={CHART_TOOLTIP_STYLE}
+                labelStyle={{ color: 'var(--color-gray-700)' }}
+              />
+              <Bar dataKey="total" fill="var(--color-brand-600)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

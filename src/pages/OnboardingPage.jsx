@@ -56,7 +56,7 @@ export default function OnboardingPage() {
           type="button"
           onClick={() => setMode('create')}
           className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-            mode === 'create' ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
+            mode === 'create' ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white' : 'border-gray-200 text-gray-600'
           }`}
         >
           {t('onboarding.createTab')}
@@ -65,7 +65,7 @@ export default function OnboardingPage() {
           type="button"
           onClick={() => setMode('join')}
           className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-            mode === 'join' ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
+            mode === 'join' ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white' : 'border-gray-200 text-gray-600'
           }`}
         >
           {t('onboarding.joinTab')}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSubscription } from '../contexts/SubscriptionContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { formatCurrency } from '../utils/formatCurrency'
 import { getDaysRemaining, isTrialExpired } from '../utils/subscriptionStatus'
 
@@ -28,6 +29,7 @@ function formatFullDate(isoString, locale) {
 export default function SubscriptionCard() {
   const { t, i18n } = useTranslation()
   const { subscription, loading, startCheckout, cancelSubscription } = useSubscription()
+  const confirm = useConfirm()
   const [actionError, setActionError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -49,7 +51,7 @@ export default function SubscriptionCard() {
   }
 
   async function handleCancel() {
-    if (!window.confirm(t('subscription.cancelConfirm'))) return
+    if (!(await confirm(t('subscription.cancelConfirm')))) return
     setActionError('')
     setSubmitting(true)
     try {

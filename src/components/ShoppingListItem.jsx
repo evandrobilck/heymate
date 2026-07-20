@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useShopping } from '../contexts/ShoppingContext'
+import { useToast } from '../contexts/ToastContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 import RecordPurchaseForm from './RecordPurchaseForm'
@@ -14,6 +16,8 @@ export default function ShoppingListItem({ item }) {
   const { house, isAdmin } = useHouse()
   const { bills } = useBills()
   const { renameItem, deleteItem } = useShopping()
+  const showToast = useToast()
+  const confirm = useConfirm()
   const [recording, setRecording] = useState(false)
   const [renaming, setRenaming] = useState(false)
   const [editingPurchase, setEditingPurchase] = useState(false)
@@ -24,12 +28,12 @@ export default function ShoppingListItem({ item }) {
   const linkedBill = item.billId ? bills.find((bill) => bill.id === item.billId) : null
 
   async function handleDelete(confirmKey) {
-    if (!window.confirm(t(confirmKey))) return
+    if (!(await confirm(t(confirmKey)))) return
     try {
       await deleteItem(item.id)
     } catch (err) {
       console.error(err)
-      alert(t('shoppingPage.deleteError'))
+      showToast(t('shoppingPage.deleteError'))
     }
   }
 

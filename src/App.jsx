@@ -1,75 +1,87 @@
+import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import RequireAuth from './components/RequireAuth'
 import RequireHouse from './components/RequireHouse'
 import RequireActiveSubscription from './components/RequireActiveSubscription'
 import RedirectIfAuthenticated from './components/RedirectIfAuthenticated'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import OnboardingPage from './pages/OnboardingPage'
-import HomePage from './pages/HomePage'
-import ContasPage from './pages/ContasPage'
-import TarefasPage from './pages/TarefasPage'
-import GastosPage from './pages/GastosPage'
-import ComprasPage from './pages/ComprasPage'
-import CalendarioPage from './pages/CalendarioPage'
-import CasaPage from './pages/CasaPage'
-import SettingsPage from './pages/SettingsPage'
-import ProfilePage from './pages/ProfilePage'
+
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const OnboardingPage = lazy(() => import('./pages/OnboardingPage'))
+const HomePage = lazy(() => import('./pages/HomePage'))
+const ContasPage = lazy(() => import('./pages/ContasPage'))
+const TarefasPage = lazy(() => import('./pages/TarefasPage'))
+const GastosPage = lazy(() => import('./pages/GastosPage'))
+const ComprasPage = lazy(() => import('./pages/ComprasPage'))
+const CalendarioPage = lazy(() => import('./pages/CalendarioPage'))
+const CasaPage = lazy(() => import('./pages/CasaPage'))
+const SettingsPage = lazy(() => import('./pages/SettingsPage'))
+const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+
+function PageFallback() {
+  return (
+    <div className="flex h-full min-h-[50vh] items-center justify-center">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600" />
+    </div>
+  )
+}
 
 export default function App() {
   return (
-    <Routes>
-      <Route
-        path="/login"
-        element={
-          <RedirectIfAuthenticated>
-            <LoginPage />
-          </RedirectIfAuthenticated>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <RedirectIfAuthenticated>
-            <RegisterPage />
-          </RedirectIfAuthenticated>
-        }
-      />
+    <Suspense fallback={<PageFallback />}>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <RedirectIfAuthenticated>
+              <LoginPage />
+            </RedirectIfAuthenticated>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <RedirectIfAuthenticated>
+              <RegisterPage />
+            </RedirectIfAuthenticated>
+          }
+        />
 
-      <Route
-        path="/onboarding"
-        element={
-          <RequireAuth>
-            <OnboardingPage />
-          </RequireAuth>
-        }
-      />
+        <Route
+          path="/onboarding"
+          element={
+            <RequireAuth>
+              <OnboardingPage />
+            </RequireAuth>
+          }
+        />
 
-      <Route
-        element={
-          <RequireAuth>
-            <RequireHouse>
-              <RequireActiveSubscription>
-                <Layout />
-              </RequireActiveSubscription>
-            </RequireHouse>
-          </RequireAuth>
-        }
-      >
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/contas" element={<ContasPage />} />
-        <Route path="/tarefas" element={<TarefasPage />} />
-        <Route path="/gastos" element={<GastosPage />} />
-        <Route path="/compras" element={<ComprasPage />} />
-        <Route path="/calendario" element={<CalendarioPage />} />
-        <Route path="/casa" element={<CasaPage />} />
-        <Route path="/configuracoes" element={<SettingsPage />} />
-        <Route path="/perfil" element={<ProfilePage />} />
-      </Route>
+        <Route
+          element={
+            <RequireAuth>
+              <RequireHouse>
+                <RequireActiveSubscription>
+                  <Layout />
+                </RequireActiveSubscription>
+              </RequireHouse>
+            </RequireAuth>
+          }
+        >
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/contas" element={<ContasPage />} />
+          <Route path="/tarefas" element={<TarefasPage />} />
+          <Route path="/gastos" element={<GastosPage />} />
+          <Route path="/compras" element={<ComprasPage />} />
+          <Route path="/calendario" element={<CalendarioPage />} />
+          <Route path="/casa" element={<CasaPage />} />
+          <Route path="/configuracoes" element={<SettingsPage />} />
+          <Route path="/perfil" element={<ProfilePage />} />
+        </Route>
 
-      <Route path="/" element={<Navigate to="/home" replace />} />
-      <Route path="*" element={<Navigate to="/home" replace />} />
-    </Routes>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
+      </Routes>
+    </Suspense>
   )
 }

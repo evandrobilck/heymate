@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import Avatar from './Avatar'
+import ThemeToggle from './ThemeToggle'
 import { NAV_TABS } from './navIcons'
 
 export default function Sidebar() {
@@ -14,7 +15,13 @@ export default function Sidebar() {
   return (
     <nav className="hidden h-svh w-60 shrink-0 flex-col border-r border-gray-200 bg-surface md:flex">
       <div className="px-5 py-6">
-        <img src="/logo-purple.svg" alt={t('app.name')} className="h-11 w-auto" />
+        <div className="flex items-start justify-between">
+          <div>
+            <img src="/logo-purple.svg" alt={t('app.name')} className="h-11 w-auto dark:hidden" />
+            <img src="/logo-white.svg" alt={t('app.name')} className="hidden h-11 w-auto dark:block" />
+          </div>
+          <ThemeToggle className="-mt-1" />
+        </div>
         <p className="mt-2 truncate text-base font-bold text-gray-700">{house.name}</p>
       </div>
 
@@ -25,7 +32,7 @@ export default function Sidebar() {
               to={to}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive ? 'bg-brand-50 text-brand-700' : 'text-gray-600 hover:bg-gray-50'
+                  isActive ? 'bg-brand-50 text-brand-700 dark:text-white' : 'text-gray-600 hover:bg-gray-50'
                 }`
               }
             >

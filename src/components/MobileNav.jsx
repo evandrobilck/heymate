@@ -39,7 +39,7 @@ export default function MobileNav() {
                     onClick={() => setShowMore(false)}
                     className={({ isActive }) =>
                       `flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-[10px] font-medium ${
-                        isActive ? 'bg-brand-50 text-brand-600' : 'text-gray-500 hover:bg-gray-50'
+                        isActive ? 'bg-brand-50 text-brand-600 dark:text-white' : 'text-gray-500 hover:bg-gray-50'
                       }`
                     }
                   >
@@ -62,7 +62,7 @@ export default function MobileNav() {
                 onClick={() => setShowMore(false)}
                 className={({ isActive }) =>
                   `flex flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors ${
-                    isActive ? 'text-brand-600' : 'text-gray-400 hover:text-gray-600'
+                    isActive ? 'text-brand-600 dark:text-white' : 'text-gray-400 hover:text-gray-600'
                   }`
                 }
               >
@@ -77,7 +77,7 @@ export default function MobileNav() {
                 type="button"
                 onClick={() => setShowMore((prev) => !prev)}
                 className={`flex w-full flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors ${
-                  showMore || isMoreActive ? 'text-brand-600' : 'text-gray-400 hover:text-gray-600'
+                  showMore || isMoreActive ? 'text-brand-600 dark:text-white' : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
                 <MoreIcon className="h-5 w-5" />

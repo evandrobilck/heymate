@@ -5,6 +5,8 @@ import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useCategories } from '../contexts/CategoriesContext'
+import { useToast } from '../contexts/ToastContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { billCategories, currencyOptions } from '../services/mockData'
 import CategoryManager from '../components/CategoryManager'
 import SubscriptionCard from '../components/SubscriptionCard'
@@ -26,6 +28,8 @@ export default function SettingsPage() {
     showBuiltInCategory,
   } = useCategories()
   const navigate = useNavigate()
+  const showToast = useToast()
+  const confirm = useConfirm()
 
   const [name, setName] = useState(house.name)
   const [savingName, setSavingName] = useState(false)
@@ -104,30 +108,30 @@ export default function SettingsPage() {
 
   async function handleRemoveBillCategory(id) {
     const usageCount = bills.filter((bill) => bill.category === id).length
-    if (usageCount > 0 && !window.confirm(t('settingsPage.categoryInUseConfirm', { count: usageCount }))) return
+    if (usageCount > 0 && !(await confirm(t('settingsPage.categoryInUseConfirm', { count: usageCount })))) return
     try {
       await removeBillCategory(id)
     } catch (err) {
       console.error(err)
-      alert(t('settingsPage.categoryRemoveError'))
+      showToast(t('settingsPage.categoryRemoveError'))
     }
   }
 
   async function handleRemoveShoppingCategory(id) {
     const usageCount = bills.filter((bill) => bill.category === id).length
-    if (usageCount > 0 && !window.confirm(t('settingsPage.categoryInUseConfirm', { count: usageCount }))) return
+    if (usageCount > 0 && !(await confirm(t('settingsPage.categoryInUseConfirm', { count: usageCount })))) return
     try {
       await removeShoppingCategory(id)
     } catch (err) {
       console.error(err)
-      alert(t('settingsPage.categoryRemoveError'))
+      showToast(t('settingsPage.categoryRemoveError'))
     }
   }
 
   async function handleTransferAdmin() {
     if (!transferTarget) return
     const targetName = otherActiveMembers.find((member) => member.id === transferTarget)?.name
-    if (!window.confirm(t('settingsPage.transferAdminConfirm', { name: targetName }))) return
+    if (!(await confirm(t('settingsPage.transferAdminConfirm', { name: targetName })))) return
     setTransferError('')
     try {
       await transferAdmin(transferTarget)
@@ -194,7 +198,7 @@ export default function SettingsPage() {
               onClick={() => handleChangeCurrency(code)}
               className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
                 house.currency === code
-                  ? 'border-brand-500 bg-brand-50 text-brand-700'
+                  ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white'
                   : 'border-gray-200 text-gray-600'
               }`}
             >

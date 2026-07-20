@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useTasks } from '../contexts/TasksContext'
+import { useToast } from '../contexts/ToastContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { getMonthGrid, toDayKey } from '../utils/calendar'
 import { getRecurrenceOccurrencesInRange } from '../utils/recurrence'
 import { formatCurrency } from '../utils/formatCurrency'
@@ -16,6 +18,8 @@ export default function CalendarioPage() {
   const { house } = useHouse()
   const { bills, deleteOccurrence, deleteOccurrenceAndFollowing } = useBills()
   const { tasks } = useTasks()
+  const showToast = useToast()
+  const confirm = useConfirm()
 
   const today = useMemo(() => new Date(), [])
   const [cursor, setCursor] = useState({ year: today.getFullYear(), month: today.getMonth() })
@@ -83,23 +87,23 @@ export default function CalendarioPage() {
   }
 
   async function handleDeleteOnlyThis(billId) {
-    if (!window.confirm(t('calendarPage.deleteOnlyThisConfirm'))) return
+    if (!(await confirm(t('calendarPage.deleteOnlyThisConfirm')))) return
     try {
       await deleteOccurrence(billId, selectedDay)
     } catch (err) {
       console.error(err)
-      alert(t('calendarPage.deleteError'))
+      showToast(t('calendarPage.deleteError'))
     }
     setDeletingEventId(null)
   }
 
   async function handleDeleteFollowing(billId) {
-    if (!window.confirm(t('calendarPage.deleteFollowingConfirm'))) return
+    if (!(await confirm(t('calendarPage.deleteFollowingConfirm')))) return
     try {
       await deleteOccurrenceAndFollowing(billId, selectedDay)
     } catch (err) {
       console.error(err)
-      alert(t('calendarPage.deleteError'))
+      showToast(t('calendarPage.deleteError'))
     }
     setDeletingEventId(null)
   }

@@ -4,6 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import './i18n'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { ToastProvider } from './contexts/ToastContext'
+import { ConfirmProvider } from './contexts/ConfirmContext'
 import { AuthProvider } from './contexts/AuthContext'
 import { HouseProvider } from './contexts/HouseContext'
 import { SubscriptionProvider } from './contexts/SubscriptionContext'
@@ -19,25 +21,29 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider>
-      <AuthProvider>
-        <HouseProvider>
-          <SubscriptionProvider>
-            <LanguageProvider>
-              <CategoriesProvider>
-                <BillsProvider>
-                  <ShoppingProvider>
-                    <TasksProvider>
-                      <VaultProvider>
-                        <App />
-                      </VaultProvider>
-                    </TasksProvider>
-                  </ShoppingProvider>
-                </BillsProvider>
-              </CategoriesProvider>
-            </LanguageProvider>
-          </SubscriptionProvider>
-        </HouseProvider>
-      </AuthProvider>
+        <ToastProvider>
+          <ConfirmProvider>
+            <AuthProvider>
+              <HouseProvider>
+                <SubscriptionProvider>
+                  <LanguageProvider>
+                    <CategoriesProvider>
+                      <BillsProvider>
+                        <ShoppingProvider>
+                          <TasksProvider>
+                            <VaultProvider>
+                              <App />
+                            </VaultProvider>
+                          </TasksProvider>
+                        </ShoppingProvider>
+                      </BillsProvider>
+                    </CategoriesProvider>
+                  </LanguageProvider>
+                </SubscriptionProvider>
+              </HouseProvider>
+            </AuthProvider>
+          </ConfirmProvider>
+        </ToastProvider>
       </ThemeProvider>
     </BrowserRouter>
   </StrictMode>,

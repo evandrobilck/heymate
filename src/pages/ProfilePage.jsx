@@ -104,7 +104,7 @@ export default function ProfilePage() {
               type="button"
               onClick={() => setLanguage(lang)}
               className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-                language === lang ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
+                language === lang ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white' : 'border-gray-200 text-gray-600'
               }`}
             >
               {LANGUAGE_LABELS[lang]}
@@ -120,7 +120,7 @@ export default function ProfilePage() {
             type="button"
             onClick={() => theme === 'dark' && toggleTheme()}
             className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-              theme === 'light' ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
+              theme === 'light' ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white' : 'border-gray-200 text-gray-600'
             }`}
           >
             ☀️ {t('profilePage.themeLight')}
@@ -129,7 +129,7 @@ export default function ProfilePage() {
             type="button"
             onClick={() => theme === 'light' && toggleTheme()}
             className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium ${
-              theme === 'dark' ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-gray-200 text-gray-600'
+              theme === 'dark' ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-white' : 'border-gray-200 text-gray-600'
             }`}
           >
             🌙 {t('profilePage.themeDark')}
