@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useShopping } from '../contexts/ShoppingContext'
 import ShoppingListItem from '../components/ShoppingListItem'
+import SkeletonRows from '../components/SkeletonRows'
 
 export default function ComprasPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const { items, addItem } = useShopping()
+  const { items, loading, addItem } = useShopping()
   const [newItemName, setNewItemName] = useState('')
 
   const pendingItems = items.filter((item) => !item.bought)
@@ -43,15 +44,21 @@ export default function ComprasPage() {
 
       <div className="mt-4 space-y-2">
         <h2 className="text-sm font-semibold text-gray-900">{t('shoppingPage.toBuyTitle')}</h2>
-        {pendingItems.length === 0 && <p className="text-sm text-gray-400">{t('shoppingPage.noPending')}</p>}
-        <ul className="space-y-2">
-          {pendingItems.map((item) => (
-            <ShoppingListItem key={item.id} item={item} />
-          ))}
-        </ul>
+        {loading ? (
+          <SkeletonRows />
+        ) : (
+          <>
+            {pendingItems.length === 0 && <p className="text-sm text-gray-400">{t('shoppingPage.noPending')}</p>}
+            <ul className="space-y-2">
+              {pendingItems.map((item) => (
+                <ShoppingListItem key={item.id} item={item} />
+              ))}
+            </ul>
+          </>
+        )}
       </div>
 
-      {boughtItems.length > 0 && (
+      {!loading && boughtItems.length > 0 && (
         <div className="mt-6 space-y-2">
           <h2 className="text-sm font-semibold text-gray-900">{t('shoppingPage.boughtTitle')}</h2>
           <ul className="space-y-2 opacity-60">

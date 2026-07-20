@@ -21,10 +21,12 @@ function mapItemRow(row) {
 export function ShoppingProvider({ children }) {
   const { house } = useHouse()
   const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
     if (!house?.id) {
       setItems([])
+      setLoading(false)
       return
     }
 
@@ -36,10 +38,12 @@ export function ShoppingProvider({ children }) {
 
     if (error) {
       console.error(error)
+      setLoading(false)
       return
     }
 
     setItems((data ?? []).map(mapItemRow))
+    setLoading(false)
   }, [house?.id])
 
   useEffect(() => {
@@ -136,8 +140,8 @@ export function ShoppingProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ items, addItem, recordPurchase, renameItem, deleteItem, updatePurchase }),
-    [items]
+    () => ({ items, loading, addItem, recordPurchase, renameItem, deleteItem, updatePurchase }),
+    [items, loading]
   )
 
   return <ShoppingContext.Provider value={value}>{children}</ShoppingContext.Provider>

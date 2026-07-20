@@ -35,10 +35,12 @@ function mapBillRow(row) {
 export function BillsProvider({ children }) {
   const { house } = useHouse()
   const [bills, setBills] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
     if (!house?.id) {
       setBills([])
+      setLoading(false)
       return
     }
 
@@ -50,10 +52,12 @@ export function BillsProvider({ children }) {
 
     if (error) {
       console.error(error)
+      setLoading(false)
       return
     }
 
     setBills((data ?? []).map(mapBillRow))
+    setLoading(false)
   }, [house?.id])
 
   useEffect(() => {
@@ -179,8 +183,8 @@ export function BillsProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ bills, addBill, updateBill, toggleParticipantPaid, deleteOccurrence, deleteOccurrenceAndFollowing }),
-    [bills]
+    () => ({ bills, loading, addBill, updateBill, toggleParticipantPaid, deleteOccurrence, deleteOccurrenceAndFollowing }),
+    [bills, loading]
   )
 
   return <BillsContext.Provider value={value}>{children}</BillsContext.Provider>

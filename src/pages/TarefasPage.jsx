@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { useTasks } from '../contexts/TasksContext'
 import TaskListItem from '../components/TaskListItem'
 import AddTaskForm from '../components/AddTaskForm'
+import SkeletonRows from '../components/SkeletonRows'
 
 export default function TarefasPage() {
   const { t } = useTranslation()
-  const { tasks } = useTasks()
+  const { tasks, loading } = useTasks()
   const [showForm, setShowForm] = useState(false)
 
   const pendingTasks = tasks.filter((task) => !task.completed)
@@ -27,15 +28,21 @@ export default function TarefasPage() {
 
       <div className="mt-4 space-y-2">
         <h2 className="text-sm font-semibold text-gray-900">{t('tasksPage.todoTitle')}</h2>
-        {pendingTasks.length === 0 && <p className="text-sm text-gray-400">{t('tasksPage.noPending')}</p>}
-        <ul className="space-y-2">
-          {pendingTasks.map((task) => (
-            <TaskListItem key={task.id} task={task} />
-          ))}
-        </ul>
+        {loading ? (
+          <SkeletonRows />
+        ) : (
+          <>
+            {pendingTasks.length === 0 && <p className="text-sm text-gray-400">{t('tasksPage.noPending')}</p>}
+            <ul className="space-y-2">
+              {pendingTasks.map((task) => (
+                <TaskListItem key={task.id} task={task} />
+              ))}
+            </ul>
+          </>
+        )}
       </div>
 
-      {doneTasks.length > 0 && (
+      {!loading && doneTasks.length > 0 && (
         <div className="mt-6 space-y-2">
           <h2 className="text-sm font-semibold text-gray-900">{t('tasksPage.doneTitle')}</h2>
           <ul className="space-y-2 opacity-60">

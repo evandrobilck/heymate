@@ -22,10 +22,12 @@ function mapTaskRow(row) {
 export function TasksProvider({ children }) {
   const { house } = useHouse()
   const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
     if (!house?.id) {
       setTasks([])
+      setLoading(false)
       return
     }
 
@@ -37,10 +39,12 @@ export function TasksProvider({ children }) {
 
     if (error) {
       console.error(error)
+      setLoading(false)
       return
     }
 
     setTasks((data ?? []).map(mapTaskRow))
+    setLoading(false)
   }, [house?.id])
 
   useEffect(() => {
@@ -156,8 +160,8 @@ export function TasksProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ tasks, addTask, updateTask, deleteTask, markTaskDone, markTaskUndone }),
-    [tasks]
+    () => ({ tasks, loading, addTask, updateTask, deleteTask, markTaskDone, markTaskUndone }),
+    [tasks, loading]
   )
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>

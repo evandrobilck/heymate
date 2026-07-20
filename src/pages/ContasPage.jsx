@@ -4,10 +4,11 @@ import { useBills } from '../contexts/BillsContext'
 import BillCard from '../components/BillCard'
 import AddBillForm from '../components/AddBillForm'
 import BalanceSummary from '../components/BalanceSummary'
+import SkeletonRows from '../components/SkeletonRows'
 
 export default function ContasPage() {
   const { t } = useTranslation()
-  const { bills } = useBills()
+  const { bills, loading } = useBills()
   const [showForm, setShowForm] = useState(false)
   const [editingBill, setEditingBill] = useState(null)
 
@@ -33,13 +34,19 @@ export default function ContasPage() {
 
       <div className="mt-4 space-y-3">
         <h2 className="text-sm font-semibold text-gray-900">{t('billsPage.pendingTitle')}</h2>
-        {pendingBills.length === 0 && <p className="text-sm text-gray-400">{t('billsPage.noPending')}</p>}
-        {pendingBills.map((bill) => (
-          <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
-        ))}
+        {loading ? (
+          <SkeletonRows />
+        ) : (
+          <>
+            {pendingBills.length === 0 && <p className="text-sm text-gray-400">{t('billsPage.noPending')}</p>}
+            {pendingBills.map((bill) => (
+              <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
+            ))}
+          </>
+        )}
       </div>
 
-      {paidBills.length > 0 && (
+      {!loading && paidBills.length > 0 && (
         <div className="mt-6 space-y-3">
           <h2 className="text-sm font-semibold text-gray-900">{t('billsPage.paidTitle')}</h2>
           {paidBills.map((bill) => (
