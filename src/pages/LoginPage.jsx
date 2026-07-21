@@ -23,7 +23,7 @@ export default function LoginPage() {
       navigate('/home')
     } catch (err) {
       console.error(err)
-      setError(t('auth.loginError'))
+      setError(`${t('auth.loginError')} (${err.message})`)
     } finally {
       setSubmitting(false)
     }
@@ -40,6 +40,9 @@ export default function LoginPage() {
           onChange={(event) => setEmail(event.target.value)}
           placeholder={t('auth.email')}
           required
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoComplete="email"
           aria-invalid={Boolean(error)}
           aria-describedby={error ? 'login-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
@@ -50,6 +53,9 @@ export default function LoginPage() {
           onChange={(event) => setPassword(event.target.value)}
           placeholder={t('auth.password')}
           required
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoComplete="current-password"
           aria-invalid={Boolean(error)}
           aria-describedby={error ? 'login-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"

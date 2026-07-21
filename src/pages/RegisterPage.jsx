@@ -29,7 +29,7 @@ export default function RegisterPage() {
       }
     } catch (err) {
       console.error(err)
-      setError(t('auth.registerError'))
+      setError(`${t('auth.registerError')} (${err.message})`)
     } finally {
       setSubmitting(false)
     }
@@ -65,6 +65,9 @@ export default function RegisterPage() {
           onChange={(event) => setEmail(event.target.value)}
           placeholder={t('auth.email')}
           required
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoComplete="email"
           aria-invalid={Boolean(error)}
           aria-describedby={error ? 'register-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
@@ -76,6 +79,9 @@ export default function RegisterPage() {
           placeholder={t('auth.password')}
           required
           minLength={6}
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoComplete="new-password"
           aria-invalid={Boolean(error)}
           aria-describedby={error ? 'register-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
