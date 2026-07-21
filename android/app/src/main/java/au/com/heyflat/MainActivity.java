@@ -1,4 +1,4 @@
-package com.heyflat.app;
+package au.com.heyflat;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -11,7 +11,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!
-const FROM_EMAIL = 'HeyFlat <onboarding@resend.dev>'
+const FROM_EMAIL = 'HeyFlat <notificacoes@mail.heyflat.com.au>'
 
 // Notifications are timed for the house's market (Australia) rather than UTC,
 // so "today" matches what members actually see due on the calendar.
