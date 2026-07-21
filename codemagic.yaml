@@ -3,14 +3,14 @@ workflows:
     name: HeyFlat iOS (TestFlight)
     max_build_duration: 60
     instance_type: mac_mini_m2
+    integrations:
+      # Create this in Codemagic > Personal Account > Integrations > App
+      # Store Connect, using the Key ID / Issuer ID / .p8 private key from
+      # App Store Connect > Users and Access > Integrations > App Store
+      # Connect API. Name it exactly "heyflat-appstore" to match here.
+      app_store_connect: heyflat-appstore
     environment:
       groups:
-        # Create this group in Codemagic > Teams > Environment variables and
-        # add: APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_ISSUER_ID,
-        # APP_STORE_CONNECT_PRIVATE_KEY (from App Store Connect > Users and
-        # Access > Integrations > App Store Connect API), and
-        # CERTIFICATE_PRIVATE_KEY (leave unset to let Codemagic generate one).
-        - appstore_credentials
         - webapp_env
       vars:
         XCODE_WORKSPACE: "ios/App/App.xcodeproj"
