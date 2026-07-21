@@ -37,7 +37,16 @@ export default function AuthLayout({ children }) {
       </div>
 
       <div className="hidden flex-1 items-center justify-center px-6 py-10 md:flex">
-        <div className="w-full max-w-sm">{children}</div>
+        <div className="w-full max-w-sm">
+          <img src="/logo-mark-purple.svg" alt="" aria-hidden="true" className="mx-auto h-14 w-auto dark:hidden" />
+          <img
+            src="/logo-mark-white.svg"
+            alt=""
+            aria-hidden="true"
+            className="mx-auto hidden h-14 w-auto dark:block"
+          />
+          <div className="mt-6">{children}</div>
+        </div>
       </div>
     </div>
   )
