@@ -55,4 +55,9 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        # false because we're only using TestFlight Internal Testing, which
+        # doesn't need Apple's Beta App Review at all — true here submits
+        # for that review every build, which fails while an earlier build
+        # is still pending review ("Another build is in review"). The
+        # build still uploads and reaches internal testers either way.
+        submit_to_testflight: false
