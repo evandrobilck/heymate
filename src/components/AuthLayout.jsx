@@ -5,10 +5,22 @@ export default function AuthLayout({ children }) {
 
   return (
     <div className="flex min-h-svh flex-col md:flex-row">
-      <div className="hidden shrink-0 flex-col justify-between bg-brand-600 p-12 text-white md:flex md:w-[420px]">
-        <img src="/logo-white.svg" alt={t('app.name')} className="h-8 w-auto" />
-        <h2 className="text-3xl font-semibold leading-tight">{t('app.tagline')}</h2>
-        <img src="/logo-white.svg" alt={t('app.name')} className="h-4 w-auto opacity-70" />
+      <div className="relative hidden shrink-0 flex-col overflow-hidden bg-brand-600 p-12 text-white md:flex md:w-[420px]">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <img src="/logo-mark-white.svg" alt="" className="absolute -right-24 -top-24 h-80 w-80 opacity-90" />
+        </div>
+
+        <div className="relative mt-40">
+          <img src="/logo-white.svg" alt={t('app.name')} className="h-10 w-auto" />
+          <h2 className="mt-6 text-3xl font-semibold leading-tight">{t('app.tagline')}</h2>
+        </div>
+
+        <div className="relative mt-auto text-center">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/70">
+            {t('app.developedBy')}
+          </p>
+          <img src="/egg-studio-logo-white.svg" alt="Egg Studio" className="mx-auto mt-2 h-6 w-auto opacity-90" />
+        </div>
       </div>
 
       <div className="relative flex min-h-svh flex-1 flex-col bg-brand-600 px-6 pb-8 pt-16 md:hidden">
