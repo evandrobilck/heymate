@@ -4,5 +4,8 @@
   "webDir": "dist",
   "server": {
     "iosScheme": "https"
+  },
+  "ios": {
+    "contentInset": "automatic"
   }
 }

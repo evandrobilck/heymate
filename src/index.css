@@ -55,6 +55,16 @@ body {
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+/* iOS Safari/WKWebView auto-zooms on focus into any input under 16px, then
+   never zooms back out on its own. !important is needed here since these
+   elements also carry a Tailwind text-size utility class (e.g. text-sm),
+   which has higher specificity than a plain element selector. */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+
 @keyframes modal-backdrop-in {
   from {
     opacity: 0;
