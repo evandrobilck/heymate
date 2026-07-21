@@ -11,6 +11,11 @@ workflows:
       app_store_connect: heyflat-appstore
     environment:
       groups:
+        # appstore_credentials just needs one variable: CERTIFICATE_PRIVATE_KEY
+        # (a plain RSA private key Codemagic uses to generate a CSR and get a
+        # new distribution certificate signed by Apple — it can't create a
+        # certificate without one to pair it with).
+        - appstore_credentials
         - webapp_env
       vars:
         XCODE_WORKSPACE: "ios/App/App.xcodeproj"
