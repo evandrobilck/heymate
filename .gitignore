@@ -34,3 +34,6 @@ supabase/.temp/
 
 .vercel
 .env*
+
+# Apple/App Store Connect private keys — never commit these
+*.p8

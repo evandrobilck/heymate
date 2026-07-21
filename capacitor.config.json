@@ -1,5 +1,8 @@
 {
   "appId": "au.com.heyflat",
   "appName": "HeyFlat",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "iosScheme": "https"
+  }
 }
