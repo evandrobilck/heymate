@@ -14,7 +14,7 @@ export default function AuthLayout({ children }) {
       <div className="relative flex min-h-svh flex-1 flex-col bg-brand-600 px-6 pb-8 pt-16 md:hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
           <img
-            src="/app-icon-white.svg"
+            src="/logo-mark-white.svg"
             alt=""
             className="absolute -right-16 -top-20 h-64 w-64 rotate-12 opacity-90"
           />
