@@ -10,12 +10,12 @@ export default function AuthLayout({ children }) {
           <img src="/logo-mark-white.svg" alt="" className="absolute -right-24 -top-24 h-80 w-80 opacity-90" />
         </div>
 
-        <div className="relative mt-40">
+        <div className="relative flex flex-1 flex-col justify-center">
           <img src="/logo-white.svg" alt={t('app.name')} className="h-10 w-auto" />
           <h2 className="mt-6 text-3xl font-semibold leading-tight">{t('app.tagline')}</h2>
         </div>
 
-        <div className="relative mt-auto text-center">
+        <div className="relative text-center">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-white/70">
             {t('app.developedBy')}
           </p>
