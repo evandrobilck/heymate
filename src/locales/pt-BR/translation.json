@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "HeyFlat",
-    "tagline": "Sua Casa Compartilhada, Organizada"
+    "tagline": "Sua Casa Compartilhada, Organizada",
+    "developedBy": "Desenvolvido por"
   },
   "nav": {
     "home": "Início",

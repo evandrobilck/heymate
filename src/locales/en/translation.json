@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "HeyFlat",
-    "tagline": "Your Shared Home, Sorted"
+    "tagline": "Your Shared Home, Sorted",
+    "developedBy": "Developed by"
   },
   "nav": {
     "home": "Home",
