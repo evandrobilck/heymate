@@ -338,6 +338,11 @@
     "canceledTitle": "Subscription canceled",
     "canceledBody": "{{houseName}}'s subscription is canceled. Reactivate it to keep using HeyFlat.",
     "nonAdminBlockedHint": "Ask the house admin to reactivate the subscription.",
-    "trialEndingBanner": "your free trial is ending soon."
+    "trialEndingBanner": "your free trial is ending soon.",
+    "resultSuccessTitle": "Payment successful",
+    "resultSuccessBody": "Your house's subscription is now active. You can close this tab and go back to HeyFlat.",
+    "resultCanceledTitle": "Checkout canceled",
+    "resultCanceledBody": "No charge was made. You can close this tab and go back to HeyFlat whenever you're ready.",
+    "resultCloseHint": "Close this tab to return to the app."
   }
 }

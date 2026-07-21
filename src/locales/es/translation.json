@@ -338,6 +338,11 @@
     "canceledTitle": "Suscripción cancelada",
     "canceledBody": "La suscripción de {{houseName}} está cancelada. Reactívala para seguir usando HeyFlat.",
     "nonAdminBlockedHint": "Pídele al admin de la casa que reactive la suscripción.",
-    "trialEndingBanner": "tu prueba gratis está por terminar."
+    "trialEndingBanner": "tu prueba gratis está por terminar.",
+    "resultSuccessTitle": "Pago confirmado",
+    "resultSuccessBody": "La suscripción de tu casa ya está activa. Puedes cerrar esta pestaña y volver a HeyFlat.",
+    "resultCanceledTitle": "Checkout cancelado",
+    "resultCanceledBody": "No se realizó ningún cobro. Puedes cerrar esta pestaña y volver a HeyFlat cuando quieras.",
+    "resultCloseHint": "Cierra esta pestaña para volver a la app."
   }
 }

@@ -1,4 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { Capacitor } from '@capacitor/core'
+import { Browser } from '@capacitor/browser'
 import { supabase } from '../services/supabase'
 import { useHouse } from './HouseContext'
 
@@ -80,16 +82,24 @@ export function SubscriptionProvider({ children }) {
     }
   }, [house?.id, refresh])
 
-  // Starts a real Stripe Checkout session (test mode) and redirects the
-  // browser there. The subscription row itself is only updated once Stripe
-  // confirms payment via the stripe-webhook edge function.
+  // Starts a real Stripe Checkout session (test mode). On native platforms
+  // this opens in an in-app browser tab (SFSafariViewController / Custom
+  // Tabs) instead of the app's own webview, since payment happening outside
+  // the app's own UI is what keeps this exempt from Apple/Google's in-app
+  // purchase requirement. The subscription row itself is only updated once
+  // Stripe confirms payment via the stripe-webhook edge function.
   async function startCheckout() {
     if (!house?.id) return
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { house_id: house.id },
     })
     if (error) throw new Error(await readFunctionError(error))
-    window.location.href = data.url
+
+    if (Capacitor.isNativePlatform()) {
+      await Browser.open({ url: data.url })
+    } else {
+      window.location.href = data.url
+    }
   }
 
   // Cancels the subscription in Stripe (test mode). house_subscriptions is
