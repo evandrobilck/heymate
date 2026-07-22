@@ -16,6 +16,8 @@ const TarefasPage = lazy(() => import('./pages/TarefasPage'))
 const GastosPage = lazy(() => import('./pages/GastosPage'))
 const ComprasPage = lazy(() => import('./pages/ComprasPage'))
 const CalendarioPage = lazy(() => import('./pages/CalendarioPage'))
+const ManutencaoPage = lazy(() => import('./pages/ManutencaoPage'))
+const InspecaoPage = lazy(() => import('./pages/InspecaoPage'))
 const CasaPage = lazy(() => import('./pages/CasaPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
@@ -77,6 +79,8 @@ export default function App() {
           <Route path="/gastos" element={<GastosPage />} />
           <Route path="/compras" element={<ComprasPage />} />
           <Route path="/calendario" element={<CalendarioPage />} />
+          <Route path="/manutencao" element={<ManutencaoPage />} />
+          <Route path="/inspecao" element={<InspecaoPage />} />
           <Route path="/casa" element={<CasaPage />} />
           <Route path="/configuracoes" element={<SettingsPage />} />
           <Route path="/perfil" element={<ProfilePage />} />

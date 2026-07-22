@@ -62,6 +62,24 @@ export function HouseIcon(props) {
   )
 }
 
+export function MaintenanceIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4l-2.65 2.65a1.5 1.5 0 0 1-2.12 0l-.88-.88a1.5 1.5 0 0 1 0-2.12Z" />
+    </svg>
+  )
+}
+
+export function InspectionIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M8 8h8M8 12h5" />
+      <path d="m8.5 16 1.8 1.8L14 14" />
+    </svg>
+  )
+}
+
 export function SettingsIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -88,6 +106,8 @@ export const NAV_TABS = [
   { to: '/gastos', labelKey: 'nav.expenses', Icon: ExpensesIcon },
   { to: '/compras', labelKey: 'nav.shopping', Icon: ShoppingIcon },
   { to: '/calendario', labelKey: 'nav.calendar', Icon: CalendarIcon },
+  { to: '/manutencao', labelKey: 'nav.maintenance', Icon: MaintenanceIcon },
+  { to: '/inspecao', labelKey: 'nav.inspection', Icon: InspectionIcon },
   { to: '/casa', labelKey: 'nav.house', Icon: HouseIcon },
   { to: '/configuracoes', labelKey: 'nav.settings', Icon: SettingsIcon, adminOnly: true },
 ]

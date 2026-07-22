@@ -14,6 +14,8 @@ import { CategoriesProvider } from './contexts/CategoriesContext'
 import { BillsProvider } from './contexts/BillsContext'
 import { TasksProvider } from './contexts/TasksContext'
 import { ShoppingProvider } from './contexts/ShoppingContext'
+import { MaintenanceProvider } from './contexts/MaintenanceContext'
+import { InspectionProvider } from './contexts/InspectionContext'
 import { VaultProvider } from './contexts/VaultContext'
 import App from './App.jsx'
 
@@ -31,9 +33,13 @@ createRoot(document.getElementById('root')).render(
                       <BillsProvider>
                         <ShoppingProvider>
                           <TasksProvider>
-                            <VaultProvider>
-                              <App />
-                            </VaultProvider>
+                            <MaintenanceProvider>
+                              <InspectionProvider>
+                                <VaultProvider>
+                                  <App />
+                                </VaultProvider>
+                              </InspectionProvider>
+                            </MaintenanceProvider>
                           </TasksProvider>
                         </ShoppingProvider>
                       </BillsProvider>
