@@ -10,6 +10,8 @@ const LoginPage = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage'))
 const CheckoutResultPage = lazy(() => import('./pages/CheckoutResultPage'))
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'))
+const SupportPage = lazy(() => import('./pages/SupportPage'))
 const HomePage = lazy(() => import('./pages/HomePage'))
 const ContasPage = lazy(() => import('./pages/ContasPage'))
 const TarefasPage = lazy(() => import('./pages/TarefasPage'))
@@ -52,6 +54,8 @@ export default function App() {
         />
 
         <Route path="/checkout-resultado" element={<CheckoutResultPage />} />
+        <Route path="/privacidade" element={<PrivacyPolicyPage />} />
+        <Route path="/suporte" element={<SupportPage />} />
 
         <Route
           path="/onboarding"
