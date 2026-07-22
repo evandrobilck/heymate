@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBills } from '../contexts/BillsContext'
+import { isBillOccurrenceVisible } from '../utils/recurrence'
 import BillCard from '../components/BillCard'
 import AddBillForm from '../components/AddBillForm'
 import BalanceSummary from '../components/BalanceSummary'
@@ -13,8 +14,10 @@ export default function ContasPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingBill, setEditingBill] = useState(null)
 
-  const pendingBills = bills.filter((bill) => bill.participantIds.some((id) => !bill.shares[id].paid))
-  const paidBills = bills.filter((bill) => bill.participantIds.every((id) => bill.shares[id].paid))
+  const visibleBills = bills.filter(isBillOccurrenceVisible)
+
+  const pendingBills = visibleBills.filter((bill) => bill.participantIds.some((id) => !bill.shares[id].paid))
+  const paidBills = visibleBills.filter((bill) => bill.participantIds.every((id) => bill.shares[id].paid))
 
   return (
     <div>

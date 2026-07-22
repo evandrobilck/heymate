@@ -74,6 +74,17 @@ export function getRecurrenceOccurrencesInRange(
   return results
 }
 
+// Pages that only ever show a bill's stored due_date (not a rolling
+// per-occurrence view, e.g. ContasPage/BalanceSummary) need to know whether
+// that one date has been individually excluded or cut off by the recurring
+// series' end — either way means "nothing to show for this bill right now".
+export function isBillOccurrenceVisible(bill) {
+  if (bill.recurrence === 'none') return true
+  if (bill.excludedDates.includes(bill.dueDate)) return false
+  if (bill.recurrenceUntil && bill.dueDate > bill.recurrenceUntil) return false
+  return true
+}
+
 // The next occurrence on or after `fromKey`, searching up to a year ahead.
 export function getNextOccurrenceOnOrAfter(
   dueDateKey,
