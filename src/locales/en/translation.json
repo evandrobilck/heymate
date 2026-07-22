@@ -156,9 +156,6 @@
     "assigneeHint": "Pick one or more roommates. Leave everyone unchecked for a general task.",
     "general": "Everyone",
     "recurrenceLabel": "Recurrence",
-    "notifyLabel": "Notify assignee",
-    "notifyTimeLabel": "Notify at time",
-    "notifyTimeHint": "Optional. E.g. 7pm for tasks that can only be done at night, like taking out the trash.",
     "save": "Save task",
     "todoTitle": "To do",
     "doneTitle": "Done",
@@ -166,7 +163,6 @@
     "markDone": "Mark as done",
     "whoCompleted": "Who did it?",
     "confirmDone": "Confirm",
-    "notifyOn": "Notifications on",
     "completedBy": "Done by {{name}} · {{date}}",
     "dueDateLabel": "Due date (optional)",
     "dueOn": "Due {{date}}",
@@ -391,5 +387,17 @@
     "taskError": "Couldn't update the task. Try again.",
     "deleteConfirm": "Delete this inspection and its tasks? This can't be undone.",
     "deleteError": "Couldn't delete. Try again."
+  },
+  "reminders": {
+    "label": "Reminders",
+    "billHint": "Add one or more reminders for this bill, each with its own channel, how many days before the due date, and time.",
+    "taskHint": "Add one or more reminders for this task, each with its own channel, how many days before the due date, and time.",
+    "addReminder": "Add reminder",
+    "daysBefore": "day(s) before",
+    "channel": {
+      "email": "Email",
+      "push": "Push",
+      "both": "Email & Push"
+    }
   }
 }

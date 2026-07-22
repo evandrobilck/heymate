@@ -156,9 +156,6 @@
     "assigneeHint": "Elige uno o más compañeros. Deja todos sin marcar para una tarea general.",
     "general": "Todos",
     "recurrenceLabel": "Recurrencia",
-    "notifyLabel": "Notificar al responsable",
-    "notifyTimeLabel": "Notificar a la hora",
-    "notifyTimeHint": "Opcional. Ej.: 19:00 para tareas que solo se pueden hacer de noche, como sacar la basura.",
     "save": "Guardar tarea",
     "todoTitle": "Por hacer",
     "doneTitle": "Hechas",
@@ -166,7 +163,6 @@
     "markDone": "Marcar como hecha",
     "whoCompleted": "¿Quién lo hizo?",
     "confirmDone": "Confirmar",
-    "notifyOn": "Notificaciones activas",
     "completedBy": "Hecha por {{name}} · {{date}}",
     "dueDateLabel": "Vencimiento (opcional)",
     "dueOn": "Vence {{date}}",
@@ -391,5 +387,17 @@
     "taskError": "No se pudo actualizar la tarea. Intenta de nuevo.",
     "deleteConfirm": "¿Eliminar esta inspección y sus tareas? Esta acción no se puede deshacer.",
     "deleteError": "No se pudo eliminar. Intenta de nuevo."
+  },
+  "reminders": {
+    "label": "Recordatorios",
+    "billHint": "Agrega uno o más recordatorios para esta cuenta, cada uno con su canal, cuántos días antes del vencimiento y hora.",
+    "taskHint": "Agrega uno o más recordatorios para esta tarea, cada uno con su canal, cuántos días antes del vencimiento y hora.",
+    "addReminder": "Agregar recordatorio",
+    "daysBefore": "día(s) antes",
+    "channel": {
+      "email": "Correo",
+      "push": "Push",
+      "both": "Correo y Push"
+    }
   }
 }

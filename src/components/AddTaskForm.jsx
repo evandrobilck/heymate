@@ -5,6 +5,7 @@ import { useHouse } from '../contexts/HouseContext'
 import { useTasks } from '../contexts/TasksContext'
 import { taskRecurrenceOptions } from '../services/mockData'
 import Modal from './Modal'
+import ReminderList from './ReminderList'
 
 export default function AddTaskForm({ onClose, task = null }) {
   const { t } = useTranslation()
@@ -30,8 +31,7 @@ export default function AddTaskForm({ onClose, task = null }) {
   const [assigneeIds, setAssigneeIds] = useState(task?.assigneeIds ?? [])
   const [recurrence, setRecurrence] = useState(task?.recurrence ?? 'none')
   const [dueDate, setDueDate] = useState(task?.dueDate ?? '')
-  const [notify, setNotify] = useState(task?.notify ?? false)
-  const [notifyTime, setNotifyTime] = useState(task?.notifyTime ?? '')
+  const [reminders, setReminders] = useState(task?.reminders ?? [])
 
   const isValid = title.trim() !== ''
 
@@ -50,8 +50,7 @@ export default function AddTaskForm({ onClose, task = null }) {
       assigneeIds,
       recurrence,
       dueDate: dueDate || null,
-      notify,
-      notifyTime: notify ? notifyTime || null : null,
+      reminders,
     }
 
     if (isEditing) {
@@ -129,28 +128,11 @@ export default function AddTaskForm({ onClose, task = null }) {
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                checked={notify}
-                onChange={(event) => setNotify(event.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-brand-600"
-              />
-              {t('tasksPage.notifyLabel')}
-            </label>
-
-            {notify && (
-              <div className="mt-2">
-                <label className="text-xs font-medium text-gray-600">{t('tasksPage.notifyTimeLabel')}</label>
-                <input
-                  type="time"
-                  value={notifyTime}
-                  onChange={(event) => setNotifyTime(event.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
-                />
-                <p className="mt-0.5 text-xs text-gray-400">{t('tasksPage.notifyTimeHint')}</p>
-              </div>
-            )}
+            <label className="text-xs font-medium text-gray-600">{t('reminders.label')}</label>
+            <p className="mt-0.5 text-xs text-gray-400">{t('reminders.taskHint')}</p>
+            <div className="mt-2">
+              <ReminderList reminders={reminders} onChange={setReminders} />
+            </div>
           </div>
 
           <button

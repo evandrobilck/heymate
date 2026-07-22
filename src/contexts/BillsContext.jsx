@@ -29,6 +29,12 @@ function mapBillRow(row) {
     source: row.source,
     participantIds: (row.bill_shares ?? []).map((share) => share.user_id),
     shares,
+    reminders: (row.bill_reminders ?? []).map((reminder) => ({
+      id: reminder.id,
+      channel: reminder.channel,
+      daysBefore: reminder.days_before,
+      timeOfDay: reminder.time_of_day?.slice(0, 5),
+    })),
   }
 }
 
@@ -46,7 +52,7 @@ export function BillsProvider({ children }) {
 
     const { data, error } = await supabase
       .from('bills')
-      .select('*, bill_shares(*), bill_occurrence_exceptions(occurrence_date)')
+      .select('*, bill_shares(*), bill_occurrence_exceptions(occurrence_date), bill_reminders(*)')
       .eq('house_id', house.id)
       .order('due_date', { ascending: true })
 
@@ -76,12 +82,30 @@ export function BillsProvider({ children }) {
       )
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_shares' }, () => refresh())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_occurrence_exceptions' }, () => refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_reminders' }, () => refresh())
       .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
     }
   }, [house?.id, refresh])
+
+  async function syncBillReminders(billId, reminders) {
+    const { error: deleteError } = await supabase.from('bill_reminders').delete().eq('bill_id', billId)
+    if (deleteError) throw deleteError
+
+    if (reminders.length > 0) {
+      const { error: insertError } = await supabase.from('bill_reminders').insert(
+        reminders.map((reminder) => ({
+          bill_id: billId,
+          channel: reminder.channel,
+          days_before: reminder.daysBefore,
+          time_of_day: reminder.timeOfDay,
+        }))
+      )
+      if (insertError) throw insertError
+    }
+  }
 
   async function addBill(bill) {
     const shares = bill.participantIds.map((userId) => ({
@@ -92,7 +116,7 @@ export function BillsProvider({ children }) {
       paid_at: bill.shares[userId].paidAt ?? null,
     }))
 
-    const { error } = await supabase.rpc('create_bill', {
+    const { data, error } = await supabase.rpc('create_bill', {
       p_house_id: house.id,
       p_title: bill.title,
       p_category: bill.category,
@@ -105,6 +129,7 @@ export function BillsProvider({ children }) {
     })
 
     if (error) throw error
+    if (bill.reminders?.length > 0) await syncBillReminders(data.id, bill.reminders)
     await refresh()
   }
 
@@ -137,6 +162,7 @@ export function BillsProvider({ children }) {
     })
 
     if (error) throw error
+    if (bill.reminders) await syncBillReminders(billId, bill.reminders)
     await refresh()
   }
 

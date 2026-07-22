@@ -11,12 +11,16 @@ function mapTaskRow(row) {
     assigneeIds: (row.task_assignees ?? []).map((assignee) => assignee.user_id),
     recurrence: row.recurrence,
     dueDate: row.due_date,
-    notify: row.notify,
-    notifyTime: row.notify_time ? row.notify_time.slice(0, 5) : null,
     completed: row.completed,
     completedByIds: (row.task_completers ?? []).map((completer) => completer.user_id),
     completedAt: row.completed_at,
     createdBy: row.created_by,
+    reminders: (row.task_reminders ?? []).map((reminder) => ({
+      id: reminder.id,
+      channel: reminder.channel,
+      daysBefore: reminder.days_before,
+      timeOfDay: reminder.time_of_day?.slice(0, 5),
+    })),
   }
 }
 
@@ -34,7 +38,7 @@ export function TasksProvider({ children }) {
 
     const { data, error } = await supabase
       .from('tasks')
-      .select('*, task_assignees(user_id), task_completers(user_id)')
+      .select('*, task_assignees(user_id), task_completers(user_id), task_reminders(*)')
       .eq('house_id', house.id)
       .order('created_at', { ascending: false })
 
@@ -64,12 +68,30 @@ export function TasksProvider({ children }) {
       )
       .on('postgres_changes', { event: '*', schema: 'public', table: 'task_assignees' }, () => refresh())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'task_completers' }, () => refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_reminders' }, () => refresh())
       .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
     }
   }, [house?.id, refresh])
+
+  async function syncTaskReminders(taskId, reminders) {
+    const { error: deleteError } = await supabase.from('task_reminders').delete().eq('task_id', taskId)
+    if (deleteError) throw deleteError
+
+    if (reminders.length > 0) {
+      const { error: insertError } = await supabase.from('task_reminders').insert(
+        reminders.map((reminder) => ({
+          task_id: taskId,
+          channel: reminder.channel,
+          days_before: reminder.daysBefore,
+          time_of_day: reminder.timeOfDay,
+        }))
+      )
+      if (insertError) throw insertError
+    }
+  }
 
   async function addTask(task) {
     const { data, error } = await supabase
@@ -79,8 +101,6 @@ export function TasksProvider({ children }) {
         title: task.title,
         recurrence: task.recurrence,
         due_date: task.dueDate,
-        notify: task.notify,
-        notify_time: task.notifyTime,
         created_by: task.createdBy,
       })
       .select()
@@ -96,6 +116,8 @@ export function TasksProvider({ children }) {
       if (assigneesError) throw assigneesError
     }
 
+    if (task.reminders?.length > 0) await syncTaskReminders(data.id, task.reminders)
+
     await refresh()
   }
 
@@ -106,8 +128,6 @@ export function TasksProvider({ children }) {
         title: task.title,
         recurrence: task.recurrence,
         due_date: task.dueDate,
-        notify: task.notify,
-        notify_time: task.notifyTime,
       })
       .eq('id', taskId)
 
@@ -123,6 +143,8 @@ export function TasksProvider({ children }) {
 
       if (assigneesError) throw assigneesError
     }
+
+    if (task.reminders) await syncTaskReminders(taskId, task.reminders)
 
     await refresh()
   }

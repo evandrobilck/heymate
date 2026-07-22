@@ -68,16 +68,26 @@ export function ShoppingProvider({ children }) {
   }, [house?.id, refresh])
 
   async function addItem(name, userId) {
-    const { error } = await supabase.from('shopping_items').insert({
-      house_id: house.id,
-      name,
-      added_by: userId,
-    })
+    const { data, error } = await supabase
+      .from('shopping_items')
+      .insert({
+        house_id: house.id,
+        name,
+        added_by: userId,
+      })
+      .select()
+      .single()
 
     if (error) {
       console.error(error)
       return
     }
+
+    // Fire-and-forget: instant push to the rest of the house. Never block
+    // adding the item on this, and never surface a failure here — push
+    // isn't wired up yet (needs Firebase), so this is a safe no-op for now.
+    supabase.functions.invoke('notify-shopping-added', { body: { item_id: data.id } }).catch(() => {})
+
     await refresh()
   }
 

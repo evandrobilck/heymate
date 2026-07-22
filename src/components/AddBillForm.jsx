@@ -7,6 +7,7 @@ import { billCategories, recurrenceOptions } from '../services/mockData'
 import { computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
 import { formatCurrency } from '../utils/formatCurrency'
 import Modal from './Modal'
+import ReminderList from './ReminderList'
 
 const SPLIT_TYPES = ['equal', 'percentage', 'exact']
 
@@ -57,6 +58,7 @@ export default function AddBillForm({ onClose, bill = null }) {
       ? Object.fromEntries(bill.participantIds.map((id) => [id, String(bill.shares[id].amount ?? '')]))
       : {}
   )
+  const [reminders, setReminders] = useState(bill?.reminders ?? [])
 
   const amountValue = Number(totalAmount) || 0
 
@@ -104,6 +106,7 @@ export default function AddBillForm({ onClose, bill = null }) {
       splitType,
       participantIds,
       shares,
+      reminders,
     }
 
     if (isEditing) {
@@ -299,6 +302,14 @@ export default function AddBillForm({ onClose, bill = null }) {
                 })}
               </p>
             )}
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-gray-600">{t('reminders.label')}</label>
+            <p className="mt-0.5 text-xs text-gray-400">{t('reminders.billHint')}</p>
+            <div className="mt-2">
+              <ReminderList reminders={reminders} onChange={setReminders} />
+            </div>
           </div>
 
           <button

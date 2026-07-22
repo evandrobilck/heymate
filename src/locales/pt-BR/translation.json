@@ -156,9 +156,6 @@
     "assigneeHint": "Escolha um ou mais moradores. Deixe todos desmarcados para uma tarefa geral.",
     "general": "Todos",
     "recurrenceLabel": "Recorrência",
-    "notifyLabel": "Notificar responsável",
-    "notifyTimeLabel": "Notificar horário",
-    "notifyTimeHint": "Opcional. Ex.: 19:00 para tarefas que só podem ser feitas à noite, como tirar o lixo.",
     "save": "Salvar tarefa",
     "todoTitle": "A fazer",
     "doneTitle": "Feitas",
@@ -166,7 +163,6 @@
     "markDone": "Marcar como feita",
     "whoCompleted": "Quem fez?",
     "confirmDone": "Confirmar",
-    "notifyOn": "Notificações ativas",
     "completedBy": "Feita por {{name}} · {{date}}",
     "dueDateLabel": "Vencimento (opcional)",
     "dueOn": "Vence {{date}}",
@@ -391,5 +387,17 @@
     "taskError": "Não foi possível atualizar a tarefa. Tente de novo.",
     "deleteConfirm": "Apagar esta inspeção e suas tarefas? Essa ação não pode ser desfeita.",
     "deleteError": "Não foi possível apagar. Tente de novo."
+  },
+  "reminders": {
+    "label": "Lembretes",
+    "billHint": "Adicione um ou mais lembretes pra essa conta, cada um com seu canal, quantos dias antes do vencimento e horário.",
+    "taskHint": "Adicione um ou mais lembretes pra essa tarefa, cada um com seu canal, quantos dias antes do vencimento e horário.",
+    "addReminder": "Adicionar lembrete",
+    "daysBefore": "dia(s) antes",
+    "channel": {
+      "email": "E-mail",
+      "push": "Push",
+      "both": "E-mail e Push"
+    }
   }
 }
