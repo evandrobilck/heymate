@@ -5,6 +5,7 @@ import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { computeBalances } from '../utils/computeBalances'
 import { formatCurrency } from '../utils/formatCurrency'
+import { isBillOccurrenceVisible } from '../utils/recurrence'
 import Avatar from './Avatar'
 
 function BalanceCard({ title, total, entries, tone, emptyLabel, memberName, findMember, currency, locale }) {
@@ -59,7 +60,7 @@ export default function HomeBalanceCards() {
   const { bills } = useBills()
 
   const { owedToYou, youOwe, totalOwedToYou, totalYouOwe } = useMemo(
-    () => computeBalances(bills, user.id),
+    () => computeBalances(bills.filter(isBillOccurrenceVisible), user.id),
     [bills, user.id]
   )
 
