@@ -3,10 +3,12 @@ import Sidebar from './Sidebar'
 import MobileHeader from './MobileHeader'
 import MobileNav from './MobileNav'
 import TrialBanner from './TrialBanner'
+import PushRegistration from './PushRegistration'
 
 export default function Layout() {
   return (
     <div className="flex h-svh flex-col overflow-hidden bg-gray-50 md:flex-row">
+      <PushRegistration />
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <MobileHeader />

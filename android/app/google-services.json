@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "50851720081",
+    "project_id": "heyflat-c8fed",
+    "storage_bucket": "heyflat-c8fed.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50851720081:android:2f6c595a224a692d220830",
+        "android_client_info": {
+          "package_name": "au.com.heyflat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_rR8xXwV_xaJKlOUO4I8kgzJRyZ0t9zo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

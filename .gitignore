@@ -37,3 +37,10 @@ supabase/.temp/
 
 # Apple/App Store Connect private keys — never commit these
 *.p8
+
+# Firebase service account keys (Admin SDK) — never commit these. Note
+# google-services.json / GoogleService-Info.plist are NOT secret (client
+# identifiers only) and are intentionally tracked inside android/app/ and
+# ios/App/App/ — this only blocks stray copies elsewhere plus the real key.
+/google-services.json
+*firebase-adminsdk*.json
