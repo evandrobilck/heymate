@@ -7,5 +7,10 @@
   },
   "ios": {
     "contentInset": "automatic"
+  },
+  "plugins": {
+    "FirebaseMessaging": {
+      "presentationOptions": ["alert", "badge", "sound"]
+    }
   }
 }

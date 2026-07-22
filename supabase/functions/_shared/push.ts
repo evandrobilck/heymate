@@ -65,24 +65,28 @@ async function getAccessToken(): Promise<string | null> {
 
 // Sends to every device token on file for a user. No-op (returns
 // immediately) until FCM_PROJECT_ID/FCM_CLIENT_EMAIL/FCM_PRIVATE_KEY are
-// all set as Supabase secrets and push_tokens has real rows.
+// all set as Supabase secrets and push_tokens has real rows. Returns a list
+// of error strings (empty on full success) instead of throwing, so a bad
+// token can't take down the caller's other notification channels.
 export async function sendPush(
   // deno-lint-ignore no-explicit-any
   supabase: any,
   userId: string,
   title: string,
   body: string
-) {
+): Promise<string[]> {
   const accessToken = await getAccessToken()
-  if (!accessToken) return
+  if (!accessToken) return ['FCM not configured or token exchange failed']
 
   const { data: tokens } = await supabase.from('push_tokens').select('token').eq('user_id', userId)
+  const errors: string[] = []
   for (const { token } of tokens ?? []) {
     const res = await fetch(`https://fcm.googleapis.com/v1/projects/${FCM_PROJECT_ID}/messages:send`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: { token, notification: { title, body } } }),
     })
-    if (!res.ok) console.error(`FCM send failed for token: ${await res.text()}`)
+    if (!res.ok) errors.push(`FCM send failed for token: ${await res.text()}`)
   }
+  return errors
 }

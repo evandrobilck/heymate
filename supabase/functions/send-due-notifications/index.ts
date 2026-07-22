@@ -292,10 +292,17 @@ Deno.serve(async () => {
             houseName: house?.name ?? '',
           })
           if (reminder.channel === 'email' || reminder.channel === 'both') {
-            if (profile.email) await sendEmail(profile.email, subject, html)
+            if (profile.email) {
+              try {
+                await sendEmail(profile.email, subject, html)
+              } catch (err) {
+                errors.push(`task ${task.id} -> ${a.user_id} (email): ${err}`)
+              }
+            }
           }
           if (reminder.channel === 'push' || reminder.channel === 'both') {
-            await sendPush(supabase, a.user_id, subject, `${task.title} — ${house?.name ?? ''}`)
+            const pushErrors = await sendPush(supabase, a.user_id, subject, `${task.title} — ${house?.name ?? ''}`)
+            for (const e of pushErrors) errors.push(`task ${task.id} -> ${a.user_id} (push): ${e}`)
           }
           sent++
         } catch (err) {
@@ -321,10 +328,17 @@ Deno.serve(async () => {
             amount: formatAmount(share.amount, house?.currency ?? 'AUD', profile.language ?? 'en'),
           })
           if (reminder.channel === 'email' || reminder.channel === 'both') {
-            if (profile.email) await sendEmail(profile.email, subject, html)
+            if (profile.email) {
+              try {
+                await sendEmail(profile.email, subject, html)
+              } catch (err) {
+                errors.push(`bill ${bill.id} -> ${share.user_id} (email): ${err}`)
+              }
+            }
           }
           if (reminder.channel === 'push' || reminder.channel === 'both') {
-            await sendPush(supabase, share.user_id, subject, `${bill.title} — ${house?.name ?? ''}`)
+            const pushErrors = await sendPush(supabase, share.user_id, subject, `${bill.title} — ${house?.name ?? ''}`)
+            for (const e of pushErrors) errors.push(`bill ${bill.id} -> ${share.user_id} (push): ${e}`)
           }
           sent++
         } catch (err) {
