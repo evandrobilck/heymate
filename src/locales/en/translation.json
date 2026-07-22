@@ -145,7 +145,14 @@
     "pending": "Pending",
     "markPaid": "Mark paid",
     "paidOn": "paid {{date}}",
-    "fromShopping": "Added from shopping list"
+    "fromShopping": "Added from shopping list",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this bill? This action can't be undone.",
+    "deleteOnlyThis": "Delete only this one",
+    "deleteThisAndFollowing": "Delete this and future ones",
+    "deleteOnlyThisConfirm": "Delete only this occurrence? The bill keeps existing for future dates.",
+    "deleteFollowingConfirm": "Delete this and all future occurrences? Past ones stay recorded.",
+    "deleteError": "Couldn't delete the bill. Please try again."
   },
   "tasksPage": {
     "addTask": "Add task",

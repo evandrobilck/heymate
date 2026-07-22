@@ -150,7 +150,7 @@ export function ShoppingProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ items, loading, addItem, recordPurchase, renameItem, deleteItem, updatePurchase }),
+    () => ({ items, loading, refresh, addItem, recordPurchase, renameItem, deleteItem, updatePurchase }),
     [items, loading]
   )
 

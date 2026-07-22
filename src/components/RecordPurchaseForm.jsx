@@ -217,7 +217,7 @@ export default function RecordPurchaseForm({ item, bill = null, onClose }) {
                 className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
               >
                 {activeMembers.map((member) => (
-                  <option key={member.id} value={member.id}>
+                  <option key={member.id} value={member.id} className="text-black">
                     {member.id === user.id ? t('shoppingPage.you') : member.name}
                   </option>
                 ))}

@@ -27,7 +27,7 @@ export default function ReminderList({ reminders, onChange }) {
             className="rounded-lg border border-gray-300 px-2 py-1.5 text-xs outline-none focus:border-brand-500"
           >
             {CHANNELS.map((channel) => (
-              <option key={channel} value={channel}>
+              <option key={channel} value={channel} className="text-black">
                 {t(`reminders.channel.${channel}`)}
               </option>
             ))}

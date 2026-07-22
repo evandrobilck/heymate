@@ -207,7 +207,7 @@ export default function AddBillForm({ onClose, bill = null }) {
               className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             >
               {recurrenceOptions.map((option) => (
-                <option key={option} value={option}>
+                <option key={option} value={option} className="text-black">
                   {t(`recurrence.${option}`)}
                 </option>
               ))}

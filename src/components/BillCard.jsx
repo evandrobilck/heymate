@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useCategories } from '../contexts/CategoriesContext'
+import { useToast } from '../contexts/ToastContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { billCategories } from '../services/mockData'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
@@ -12,9 +14,12 @@ export default function BillCard({ bill, onEdit }) {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const { house, isAdmin } = useHouse()
-  const { toggleParticipantPaid } = useBills()
+  const { toggleParticipantPaid, deleteBill, deleteOccurrence, deleteOccurrenceAndFollowing } = useBills()
   const { customBillCategories, customShoppingCategories } = useCategories()
+  const showToast = useToast()
+  const confirm = useConfirm()
   const [expanded, setExpanded] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   const category = billCategories.find((item) => item.id === bill.category)
   const customCategory = category
@@ -26,6 +31,39 @@ export default function BillCard({ bill, onEdit }) {
   }))
   const isFullyPaid = participants.every(({ share }) => share.paid)
   const canEdit = bill.createdBy === user.id || isAdmin
+  const isRecurring = bill.recurrence !== 'none'
+
+  async function handleDeleteNonRecurring() {
+    if (!(await confirm(t('billsPage.deleteConfirm')))) return
+    try {
+      await deleteBill(bill.id)
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.deleteError'))
+    }
+  }
+
+  async function handleDeleteOnlyThis() {
+    if (!(await confirm(t('billsPage.deleteOnlyThisConfirm')))) return
+    try {
+      await deleteOccurrence(bill.id, bill.dueDate)
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.deleteError'))
+    }
+    setConfirmingDelete(false)
+  }
+
+  async function handleDeleteFollowing() {
+    if (!(await confirm(t('billsPage.deleteFollowingConfirm')))) return
+    try {
+      await deleteOccurrenceAndFollowing(bill.id, bill.dueDate)
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.deleteError'))
+    }
+    setConfirmingDelete(false)
+  }
 
   return (
     <div className="rounded-xl border border-gray-200 bg-surface p-4">
@@ -62,14 +100,68 @@ export default function BillCard({ bill, onEdit }) {
       {expanded && (
         <div className="mt-3 border-t border-gray-100 pt-3">
           {canEdit && (
-            <div className="mb-2 flex justify-end">
-              <button
-                type="button"
-                onClick={onEdit}
-                className="text-xs font-medium text-brand-600 hover:text-brand-700"
-              >
-                {t('billsPage.edit')}
-              </button>
+            <div className="mb-2 flex flex-wrap items-center justify-end gap-3">
+              {confirmingDelete ? (
+                isRecurring ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleDeleteOnlyThis}
+                      className="text-xs font-medium text-red-600 hover:text-red-700"
+                    >
+                      {t('billsPage.deleteOnlyThis')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDeleteFollowing}
+                      className="text-xs font-medium text-red-600 hover:text-red-700"
+                    >
+                      {t('billsPage.deleteThisAndFollowing')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmingDelete(false)}
+                      className="text-xs font-medium text-gray-400"
+                    >
+                      {t('vaultPage.cancel')}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleDeleteNonRecurring}
+                      className="text-xs font-medium text-red-600 hover:text-red-700"
+                    >
+                      {t('billsPage.delete')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmingDelete(false)}
+                      className="text-xs font-medium text-gray-400"
+                    >
+                      {t('vaultPage.cancel')}
+                    </button>
+                  </>
+                )
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingDelete(true)}
+                    className="text-xs font-medium text-red-600 hover:text-red-700"
+                  >
+                    {t('billsPage.delete')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onEdit}
+                    className="text-xs font-medium text-brand-600 hover:text-brand-700"
+                  >
+                    {t('billsPage.edit')}
+                  </button>
+                </>
+              )}
             </div>
           )}
           <ul className="space-y-2">

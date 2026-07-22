@@ -27,16 +27,16 @@ export default function RoommateOfMonthCard() {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-surface">
       <div className="bg-gradient-to-br from-brand-600 to-brand-800 px-5 py-6 text-center text-white">
-        <p className="text-sm font-medium text-brand-100">🏆 {t('roommateOfMonth.title')}</p>
-        <p className="text-xs text-brand-200">{formatMonth(monthKey, i18n.language)}</p>
+        <p className="text-sm font-medium text-white/90">🏆 {t('roommateOfMonth.title')}</p>
+        <p className="text-xs text-white/70">{formatMonth(monthKey, i18n.language)}</p>
 
-        {leaders.length === 0 && <p className="mt-4 text-sm text-brand-100">{t('roommateOfMonth.empty')}</p>}
+        {leaders.length === 0 && <p className="mt-4 text-sm text-white/90">{t('roommateOfMonth.empty')}</p>}
 
         {leaders.length === 1 && (
           <div className="mt-4 flex flex-col items-center gap-2">
             <Avatar name={leaders[0].member.name} avatarUrl={leaders[0].member.avatarUrl} size="xl" />
             <p className="text-base font-semibold">{leaders[0].member.name}</p>
-            <p className="text-sm text-brand-100">{t('roommateOfMonth.taskCount', { count: leaders[0].count })}</p>
+            <p className="text-sm text-white/90">{t('roommateOfMonth.taskCount', { count: leaders[0].count })}</p>
           </div>
         )}
 
@@ -48,7 +48,7 @@ export default function RoommateOfMonthCard() {
                 <div key={member.id} className="flex flex-col items-center gap-1.5">
                   <Avatar name={member.name} avatarUrl={member.avatarUrl} size="lg" />
                   <p className="text-sm font-medium">{member.name}</p>
-                  <p className="text-xs text-brand-100">{t('roommateOfMonth.taskCount', { count })}</p>
+                  <p className="text-xs text-white/90">{t('roommateOfMonth.taskCount', { count })}</p>
                 </div>
               ))}
             </div>

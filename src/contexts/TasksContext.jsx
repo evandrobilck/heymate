@@ -185,7 +185,7 @@ export function TasksProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ tasks, loading, addTask, updateTask, deleteTask, markTaskDone, markTaskUndone }),
+    () => ({ tasks, loading, refresh, addTask, updateTask, deleteTask, markTaskDone, markTaskUndone }),
     [tasks, loading]
   )
 

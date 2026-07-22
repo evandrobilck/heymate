@@ -184,6 +184,12 @@ export function BillsProvider({ children }) {
     await refresh()
   }
 
+  async function deleteBill(billId) {
+    const { error } = await supabase.rpc('delete_bill', { p_bill_id: billId })
+    if (error) throw error
+    await refresh()
+  }
+
   async function deleteOccurrence(billId, occurrenceDate) {
     const { error } = await supabase
       .from('bill_occurrence_exceptions')
@@ -209,7 +215,17 @@ export function BillsProvider({ children }) {
   }
 
   const value = useMemo(
-    () => ({ bills, loading, addBill, updateBill, toggleParticipantPaid, deleteOccurrence, deleteOccurrenceAndFollowing }),
+    () => ({
+      bills,
+      loading,
+      refresh,
+      addBill,
+      updateBill,
+      deleteBill,
+      toggleParticipantPaid,
+      deleteOccurrence,
+      deleteOccurrenceAndFollowing,
+    }),
     [bills, loading]
   )
 

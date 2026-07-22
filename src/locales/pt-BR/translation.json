@@ -145,7 +145,14 @@
     "pending": "Pendente",
     "markPaid": "Marcar como pago",
     "paidOn": "pago em {{date}}",
-    "fromShopping": "Adicionada pela lista de compras"
+    "fromShopping": "Adicionada pela lista de compras",
+    "delete": "Excluir",
+    "deleteConfirm": "Apagar esta conta? Essa ação não pode ser desfeita.",
+    "deleteOnlyThis": "Excluir somente esta",
+    "deleteThisAndFollowing": "Excluir esta e as próximas",
+    "deleteOnlyThisConfirm": "Excluir somente esta ocorrência? A conta continua existindo para as próximas datas.",
+    "deleteFollowingConfirm": "Excluir esta e todas as próximas ocorrências? As anteriores continuam registradas.",
+    "deleteError": "Não foi possível apagar a conta. Tente de novo."
   },
   "tasksPage": {
     "addTask": "Adicionar tarefa",

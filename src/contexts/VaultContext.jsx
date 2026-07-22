@@ -113,7 +113,7 @@ export function VaultProvider({ children }) {
     await refresh()
   }
 
-  const value = useMemo(() => ({ vault, updateWifi, addCustomField, removeCustomField }), [vault])
+  const value = useMemo(() => ({ vault, refresh, updateWifi, addCustomField, removeCustomField }), [vault])
 
   return <VaultContext.Provider value={value}>{children}</VaultContext.Provider>
 }

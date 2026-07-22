@@ -4,6 +4,10 @@ import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useToast } from '../contexts/ToastContext'
 import { useConfirm } from '../contexts/ConfirmContext'
+import { useBills } from '../contexts/BillsContext'
+import { useTasks } from '../contexts/TasksContext'
+import { useShopping } from '../contexts/ShoppingContext'
+import { useVault } from '../contexts/VaultContext'
 import InviteCodeCard from '../components/InviteCodeCard'
 import AddressCard from '../components/AddressCard'
 import MemberListItem from '../components/MemberListItem'
@@ -28,6 +32,10 @@ export default function CasaPage() {
   const navigate = useNavigate()
   const showToast = useToast()
   const confirm = useConfirm()
+  const { refresh: refreshBills } = useBills()
+  const { refresh: refreshTasks } = useTasks()
+  const { refresh: refreshShopping } = useShopping()
+  const { refresh: refreshVault } = useVault()
 
   if (!house) return null
 
@@ -68,6 +76,9 @@ export default function CasaPage() {
     if (!(await confirm(t('housePage.resetDataConfirm')))) return
     try {
       await resetHouseData()
+      // The reset RPC deletes rows in bulk; don't rely solely on realtime
+      // to notice, refresh every affected context directly.
+      await Promise.all([refreshBills(), refreshTasks(), refreshShopping(), refreshVault()])
     } catch (err) {
       console.error(err)
       showToast(t('housePage.resetDataError'))
