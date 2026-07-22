@@ -6,11 +6,11 @@
 // date is today and the current hour matches the reminder's time, it goes
 // out via whichever channel(s) it's configured for (email, push, or both).
 import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { sendPush } from '../_shared/push.ts'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!
-const FCM_SERVER_KEY = Deno.env.get('FCM_SERVER_KEY') // unset until Firebase is wired up
 const FROM_EMAIL = 'HeyFlat <notificacoes@mail.heyflat.com.au>'
 
 // Notifications are timed for the house's market (Australia) rather than UTC,
@@ -185,21 +185,6 @@ async function sendEmail(to: string, subject: string, html: string) {
   }
 }
 
-// No-op until FCM_SERVER_KEY is configured (needs a Firebase project) and
-// the app registers device tokens into push_tokens — both still pending.
-async function sendPush(userId: string, title: string, body: string) {
-  if (!FCM_SERVER_KEY) return
-
-  const { data: tokens } = await supabase.from('push_tokens').select('token').eq('user_id', userId)
-  for (const { token } of tokens ?? []) {
-    await fetch('https://fcm.googleapis.com/fcm/send', {
-      method: 'POST',
-      headers: { Authorization: `key=${FCM_SERVER_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: token, notification: { title, body } }),
-    })
-  }
-}
-
 // --- Idempotency ---------------------------------------------------------
 
 async function claim(entityType: 'task' | 'bill', entityId: string, occurrenceDate: string, userId: string, reminderId: string) {
@@ -310,7 +295,7 @@ Deno.serve(async () => {
             if (profile.email) await sendEmail(profile.email, subject, html)
           }
           if (reminder.channel === 'push' || reminder.channel === 'both') {
-            await sendPush(a.user_id, subject, `${task.title} — ${house?.name ?? ''}`)
+            await sendPush(supabase, a.user_id, subject, `${task.title} — ${house?.name ?? ''}`)
           }
           sent++
         } catch (err) {
@@ -339,7 +324,7 @@ Deno.serve(async () => {
             if (profile.email) await sendEmail(profile.email, subject, html)
           }
           if (reminder.channel === 'push' || reminder.channel === 'both') {
-            await sendPush(share.user_id, subject, `${bill.title} — ${house?.name ?? ''}`)
+            await sendPush(supabase, share.user_id, subject, `${bill.title} — ${house?.name ?? ''}`)
           }
           sent++
         } catch (err) {
