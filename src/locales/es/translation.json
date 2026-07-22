@@ -375,6 +375,8 @@
     "addInspection": "Programar inspección",
     "dateLabel": "Fecha de la inspección",
     "notesLabel": "Notas (opcional)",
+    "checklistLabel": "Lista de tareas",
+    "checklistHint": "Qué hay que hacer para dejar la casa lista para la inspección.",
     "saving": "Guardando...",
     "save": "Guardar",
     "upcomingTitle": "Próximas",

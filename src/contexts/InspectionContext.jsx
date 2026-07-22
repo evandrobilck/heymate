@@ -67,15 +67,27 @@ export function InspectionProvider({ children }) {
     }
   }, [house?.id, refresh])
 
-  async function addInspection({ scheduledDate, notes, createdBy }) {
-    const { error } = await supabase.from('inspections').insert({
-      house_id: house.id,
-      scheduled_date: scheduledDate,
-      notes: notes || null,
-      created_by: createdBy,
-    })
+  async function addInspection({ scheduledDate, notes, createdBy, taskTitles = [] }) {
+    const { data, error } = await supabase
+      .from('inspections')
+      .insert({
+        house_id: house.id,
+        scheduled_date: scheduledDate,
+        notes: notes || null,
+        created_by: createdBy,
+      })
+      .select()
+      .single()
 
     if (error) throw error
+
+    if (taskTitles.length > 0) {
+      const { error: tasksError } = await supabase
+        .from('inspection_tasks')
+        .insert(taskTitles.map((title) => ({ inspection_id: data.id, title })))
+      if (tasksError) throw tasksError
+    }
+
     await refresh()
   }
 

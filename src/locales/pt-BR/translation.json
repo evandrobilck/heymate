@@ -375,6 +375,8 @@
     "addInspection": "Agendar inspeção",
     "dateLabel": "Data da inspeção",
     "notesLabel": "Observações (opcional)",
+    "checklistLabel": "Lista de tarefas",
+    "checklistHint": "O que precisa ser feito pra deixar a casa pronta pra inspeção.",
     "saving": "Salvando...",
     "save": "Salvar",
     "upcomingTitle": "Próximas",

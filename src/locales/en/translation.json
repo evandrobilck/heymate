@@ -375,6 +375,8 @@
     "addInspection": "Schedule inspection",
     "dateLabel": "Inspection date",
     "notesLabel": "Notes (optional)",
+    "checklistLabel": "Checklist",
+    "checklistHint": "What needs to be done to get the house ready for the inspection.",
     "saving": "Saving...",
     "save": "Save",
     "upcomingTitle": "Upcoming",
