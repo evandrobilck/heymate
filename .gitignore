@@ -44,3 +44,14 @@ supabase/.temp/
 # ios/App/App/ — this only blocks stray copies elsewhere plus the real key.
 /google-services.json
 *firebase-adminsdk*.json
+
+# Android release signing key — losing this means the app can never be
+# updated on Google Play again under the same listing. Never commit it.
+android/keystore/
+android/keystore.properties
+*.jks
+*.keystore
+
+# Working material for app store submissions (screenshots, listing copy,
+# not app code) — not meant to be committed.
+/store-assets/
