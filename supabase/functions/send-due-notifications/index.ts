@@ -110,13 +110,17 @@ function formatAmount(amount: number, currency: string, language: string): strin
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount)
 }
 
-function emailShell(innerHtml: string): string {
+function emailShell(innerHtml: string, icon?: string): string {
   return `<div style="font-family:-apple-system,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto">
-    <div style="background:#6e0bfc;padding:20px 24px;border-radius:12px 12px 0 0">
-      <span style="color:#fff;font-size:18px;font-weight:700">HeyFlat</span>
+    <div style="background:#6e0bfc;padding:24px;text-align:center;border-radius:16px 16px 0 0">
+      <img src="https://heyflat.com.au/email-logo-header.png" width="180" alt="HeyFlat" style="display:block;margin:0 auto;border:0" />
     </div>
-    <div style="border:1px solid #eee;border-top:none;padding:24px;border-radius:0 0 12px 12px;color:#111;font-size:14px;line-height:1.6">
+    <div style="background:#ffffff;border:1px solid #eee;border-top:none;border-bottom:none;padding:32px 24px;color:#111;font-size:14px;line-height:1.6">
+      ${icon ? `<div style="text-align:center;font-size:36px;margin-bottom:16px">${icon}</div>` : ''}
       ${innerHtml}
+    </div>
+    <div style="background:#6e0bfc;padding:24px;text-align:center;border-radius:0 0 16px 16px">
+      <img src="https://heyflat.com.au/email-logo-footer.png" width="90" alt="HeyFlat" style="display:block;margin:0 auto;border:0" />
     </div>
   </div>`
 }
@@ -128,19 +132,22 @@ const TEMPLATES: Record<'task' | 'bill', Record<string, (p: TemplateParams) => {
     en: (p) => ({
       subject: `Reminder: "${p.title}"`,
       html: emailShell(
-        `<p>Hi ${p.name},</p><p>Just a reminder about your task <strong>${p.title}</strong> in <strong>${p.houseName}</strong>.</p>`
+        `<p>Hi ${p.name},</p><p>Just a reminder about your task <strong>${p.title}</strong> in <strong>${p.houseName}</strong>.</p>`,
+        '🔔'
       ),
     }),
     'pt-BR': (p) => ({
       subject: `Lembrete: "${p.title}"`,
       html: emailShell(
-        `<p>Oi ${p.name},</p><p>Só lembrando da sua tarefa <strong>${p.title}</strong> em <strong>${p.houseName}</strong>.</p>`
+        `<p>Oi ${p.name},</p><p>Só lembrando da sua tarefa <strong>${p.title}</strong> em <strong>${p.houseName}</strong>.</p>`,
+        '🔔'
       ),
     }),
     es: (p) => ({
       subject: `Recordatorio: "${p.title}"`,
       html: emailShell(
-        `<p>Hola ${p.name},</p><p>Solo para recordarte tu tarea <strong>${p.title}</strong> en <strong>${p.houseName}</strong>.</p>`
+        `<p>Hola ${p.name},</p><p>Solo para recordarte tu tarea <strong>${p.title}</strong> en <strong>${p.houseName}</strong>.</p>`,
+        '🔔'
       ),
     }),
   },
@@ -148,19 +155,22 @@ const TEMPLATES: Record<'task' | 'bill', Record<string, (p: TemplateParams) => {
     en: (p) => ({
       subject: `Reminder: "${p.title}"`,
       html: emailShell(
-        `<p>Hi ${p.name},</p><p>Your share of <strong>${p.title}</strong> (<strong>${p.amount}</strong>) is coming up in <strong>${p.houseName}</strong>.</p>`
+        `<p>Hi ${p.name},</p><p>Your share of <strong>${p.title}</strong> (<strong>${p.amount}</strong>) is coming up in <strong>${p.houseName}</strong>.</p>`,
+        '🔔'
       ),
     }),
     'pt-BR': (p) => ({
       subject: `Lembrete: conta "${p.title}"`,
       html: emailShell(
-        `<p>Oi ${p.name},</p><p>Sua parte da conta <strong>${p.title}</strong> (<strong>${p.amount}</strong>) está chegando em <strong>${p.houseName}</strong>.</p>`
+        `<p>Oi ${p.name},</p><p>Sua parte da conta <strong>${p.title}</strong> (<strong>${p.amount}</strong>) está chegando em <strong>${p.houseName}</strong>.</p>`,
+        '🔔'
       ),
     }),
     es: (p) => ({
       subject: `Recordatorio: cuenta "${p.title}"`,
       html: emailShell(
-        `<p>Hola ${p.name},</p><p>Tu parte de <strong>${p.title}</strong> (<strong>${p.amount}</strong>) se acerca en <strong>${p.houseName}</strong>.</p>`
+        `<p>Hola ${p.name},</p><p>Tu parte de <strong>${p.title}</strong> (<strong>${p.amount}</strong>) se acerca en <strong>${p.houseName}</strong>.</p>`,
+        '🔔'
       ),
     }),
   },
