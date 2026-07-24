@@ -7,6 +7,7 @@ import { useBills } from '../contexts/BillsContext'
 import { useCategories } from '../contexts/CategoriesContext'
 import { useToast } from '../contexts/ToastContext'
 import { useConfirm } from '../contexts/ConfirmContext'
+import { resizeImageFile } from '../utils/resizeImage'
 import { billCategories, currencyOptions } from '../services/mockData'
 import CategoryManager from '../components/CategoryManager'
 import SubscriptionCard from '../components/SubscriptionCard'
@@ -74,7 +75,8 @@ export default function SettingsPage() {
     setUploadingPhoto(true)
     setPhotoError('')
     try {
-      await uploadHousePhoto(file)
+      const resized = await resizeImageFile(file, { maxDimension: 1200 })
+      await uploadHousePhoto(resized)
       showToast(t('profilePage.saved'))
     } catch (err) {
       console.error(err)

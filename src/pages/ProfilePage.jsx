@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { useToast } from '../contexts/ToastContext'
+import { resizeImageFile } from '../utils/resizeImage'
 import Avatar from '../components/Avatar'
 
 const LANGUAGE_LABELS = {
@@ -64,7 +65,8 @@ export default function ProfilePage() {
     setUploadingPhoto(true)
     setError('')
     try {
-      await uploadAvatar(file)
+      const resized = await resizeImageFile(file, { maxDimension: 800 })
+      await uploadAvatar(resized)
       showToast(t('profilePage.saved'))
     } catch (err) {
       console.error(err)
