@@ -97,7 +97,6 @@ export default function AddMaintenanceForm({ onClose }) {
             <input
               type="file"
               accept="image/*"
-              capture="environment"
               onChange={handlePhotoChange}
               className="hidden"
             />
