@@ -61,6 +61,18 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut()
   }
 
+  async function sendPasswordReset(email) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://app.heyflat.com.au/redefinir-senha',
+    })
+    if (error) throw error
+  }
+
+  async function updatePassword(newPassword) {
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    if (error) throw error
+  }
+
   async function updateProfile(updates) {
     const { error } = await supabase
       .from('profiles')
@@ -118,6 +130,8 @@ export function AuthProvider({ children }) {
       register,
       login,
       logout,
+      sendPasswordReset,
+      updatePassword,
       updateProfile,
       uploadAvatar,
     }),

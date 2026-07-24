@@ -1,72 +1,85 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import AuthLayout from '../components/AuthLayout'
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   const { t } = useTranslation()
-  const { login } = useAuth()
+  const { updatePassword } = useAuth()
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [done, setDone] = useState(false)
 
   async function handleSubmit(event) {
     event.preventDefault()
-    setSubmitting(true)
     setError('')
+
+    if (password !== confirmPassword) {
+      setError(t('auth.passwordsDontMatch'))
+      return
+    }
+
+    setSubmitting(true)
     try {
-      await login(email, password)
-      navigate('/home')
+      await updatePassword(password)
+      setDone(true)
+      setTimeout(() => navigate('/home'), 1500)
     } catch (err) {
       console.error(err)
-      setError(`${t('auth.loginError')} (${err.message})`)
+      setError(t('auth.updatePasswordError'))
     } finally {
       setSubmitting(false)
     }
   }
 
+  if (done) {
+    return (
+      <AuthLayout>
+        <h1 className="text-2xl font-semibold text-gray-900">{t('auth.passwordUpdated')}</h1>
+      </AuthLayout>
+    )
+  }
+
   return (
     <AuthLayout>
-      <h1 className="text-2xl font-semibold text-gray-900">{t('auth.login')}</h1>
+      <h1 className="text-2xl font-semibold text-gray-900">{t('auth.newPasswordTitle')}</h1>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-        <input
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder={t('auth.email')}
-          required
-          autoCapitalize="none"
-          autoCorrect="off"
-          autoComplete="email"
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? 'login-error' : undefined}
-          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
-        />
         <input
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          placeholder={t('auth.password')}
+          placeholder={t('auth.newPassword')}
           required
+          minLength={6}
           autoCapitalize="none"
           autoCorrect="off"
-          autoComplete="current-password"
+          autoComplete="new-password"
           aria-invalid={Boolean(error)}
-          aria-describedby={error ? 'login-error' : undefined}
+          aria-describedby={error ? 'reset-password-error' : undefined}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
         />
-        <p className="text-right">
-          <Link to="/esqueci-senha" className="text-xs font-medium text-brand-600">
-            {t('auth.forgotPassword')}
-          </Link>
-        </p>
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(event) => setConfirmPassword(event.target.value)}
+          placeholder={t('auth.confirmPassword')}
+          required
+          minLength={6}
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoComplete="new-password"
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? 'reset-password-error' : undefined}
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-brand-500"
+        />
         {error && (
-          <p id="login-error" role="alert" className="text-sm text-red-600">
+          <p id="reset-password-error" role="alert" className="text-sm text-red-600">
             {error}
           </p>
         )}
@@ -75,16 +88,9 @@ export default function LoginPage() {
           disabled={submitting}
           className="w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
         >
-          {submitting ? t('auth.loggingIn') : t('auth.login')}
+          {submitting ? t('auth.updatingPassword') : t('auth.updatePassword')}
         </button>
       </form>
-
-      <p className="mt-6 text-sm text-gray-500">
-        {t('auth.noAccount')}{' '}
-        <Link to="/register" className="font-medium text-brand-600">
-          {t('auth.register')}
-        </Link>
-      </p>
     </AuthLayout>
   )
 }

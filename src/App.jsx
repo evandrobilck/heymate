@@ -8,6 +8,8 @@ import RedirectIfAuthenticated from './components/RedirectIfAuthenticated'
 
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage'))
 const CheckoutResultPage = lazy(() => import('./pages/CheckoutResultPage'))
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'))
@@ -52,6 +54,16 @@ export default function App() {
             </RedirectIfAuthenticated>
           }
         />
+
+        <Route
+          path="/esqueci-senha"
+          element={
+            <RedirectIfAuthenticated>
+              <ForgotPasswordPage />
+            </RedirectIfAuthenticated>
+          }
+        />
+        <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
 
         <Route path="/checkout-resultado" element={<CheckoutResultPage />} />
         <Route path="/privacidade" element={<PrivacyPolicyPage />} />
