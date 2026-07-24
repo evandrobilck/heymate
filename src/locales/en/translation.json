@@ -366,6 +366,7 @@
     "photoLabel": "Photo (optional)",
     "addPhoto": "Add photo",
     "changePhoto": "Change photo",
+    "processingPhoto": "Processing photo...",
     "saving": "Saving...",
     "save": "Save",
     "openTitle": "Open",

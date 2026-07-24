@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useMaintenance } from '../contexts/MaintenanceContext'
 import { useToast } from '../contexts/ToastContext'
+import { resizeImageFile } from '../utils/resizeImage'
 import Modal from './Modal'
 
 export default function AddMaintenanceForm({ onClose }) {
@@ -16,15 +17,22 @@ export default function AddMaintenanceForm({ onClose }) {
   const [occurredOn, setOccurredOn] = useState(new Date().toISOString().slice(0, 10))
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
+  const [processingPhoto, setProcessingPhoto] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   const isValid = title.trim() !== ''
 
-  function handlePhotoChange(event) {
+  async function handlePhotoChange(event) {
     const file = event.target.files?.[0]
     if (!file) return
-    setPhotoFile(file)
-    setPhotoPreview(URL.createObjectURL(file))
+    setProcessingPhoto(true)
+    try {
+      const resized = await resizeImageFile(file)
+      setPhotoFile(resized)
+      setPhotoPreview(URL.createObjectURL(resized))
+    } finally {
+      setProcessingPhoto(false)
+    }
   }
 
   async function handleSubmit(event) {
@@ -93,11 +101,16 @@ export default function AddMaintenanceForm({ onClose }) {
           <label className="text-xs font-medium text-gray-600">{t('maintenancePage.photoLabel')}</label>
           {photoPreview && <img src={photoPreview} alt="" className="mt-2 h-40 w-full rounded-lg object-cover" />}
           <label className="mt-2 block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-3 text-center text-sm font-medium text-brand-600 hover:border-brand-400">
-            {photoPreview ? t('maintenancePage.changePhoto') : t('maintenancePage.addPhoto')}
+            {processingPhoto
+              ? t('maintenancePage.processingPhoto')
+              : photoPreview
+                ? t('maintenancePage.changePhoto')
+                : t('maintenancePage.addPhoto')}
             <input
               type="file"
               accept="image/*"
               onChange={handlePhotoChange}
+              disabled={processingPhoto}
               className="hidden"
             />
           </label>
