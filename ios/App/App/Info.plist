@@ -24,6 +24,12 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>HeyFlat uses your camera so you can take photos for maintenance requests and your profile picture.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>HeyFlat needs access to your photos so you can attach one to a maintenance request or your profile picture.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>HeyFlat needs permission to save photos, for example when downloading a maintenance photo.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
