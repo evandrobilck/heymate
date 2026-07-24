@@ -204,7 +204,14 @@
     "csvTitle": "Título",
     "csvCategory": "Categoria",
     "csvAmount": "Valor",
-    "csvDueDate": "Vencimento"
+    "csvDueDate": "Vencimento",
+    "addOld": "Adicionar conta antiga",
+    "addOldTitle": "Conta antiga",
+    "addOldHint": "Só entra nos relatórios de gastos — não aparece na aba Contas nem é dividida entre moradores.",
+    "dateLabel": "Data",
+    "save": "Salvar",
+    "oldExpensesTitle": "Contas antigas adicionadas",
+    "deleteOldConfirm": "Apagar esse lançamento antigo? Essa ação não pode ser desfeita."
   },
   "shoppingPage": {
     "addPlaceholder": "Adicionar item",

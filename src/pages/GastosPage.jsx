@@ -4,6 +4,8 @@ import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer,
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useCategories } from '../contexts/CategoriesContext'
+import { useHistoricalExpenses } from '../contexts/HistoricalExpensesContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { billCategories } from '../services/mockData'
 import { toDayKey } from '../utils/calendar'
 import {
@@ -18,6 +20,7 @@ import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 import { formatMonth } from '../utils/leaderboard'
 import EmptyState from '../components/EmptyState'
+import AddHistoricalExpenseForm from '../components/AddHistoricalExpenseForm'
 
 const CATEGORY_COLORS = {
   rent: '#a855f7',
@@ -59,9 +62,33 @@ export default function GastosPage() {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
   const { bills } = useBills()
+  const { historicalExpenses, deleteHistoricalExpense } = useHistoricalExpenses()
   const { customBillCategories, customShoppingCategories } = useCategories()
+  const confirm = useConfirm()
+  const [showAddOld, setShowAddOld] = useState(false)
 
   const allCustomCategories = [...customBillCategories, ...customShoppingCategories]
+
+  // Historical expenses are a manual log kept only for these reports — they
+  // never touch the `bills` table, so they're merged in here rather than
+  // inside BillsContext.
+  const combinedExpenses = useMemo(
+    () => [
+      ...bills,
+      ...historicalExpenses.map((expense) => ({
+        title: expense.title,
+        dueDate: expense.expenseDate,
+        totalAmount: expense.totalAmount,
+        category: expense.category,
+      })),
+    ],
+    [bills, historicalExpenses]
+  )
+
+  async function handleDeleteHistoricalExpense(expenseId) {
+    if (!(await confirm(t('expensesPage.deleteOldConfirm')))) return
+    await deleteHistoricalExpense(expenseId)
+  }
 
   function categoryLabel(categoryId) {
     const builtin = billCategories.find((cat) => cat.id === categoryId)
@@ -87,11 +114,11 @@ export default function GastosPage() {
     }
   }
 
-  const monthKeys = useMemo(() => getMonthKeysWithBills(bills), [bills])
+  const monthKeys = useMemo(() => getMonthKeysWithBills(combinedExpenses), [combinedExpenses])
 
   const categoryTotals = useMemo(
-    () => computeCategoryTotalsInRange(bills, periodStart, periodEnd),
-    [bills, periodStart, periodEnd]
+    () => computeCategoryTotalsInRange(combinedExpenses, periodStart, periodEnd),
+    [combinedExpenses, periodStart, periodEnd]
   )
   const categoryData = [
     ...billCategories.map((category) => ({
@@ -112,13 +139,13 @@ export default function GastosPage() {
     .sort((a, b) => b.value - a.value)
 
   const periodTotal = useMemo(
-    () => computeTotalInRange(bills, periodStart, periodEnd),
-    [bills, periodStart, periodEnd]
+    () => computeTotalInRange(combinedExpenses, periodStart, periodEnd),
+    [combinedExpenses, periodStart, periodEnd]
   )
   const previousRange = useMemo(() => getPreviousRange(periodStart, periodEnd), [periodStart, periodEnd])
   const previousTotal = useMemo(
-    () => computeTotalInRange(bills, previousRange.start, previousRange.end),
-    [bills, previousRange]
+    () => computeTotalInRange(combinedExpenses, previousRange.start, previousRange.end),
+    [combinedExpenses, previousRange]
   )
   const percentChange = previousTotal > 0 ? ((periodTotal - previousTotal) / previousTotal) * 100 : null
   const isIncrease = percentChange !== null && percentChange > 0.5
@@ -127,27 +154,37 @@ export default function GastosPage() {
 
   const monthlyData = useMemo(() => {
     const recentMonths = monthKeys.slice(0, 6).reverse()
-    return computeMonthlyTotals(bills, recentMonths).map((entry) => ({
+    return computeMonthlyTotals(combinedExpenses, recentMonths).map((entry) => ({
       ...entry,
       label: formatMonth(entry.monthKey, i18n.language),
     }))
-  }, [bills, monthKeys, i18n.language])
+  }, [combinedExpenses, monthKeys, i18n.language])
 
   function handleExport() {
     const rows = [
       [t('expensesPage.csvTitle'), t('expensesPage.csvCategory'), t('expensesPage.csvAmount'), t('expensesPage.csvDueDate')],
-      ...bills
+      ...combinedExpenses
         .filter((bill) => bill.dueDate >= periodStart && bill.dueDate <= periodEnd)
         .map((bill) => [bill.title, categoryLabel(bill.category), bill.totalAmount, bill.dueDate]),
     ]
     downloadCsv(`heyflat-expenses-${periodStart}_to_${periodEnd}.csv`, rows)
   }
 
-  if (bills.length === 0) {
+  if (combinedExpenses.length === 0) {
     return (
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">{t('nav.expenses')}</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-xl font-semibold text-gray-900">{t('nav.expenses')}</h1>
+          <button
+            type="button"
+            onClick={() => setShowAddOld(true)}
+            className="rounded-lg border border-brand-300 px-4 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50"
+          >
+            {t('expensesPage.addOld')}
+          </button>
+        </div>
         <EmptyState icon="📊" message={t('expensesPage.empty')} />
+        {showAddOld && <AddHistoricalExpenseForm onClose={() => setShowAddOld(false)} />}
       </div>
     )
   }
@@ -156,13 +193,22 @@ export default function GastosPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold text-gray-900">{t('nav.expenses')}</h1>
-        <button
-          type="button"
-          onClick={handleExport}
-          className="rounded-lg border border-brand-300 px-4 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50"
-        >
-          {t('expensesPage.export')}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setShowAddOld(true)}
+            className="rounded-lg border border-brand-300 px-4 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50"
+          >
+            {t('expensesPage.addOld')}
+          </button>
+          <button
+            type="button"
+            onClick={handleExport}
+            className="rounded-lg border border-brand-300 px-4 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50"
+          >
+            {t('expensesPage.export')}
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
@@ -315,6 +361,38 @@ export default function GastosPage() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {historicalExpenses.length > 0 && (
+        <div className="rounded-xl border border-gray-200 bg-surface p-4">
+          <p className="text-sm font-semibold text-gray-900">{t('expensesPage.oldExpensesTitle')}</p>
+          <ul className="mt-2 space-y-2">
+            {historicalExpenses.map((expense) => (
+              <li key={expense.id} className="flex items-center justify-between gap-2 text-sm">
+                <div>
+                  <p className="text-gray-800">{expense.title}</p>
+                  <p className="text-xs text-gray-400">
+                    {categoryLabel(expense.category)} · {formatDate(expense.expenseDate, i18n.language)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-medium text-gray-900">
+                    {formatCurrency(expense.totalAmount, i18n.language, house.currency)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteHistoricalExpense(expense.id)}
+                    className="text-xs text-gray-400 hover:text-red-600"
+                  >
+                    {t('billsPage.delete')}
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {showAddOld && <AddHistoricalExpenseForm onClose={() => setShowAddOld(false)} />}
     </div>
   )
 }

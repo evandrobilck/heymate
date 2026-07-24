@@ -204,7 +204,14 @@
     "csvTitle": "Título",
     "csvCategory": "Categoría",
     "csvAmount": "Monto",
-    "csvDueDate": "Vencimiento"
+    "csvDueDate": "Vencimiento",
+    "addOld": "Añadir cuenta antigua",
+    "addOldTitle": "Cuenta antigua",
+    "addOldHint": "Solo cuenta en estos informes de gastos — no aparece en la pestaña Cuentas ni se divide entre los compañeros.",
+    "dateLabel": "Fecha",
+    "save": "Guardar",
+    "oldExpensesTitle": "Cuentas antiguas añadidas",
+    "deleteOldConfirm": "¿Eliminar este gasto antiguo? Esta acción no se puede deshacer."
   },
   "shoppingPage": {
     "addPlaceholder": "Agregar artículo",

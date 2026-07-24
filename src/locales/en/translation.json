@@ -204,7 +204,14 @@
     "csvTitle": "Title",
     "csvCategory": "Category",
     "csvAmount": "Amount",
-    "csvDueDate": "Due date"
+    "csvDueDate": "Due date",
+    "addOld": "Add old bill",
+    "addOldTitle": "Old bill",
+    "addOldHint": "Only counts in these expense reports — it won't show up in the Bills tab or get split between roommates.",
+    "dateLabel": "Date",
+    "save": "Save",
+    "oldExpensesTitle": "Old bills added",
+    "deleteOldConfirm": "Delete this old expense entry? This can't be undone."
   },
   "shoppingPage": {
     "addPlaceholder": "Add an item",

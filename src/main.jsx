@@ -12,6 +12,7 @@ import { SubscriptionProvider } from './contexts/SubscriptionContext'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { CategoriesProvider } from './contexts/CategoriesContext'
 import { BillsProvider } from './contexts/BillsContext'
+import { HistoricalExpensesProvider } from './contexts/HistoricalExpensesContext'
 import { TasksProvider } from './contexts/TasksContext'
 import { ShoppingProvider } from './contexts/ShoppingContext'
 import { MaintenanceProvider } from './contexts/MaintenanceContext'
@@ -31,17 +32,19 @@ createRoot(document.getElementById('root')).render(
                   <LanguageProvider>
                     <CategoriesProvider>
                       <BillsProvider>
-                        <ShoppingProvider>
-                          <TasksProvider>
-                            <MaintenanceProvider>
-                              <InspectionProvider>
-                                <VaultProvider>
-                                  <App />
-                                </VaultProvider>
-                              </InspectionProvider>
-                            </MaintenanceProvider>
-                          </TasksProvider>
-                        </ShoppingProvider>
+                        <HistoricalExpensesProvider>
+                          <ShoppingProvider>
+                            <TasksProvider>
+                              <MaintenanceProvider>
+                                <InspectionProvider>
+                                  <VaultProvider>
+                                    <App />
+                                  </VaultProvider>
+                                </InspectionProvider>
+                              </MaintenanceProvider>
+                            </TasksProvider>
+                          </ShoppingProvider>
+                        </HistoricalExpensesProvider>
                       </BillsProvider>
                     </CategoriesProvider>
                   </LanguageProvider>
