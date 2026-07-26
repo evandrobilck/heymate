@@ -343,7 +343,6 @@
   },
   "subscription": {
     "title": "Suscripción",
-    "simulationNote": "Modo de prueba de Stripe — usa una tarjeta de prueba, ningún cobro real ocurre aquí.",
     "statusTrialing": "Prueba gratis",
     "statusActive": "Activa",
     "statusCanceled": "Cancelada",

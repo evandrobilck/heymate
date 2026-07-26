@@ -343,7 +343,6 @@
   },
   "subscription": {
     "title": "Assinatura",
-    "simulationNote": "Modo de teste do Stripe — use um cartão de teste, nenhuma cobrança real acontece aqui.",
     "statusTrialing": "Em teste grátis",
     "statusActive": "Ativa",
     "statusCanceled": "Cancelada",

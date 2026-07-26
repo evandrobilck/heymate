@@ -73,8 +73,6 @@ export default function SubscriptionCard() {
         </span>
       </div>
 
-      <p className="text-xs text-amber-600">{t('subscription.simulationNote')}</p>
-
       <p className="text-sm text-gray-600">{t('subscription.priceLabel', { price })}</p>
 
       {status === 'trialing' && isTrialExpired(subscription) && (

@@ -343,7 +343,6 @@
   },
   "subscription": {
     "title": "Subscription",
-    "simulationNote": "Stripe test mode — use a test card, no real charge happens here.",
     "statusTrialing": "Free trial",
     "statusActive": "Active",
     "statusCanceled": "Canceled",
