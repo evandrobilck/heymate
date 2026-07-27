@@ -204,6 +204,8 @@
   "expensesPage": {
     "byCategory": "By category",
     "monthlyComparison": "Monthly comparison",
+    "monthlyComparisonFor": "Monthly comparison — {{category}}",
+    "clearFilter": "View all",
     "export": "Export report (CSV)",
     "empty": "No expenses yet.",
     "noneInPeriod": "No expenses in this period.",

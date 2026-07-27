@@ -204,6 +204,8 @@
   "expensesPage": {
     "byCategory": "Por categoria",
     "monthlyComparison": "Comparativo mensal",
+    "monthlyComparisonFor": "Comparativo mensal — {{category}}",
+    "clearFilter": "Ver todas",
     "export": "Exportar relatório (CSV)",
     "empty": "Nenhum gasto ainda.",
     "noneInPeriod": "Nenhum gasto nesse período.",

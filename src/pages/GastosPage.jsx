@@ -66,6 +66,7 @@ export default function GastosPage() {
   const { customBillCategories, customShoppingCategories } = useCategories()
   const confirm = useConfirm()
   const [showAddOld, setShowAddOld] = useState(false)
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null)
 
   const allCustomCategories = [...customBillCategories, ...customShoppingCategories]
 
@@ -152,13 +153,25 @@ export default function GastosPage() {
   const isDecrease = percentChange !== null && percentChange < -0.5
   const topCategory = categoryData[0] ?? null
 
+  const monthlyExpenses = useMemo(
+    () =>
+      selectedCategoryId
+        ? combinedExpenses.filter((expense) => expense.category === selectedCategoryId)
+        : combinedExpenses,
+    [combinedExpenses, selectedCategoryId]
+  )
+
   const monthlyData = useMemo(() => {
     const recentMonths = monthKeys.slice(0, 6).reverse()
-    return computeMonthlyTotals(combinedExpenses, recentMonths).map((entry) => ({
+    return computeMonthlyTotals(monthlyExpenses, recentMonths).map((entry) => ({
       ...entry,
       label: formatMonth(entry.monthKey, i18n.language),
     }))
-  }, [combinedExpenses, monthKeys, i18n.language])
+  }, [monthlyExpenses, monthKeys, i18n.language])
+
+  function toggleCategoryFilter(categoryId) {
+    setSelectedCategoryId((current) => (current === categoryId ? null : categoryId))
+  }
 
   function handleExport() {
     const rows = [
@@ -297,10 +310,17 @@ export default function GastosPage() {
           <div className="mt-2 flex gap-3 overflow-x-auto pb-1">
             {categoryData.map((category) => {
               const share = periodTotal > 0 ? (category.value / periodTotal) * 100 : 0
+              const isSelected = selectedCategoryId === category.id
               return (
-                <div
+                <button
                   key={category.id}
-                  className="min-w-[150px] shrink-0 rounded-xl border border-gray-200 bg-surface p-3"
+                  type="button"
+                  onClick={() => toggleCategoryFilter(category.id)}
+                  className={`min-w-[150px] shrink-0 rounded-xl border p-3 text-left transition-colors ${
+                    isSelected
+                      ? 'border-brand-500 bg-brand-50 ring-1 ring-brand-500'
+                      : 'border-gray-200 bg-surface hover:border-brand-300'
+                  }`}
                 >
                   <p className="flex items-center gap-1.5 text-xs font-medium text-gray-500">
                     <span>{category.icon}</span>
@@ -310,7 +330,7 @@ export default function GastosPage() {
                     {formatCurrency(category.value, i18n.language, house.currency)}
                   </p>
                   <p className="text-xs text-gray-400">{share.toFixed(0)}%</p>
-                </div>
+                </button>
               )
             })}
           </div>
@@ -339,7 +359,22 @@ export default function GastosPage() {
       )}
 
       <div className="rounded-xl border border-gray-200 bg-surface p-4">
-        <p className="text-sm font-semibold text-gray-900">{t('expensesPage.monthlyComparison')}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-gray-900">
+            {selectedCategoryId
+              ? t('expensesPage.monthlyComparisonFor', { category: categoryLabel(selectedCategoryId) })
+              : t('expensesPage.monthlyComparison')}
+          </p>
+          {selectedCategoryId && (
+            <button
+              type="button"
+              onClick={() => setSelectedCategoryId(null)}
+              className="text-xs font-medium text-brand-600 hover:underline"
+            >
+              {t('expensesPage.clearFilter')}
+            </button>
+          )}
+        </div>
         <div className="mt-2 h-48">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData}>
