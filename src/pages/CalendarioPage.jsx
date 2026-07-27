@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useTasks } from '../contexts/TasksContext'
+import { useInspection } from '../contexts/InspectionContext'
+import { useCalendarEvents } from '../contexts/CalendarEventsContext'
 import { useToast } from '../contexts/ToastContext'
 import { useConfirm } from '../contexts/ConfirmContext'
 import { getMonthGrid, toDayKey } from '../utils/calendar'
@@ -10,14 +12,24 @@ import { getRecurrenceOccurrencesInRange } from '../utils/recurrence'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 import EmptyState from '../components/EmptyState'
+import AddEventForm from '../components/AddEventForm'
 
 const WEEKDAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+
+const EVENT_DOT_COLORS = {
+  bill: 'bg-brand-500',
+  task: 'bg-blue-500',
+  event: 'bg-green-500',
+  inspection: 'bg-amber-500',
+}
 
 export default function CalendarioPage() {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
   const { bills, deleteOccurrence, deleteOccurrenceAndFollowing } = useBills()
   const { tasks } = useTasks()
+  const { inspections } = useInspection()
+  const { events: calendarEvents, deleteEvent } = useCalendarEvents()
   const showToast = useToast()
   const confirm = useConfirm()
 
@@ -25,6 +37,7 @@ export default function CalendarioPage() {
   const [cursor, setCursor] = useState({ year: today.getFullYear(), month: today.getMonth() })
   const [selectedDay, setSelectedDay] = useState(toDayKey(today))
   const [deletingEventId, setDeletingEventId] = useState(null)
+  const [showAddEvent, setShowAddEvent] = useState(false)
 
   const grid = useMemo(() => getMonthGrid(cursor.year, cursor.month), [cursor])
   const rangeStartKey = grid[0]?.dayKey
@@ -66,8 +79,26 @@ export default function CalendarioPage() {
       if (!map[day]) map[day] = []
       map[day].push({ type: 'task', id: task.id, title: task.title, completed: task.completed })
     })
+    inspections.forEach((inspection) => {
+      const day = inspection.scheduledDate
+      if (day < rangeStartKey || day > rangeEndKey) return
+      if (!map[day]) map[day] = []
+      map[day].push({ type: 'inspection', id: inspection.id, title: t('nav.inspection') })
+    })
+    calendarEvents.forEach((event) => {
+      const day = event.eventDate
+      if (day < rangeStartKey || day > rangeEndKey) return
+      if (!map[day]) map[day] = []
+      map[day].push({
+        type: 'event',
+        id: event.id,
+        title: event.title,
+        eventTime: event.eventTime,
+        location: event.location,
+      })
+    })
     return map
-  }, [bills, tasks, rangeStartKey, rangeEndKey])
+  }, [bills, tasks, inspections, calendarEvents, rangeStartKey, rangeEndKey, t])
   const monthLabel = new Intl.DateTimeFormat(i18n.language, { year: 'numeric', month: 'long' }).format(
     new Date(cursor.year, cursor.month, 1)
   )
@@ -108,11 +139,31 @@ export default function CalendarioPage() {
     setDeletingEventId(null)
   }
 
+  async function handleDeleteEvent(eventId) {
+    if (!(await confirm(t('calendarPage.eventDeleteConfirm')))) return
+    try {
+      await deleteEvent(eventId)
+    } catch (err) {
+      console.error(err)
+      showToast(t('calendarPage.eventDeleteError'))
+    }
+    setDeletingEventId(null)
+  }
+
   const selectedEvents = eventsByDay[selectedDay] ?? []
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-gray-900">{t('nav.calendar')}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-gray-900">{t('nav.calendar')}</h1>
+        <button
+          type="button"
+          onClick={() => setShowAddEvent(true)}
+          className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+        >
+          + {t('calendarPage.createEvent')}
+        </button>
+      </div>
 
       <div className="mt-4 flex flex-col gap-6 md:flex-row md:gap-8">
         <div className="w-full md:w-80 md:shrink-0">
@@ -144,9 +195,10 @@ export default function CalendarioPage() {
 
           <div className="mt-1 grid grid-cols-7 gap-1">
             {grid.map((cell) => {
-              const events = eventsByDay[cell.dayKey] ?? []
-              const hasBill = events.some((event) => event.type === 'bill')
-              const hasTask = events.some((event) => event.type === 'task')
+              const dayEvents = eventsByDay[cell.dayKey] ?? []
+              const presentTypes = ['bill', 'task', 'event', 'inspection'].filter((type) =>
+                dayEvents.some((event) => event.type === type)
+              )
               const isSelected = cell.dayKey === selectedDay
               const isToday = cell.dayKey === toDayKey(today)
 
@@ -164,12 +216,12 @@ export default function CalendarioPage() {
                 >
                   <span>{cell.day}</span>
                   <span className="flex h-1.5 gap-0.5">
-                    {hasBill && (
-                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-surface' : 'bg-brand-500'}`} />
-                    )}
-                    {hasTask && (
-                      <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-surface' : 'bg-blue-500'}`} />
-                    )}
+                    {presentTypes.map((type) => (
+                      <span
+                        key={type}
+                        className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-surface' : EVENT_DOT_COLORS[type]}`}
+                      />
+                    ))}
                   </span>
                 </button>
               )
@@ -189,17 +241,15 @@ export default function CalendarioPage() {
                   className="rounded-xl border border-gray-200 bg-surface p-3"
                 >
                   <div className="flex items-center gap-3">
-                    <span
-                      className={`h-2 w-2 shrink-0 rounded-full ${event.type === 'bill' ? 'bg-brand-500' : 'bg-blue-500'}`}
-                    />
+                    <span className={`h-2 w-2 shrink-0 rounded-full ${EVENT_DOT_COLORS[event.type]}`} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-900">{event.title}</p>
                       <p className="text-xs text-gray-500">
-                        {event.type === 'bill'
-                          ? t('calendarPage.billDue')
-                          : event.completed
-                            ? t('calendarPage.taskDone')
-                            : t('calendarPage.taskDue')}
+                        {event.type === 'bill' && t('calendarPage.billDue')}
+                        {event.type === 'task' && (event.completed ? t('calendarPage.taskDone') : t('calendarPage.taskDue'))}
+                        {event.type === 'inspection' && t('calendarPage.inspectionScheduled')}
+                        {event.type === 'event' &&
+                          [event.eventTime, event.location].filter(Boolean).join(' · ')}
                       </p>
                     </div>
                     {event.type === 'bill' && (
@@ -248,12 +298,26 @@ export default function CalendarioPage() {
                       )}
                     </div>
                   )}
+
+                  {event.type === 'event' && (
+                    <div className="mt-2 flex justify-end border-t border-gray-100 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteEvent(event.id)}
+                        className="text-xs font-medium text-gray-400 hover:text-red-600"
+                      >
+                        {t('vaultPage.remove')}
+                      </button>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
           )}
         </div>
       </div>
+
+      {showAddEvent && <AddEventForm defaultDate={selectedDay} onClose={() => setShowAddEvent(false)} />}
     </div>
   )
 }

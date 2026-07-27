@@ -17,6 +17,7 @@ import { TasksProvider } from './contexts/TasksContext'
 import { ShoppingProvider } from './contexts/ShoppingContext'
 import { MaintenanceProvider } from './contexts/MaintenanceContext'
 import { InspectionProvider } from './contexts/InspectionContext'
+import { CalendarEventsProvider } from './contexts/CalendarEventsContext'
 import { VaultProvider } from './contexts/VaultContext'
 import App from './App.jsx'
 
@@ -37,9 +38,11 @@ createRoot(document.getElementById('root')).render(
                             <TasksProvider>
                               <MaintenanceProvider>
                                 <InspectionProvider>
-                                  <VaultProvider>
-                                    <App />
-                                  </VaultProvider>
+                                  <CalendarEventsProvider>
+                                    <VaultProvider>
+                                      <App />
+                                    </VaultProvider>
+                                  </CalendarEventsProvider>
                                 </InspectionProvider>
                               </MaintenanceProvider>
                             </TasksProvider>
