@@ -112,3 +112,31 @@ export function getNextOccurrenceOnOrAfter(
   if (occurrences.length === 0) return null
   return occurrences.slice().sort()[0]
 }
+
+// The latest occurrence on or before `toKey`, searching up to a year back.
+export function getLatestOccurrenceOnOrBefore(
+  dueDateKey,
+  recurrence,
+  toKey,
+  recurrenceUntil = null,
+  excludedDates = []
+) {
+  if (!dueDateKey) return null
+
+  if (!recurrence || recurrence === 'none') {
+    return dueDateKey <= toKey ? dueDateKey : null
+  }
+
+  const [year, month, day] = toKey.split('-').map(Number)
+  const horizon = toDayKey(new Date(year, month - 1, day - 366))
+  const occurrences = getRecurrenceOccurrencesInRange(
+    dueDateKey,
+    recurrence,
+    horizon,
+    toKey,
+    recurrenceUntil,
+    excludedDates
+  )
+  if (occurrences.length === 0) return null
+  return occurrences.slice().sort().at(-1)
+}

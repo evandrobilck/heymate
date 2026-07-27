@@ -10,19 +10,28 @@ import { billCategories } from '../services/mockData'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 import { resizeImageFile } from '../utils/resizeImage'
+import { toDayKey } from '../utils/calendar'
+import { getLatestOccurrenceOnOrBefore } from '../utils/recurrence'
 
 export default function BillCard({ bill, onEdit }) {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const { house, isAdmin } = useHouse()
-  const { toggleParticipantPaid, setBillPhoto, deleteBill, deleteOccurrence, deleteOccurrenceAndFollowing } =
-    useBills()
+  const {
+    toggleParticipantPaid,
+    setBillPhoto,
+    confirmBillAmount,
+    deleteBill,
+    deleteOccurrence,
+    deleteOccurrenceAndFollowing,
+  } = useBills()
   const { customBillCategories, customShoppingCategories } = useCategories()
   const showToast = useToast()
   const confirm = useConfirm()
   const [expanded, setExpanded] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [confirmingAmount, setConfirmingAmount] = useState(false)
 
   const category = billCategories.find((item) => item.id === bill.category)
   const customCategory = category
@@ -35,6 +44,17 @@ export default function BillCard({ bill, onEdit }) {
   const isFullyPaid = participants.every(({ share }) => share.paid)
   const canEdit = bill.createdBy === user.id || isAdmin
   const isRecurring = bill.recurrence !== 'none'
+
+  const latestOccurrence = isRecurring
+    ? getLatestOccurrenceOnOrBefore(
+        bill.dueDate,
+        bill.recurrence,
+        toDayKey(new Date()),
+        bill.recurrenceUntil,
+        bill.excludedDates
+      )
+    : null
+  const needsAmountReview = latestOccurrence !== null && latestOccurrence > (bill.amountConfirmedThrough ?? bill.dueDate)
 
   async function handleDeleteNonRecurring() {
     if (!(await confirm(t('billsPage.deleteConfirm')))) return
@@ -94,6 +114,18 @@ export default function BillCard({ bill, onEdit }) {
     }
   }
 
+  async function handleConfirmSameAmount() {
+    setConfirmingAmount(true)
+    try {
+      await confirmBillAmount(bill.id)
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.amountReviewError'))
+    } finally {
+      setConfirmingAmount(false)
+    }
+  }
+
   return (
     <div className="rounded-xl border border-gray-200 bg-surface p-4">
       <button
@@ -125,6 +157,29 @@ export default function BillCard({ bill, onEdit }) {
           </span>
         </div>
       </button>
+
+      {needsAmountReview && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-amber-50 px-3 py-2 dark:bg-amber-950/40">
+          <p className="text-xs font-medium text-amber-800 dark:text-amber-300">{t('billsPage.amountReviewPrompt')}</p>
+          <div className="flex shrink-0 gap-3">
+            <button
+              type="button"
+              onClick={onEdit}
+              className="text-xs font-medium text-brand-600 hover:text-brand-700"
+            >
+              {t('billsPage.updateAmount')}
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmSameAmount}
+              disabled={confirmingAmount}
+              className="text-xs font-medium text-gray-500 hover:text-gray-700 disabled:opacity-50"
+            >
+              {t('billsPage.sameAmount')}
+            </button>
+          </div>
+        </div>
+      )}
 
       {expanded && (
         <div className="mt-3 border-t border-gray-100 pt-3">

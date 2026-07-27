@@ -173,7 +173,11 @@
     "changePhoto": "Trocar foto",
     "processingPhoto": "Enviando...",
     "photoError": "Não foi possível salvar a foto. Tente de novo.",
-    "removePhotoConfirm": "Remover a foto anexada a esta conta?"
+    "removePhotoConfirm": "Remover a foto anexada a esta conta?",
+    "amountReviewPrompt": "O valor dessa conta mudou esse mês?",
+    "updateAmount": "Atualizar valor",
+    "sameAmount": "Continua o mesmo",
+    "amountReviewError": "Não foi possível confirmar. Tente de novo."
   },
   "tasksPage": {
     "addTask": "Adicionar tarefa",

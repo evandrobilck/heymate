@@ -28,6 +28,7 @@ function mapBillRow(row) {
     createdBy: row.created_by,
     source: row.source,
     photoUrl: row.photo_url,
+    amountConfirmedThrough: row.amount_confirmed_through,
     participantIds: (row.bill_shares ?? []).map((share) => share.user_id),
     shares,
     reminders: (row.bill_reminders ?? []).map((reminder) => ({
@@ -203,6 +204,12 @@ export function BillsProvider({ children }) {
     await refresh()
   }
 
+  async function confirmBillAmount(billId) {
+    const { error } = await supabase.rpc('confirm_bill_amount', { p_bill_id: billId })
+    if (error) throw error
+    await refresh()
+  }
+
   async function deleteBill(billId) {
     const { error } = await supabase.rpc('delete_bill', { p_bill_id: billId })
     if (error) throw error
@@ -241,6 +248,7 @@ export function BillsProvider({ children }) {
       addBill,
       updateBill,
       setBillPhoto,
+      confirmBillAmount,
       deleteBill,
       toggleParticipantPaid,
       deleteOccurrence,

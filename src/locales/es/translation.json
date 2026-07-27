@@ -173,7 +173,11 @@
     "changePhoto": "Cambiar foto",
     "processingPhoto": "Subiendo...",
     "photoError": "No pudimos guardar la foto. Intenta de nuevo.",
-    "removePhotoConfirm": "¿Quitar la foto adjunta a esta cuenta?"
+    "removePhotoConfirm": "¿Quitar la foto adjunta a esta cuenta?",
+    "amountReviewPrompt": "¿El valor de esta cuenta cambió este mes?",
+    "updateAmount": "Actualizar valor",
+    "sameAmount": "Sigue igual",
+    "amountReviewError": "No pudimos confirmar. Intenta de nuevo."
   },
   "tasksPage": {
     "addTask": "Agregar tarea",

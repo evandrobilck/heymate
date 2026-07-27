@@ -173,7 +173,11 @@
     "changePhoto": "Change photo",
     "processingPhoto": "Uploading...",
     "photoError": "Couldn't save the photo. Try again.",
-    "removePhotoConfirm": "Remove the photo attached to this bill?"
+    "removePhotoConfirm": "Remove the photo attached to this bill?",
+    "amountReviewPrompt": "Did this bill's amount change this month?",
+    "updateAmount": "Update amount",
+    "sameAmount": "Still the same",
+    "amountReviewError": "Couldn't confirm. Try again."
   },
   "tasksPage": {
     "addTask": "Add task",
