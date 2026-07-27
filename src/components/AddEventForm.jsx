@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useCalendarEvents } from '../contexts/CalendarEventsContext'
 import { useToast } from '../contexts/ToastContext'
 import Modal from './Modal'
+import ReminderList from './ReminderList'
 
 export default function AddEventForm({ defaultDate, onClose }) {
   const { t } = useTranslation()
@@ -16,6 +17,7 @@ export default function AddEventForm({ defaultDate, onClose }) {
   const [eventTime, setEventTime] = useState('')
   const [location, setLocation] = useState('')
   const [notes, setNotes] = useState('')
+  const [reminders, setReminders] = useState([])
   const [submitting, setSubmitting] = useState(false)
 
   const isValid = title.trim() !== '' && eventDate !== ''
@@ -32,6 +34,7 @@ export default function AddEventForm({ defaultDate, onClose }) {
         location: location.trim(),
         notes: notes.trim(),
         createdBy: user.id,
+        reminders,
       })
       onClose()
     } catch (err) {
@@ -103,6 +106,14 @@ export default function AddEventForm({ defaultDate, onClose }) {
             rows={2}
             className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
           />
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-gray-600">{t('reminders.label')}</label>
+          <p className="mt-0.5 text-xs text-gray-400">{t('reminders.eventHint')}</p>
+          <div className="mt-2">
+            <ReminderList reminders={reminders} onChange={setReminders} />
+          </div>
         </div>
 
         <button

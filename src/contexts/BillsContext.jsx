@@ -27,6 +27,7 @@ function mapBillRow(row) {
     splitType: row.split_type,
     createdBy: row.created_by,
     source: row.source,
+    photoUrl: row.photo_url,
     participantIds: (row.bill_shares ?? []).map((share) => share.user_id),
     shares,
     reminders: (row.bill_reminders ?? []).map((reminder) => ({
@@ -184,6 +185,24 @@ export function BillsProvider({ children }) {
     await refresh()
   }
 
+  async function uploadBillPhoto(file) {
+    const extension = file.name.split('.').pop()
+    const path = `${house.id}/${Date.now()}.${extension}`
+
+    const { error: uploadError } = await supabase.storage.from('bill-photos').upload(path, file)
+    if (uploadError) throw uploadError
+
+    const { data } = supabase.storage.from('bill-photos').getPublicUrl(path)
+    return data.publicUrl
+  }
+
+  async function setBillPhoto(billId, photoFile) {
+    const photoUrl = photoFile ? await uploadBillPhoto(photoFile) : null
+    const { error } = await supabase.rpc('set_bill_photo', { p_bill_id: billId, p_photo_url: photoUrl })
+    if (error) throw error
+    await refresh()
+  }
+
   async function deleteBill(billId) {
     const { error } = await supabase.rpc('delete_bill', { p_bill_id: billId })
     if (error) throw error
@@ -221,6 +240,7 @@ export function BillsProvider({ children }) {
       refresh,
       addBill,
       updateBill,
+      setBillPhoto,
       deleteBill,
       toggleParticipantPaid,
       deleteOccurrence,

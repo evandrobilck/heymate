@@ -14,6 +14,12 @@ function mapEventRow(row) {
     notes: row.notes,
     createdBy: row.created_by,
     createdAt: row.created_at,
+    reminders: (row.event_reminders ?? []).map((reminder) => ({
+      id: reminder.id,
+      channel: reminder.channel,
+      daysBefore: reminder.days_before,
+      timeOfDay: reminder.time_of_day?.slice(0, 5),
+    })),
   }
 }
 
@@ -31,7 +37,7 @@ export function CalendarEventsProvider({ children }) {
 
     const { data, error } = await supabase
       .from('calendar_events')
-      .select('*')
+      .select('*, event_reminders(*)')
       .eq('house_id', house.id)
       .order('event_date', { ascending: true })
 
@@ -59,6 +65,7 @@ export function CalendarEventsProvider({ children }) {
         { event: '*', schema: 'public', table: 'calendar_events', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_reminders' }, () => refresh())
       .subscribe()
 
     return () => {
@@ -66,17 +73,40 @@ export function CalendarEventsProvider({ children }) {
     }
   }, [house?.id, refresh])
 
-  async function addEvent({ title, eventDate, eventTime, location, notes, createdBy }) {
-    const { error } = await supabase.from('calendar_events').insert({
-      house_id: house.id,
-      title,
-      event_date: eventDate,
-      event_time: eventTime || null,
-      location: location || null,
-      notes: notes || null,
-      created_by: createdBy,
-    })
+  async function syncEventReminders(eventId, reminders) {
+    const { error: deleteError } = await supabase.from('event_reminders').delete().eq('event_id', eventId)
+    if (deleteError) throw deleteError
+
+    if (reminders.length > 0) {
+      const { error: insertError } = await supabase.from('event_reminders').insert(
+        reminders.map((reminder) => ({
+          event_id: eventId,
+          channel: reminder.channel,
+          days_before: reminder.daysBefore,
+          time_of_day: reminder.timeOfDay,
+        }))
+      )
+      if (insertError) throw insertError
+    }
+  }
+
+  async function addEvent({ title, eventDate, eventTime, location, notes, createdBy, reminders = [] }) {
+    const { data, error } = await supabase
+      .from('calendar_events')
+      .insert({
+        house_id: house.id,
+        title,
+        event_date: eventDate,
+        event_time: eventTime || null,
+        location: location || null,
+        notes: notes || null,
+        created_by: createdBy,
+      })
+      .select()
+      .single()
     if (error) throw error
+
+    if (reminders.length > 0) await syncEventReminders(data.id, reminders)
     await refresh()
   }
 

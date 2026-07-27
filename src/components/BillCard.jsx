@@ -9,17 +9,20 @@ import { useConfirm } from '../contexts/ConfirmContext'
 import { billCategories } from '../services/mockData'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
+import { resizeImageFile } from '../utils/resizeImage'
 
 export default function BillCard({ bill, onEdit }) {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const { house, isAdmin } = useHouse()
-  const { toggleParticipantPaid, deleteBill, deleteOccurrence, deleteOccurrenceAndFollowing } = useBills()
+  const { toggleParticipantPaid, setBillPhoto, deleteBill, deleteOccurrence, deleteOccurrenceAndFollowing } =
+    useBills()
   const { customBillCategories, customShoppingCategories } = useCategories()
   const showToast = useToast()
   const confirm = useConfirm()
   const [expanded, setExpanded] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
 
   const category = billCategories.find((item) => item.id === bill.category)
   const customCategory = category
@@ -65,6 +68,32 @@ export default function BillCard({ bill, onEdit }) {
     setConfirmingDelete(false)
   }
 
+  async function handlePhotoChange(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    setUploadingPhoto(true)
+    try {
+      const resized = await resizeImageFile(file)
+      await setBillPhoto(bill.id, resized)
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.photoError'))
+    } finally {
+      setUploadingPhoto(false)
+      event.target.value = ''
+    }
+  }
+
+  async function handleRemovePhoto() {
+    if (!(await confirm(t('billsPage.removePhotoConfirm')))) return
+    try {
+      await setBillPhoto(bill.id, null)
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.photoError'))
+    }
+  }
+
   return (
     <div className="rounded-xl border border-gray-200 bg-surface p-4">
       <button
@@ -99,6 +128,50 @@ export default function BillCard({ bill, onEdit }) {
 
       {expanded && (
         <div className="mt-3 border-t border-gray-100 pt-3">
+          <div className="mb-3">
+            {bill.photoUrl ? (
+              <div>
+                <a href={bill.photoUrl} target="_blank" rel="noreferrer">
+                  <img
+                    src={bill.photoUrl}
+                    alt=""
+                    className="h-32 w-full rounded-lg border border-gray-200 object-cover"
+                  />
+                </a>
+                <div className="mt-1.5 flex gap-3">
+                  <label className="cursor-pointer text-xs font-medium text-brand-600 hover:text-brand-700">
+                    {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.changePhoto')}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      disabled={uploadingPhoto}
+                      className="hidden"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    className="text-xs font-medium text-gray-400 hover:text-red-600"
+                  >
+                    {t('vaultPage.remove')}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <label className="block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-center text-xs font-medium text-brand-600 hover:border-brand-400">
+                {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.addPhoto')}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  disabled={uploadingPhoto}
+                  className="hidden"
+                />
+              </label>
+            )}
+          </div>
+
           {canEdit && (
             <div className="mb-2 flex flex-wrap items-center justify-end gap-3">
               {confirmingDelete ? (

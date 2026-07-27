@@ -168,7 +168,12 @@
     "deleteThisAndFollowing": "Eliminar esta y las próximas",
     "deleteOnlyThisConfirm": "¿Eliminar solo esta ocurrencia? La cuenta sigue existiendo para las próximas fechas.",
     "deleteFollowingConfirm": "¿Eliminar esta y todas las próximas ocurrencias? Las anteriores siguen registradas.",
-    "deleteError": "No se pudo eliminar la cuenta. Intenta de nuevo."
+    "deleteError": "No se pudo eliminar la cuenta. Intenta de nuevo.",
+    "addPhoto": "Adjuntar foto de la cuenta",
+    "changePhoto": "Cambiar foto",
+    "processingPhoto": "Subiendo...",
+    "photoError": "No pudimos guardar la foto. Intenta de nuevo.",
+    "removePhotoConfirm": "¿Quitar la foto adjunta a esta cuenta?"
   },
   "tasksPage": {
     "addTask": "Agregar tarea",
@@ -435,6 +440,7 @@
     "label": "Recordatorios",
     "billHint": "Agrega uno o más recordatorios para esta cuenta, cada uno con su canal, cuántos días antes del vencimiento y hora.",
     "taskHint": "Agrega uno o más recordatorios para esta tarea, cada uno con su canal, cuántos días antes del vencimiento y hora.",
+    "eventHint": "Agrega uno o más recordatorios para este evento — se envían a toda la casa, cada uno con su canal, cuántos días antes y hora.",
     "addReminder": "Agregar recordatorio",
     "daysBefore": "día(s) antes",
     "channel": {

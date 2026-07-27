@@ -125,9 +125,12 @@ function emailShell(innerHtml: string, icon?: string): string {
   </div>`
 }
 
-type TemplateParams = { name: string; title: string; houseName: string; amount?: string }
+type TemplateParams = { name: string; title: string; houseName: string; amount?: string; when?: string }
 
-const TEMPLATES: Record<'task' | 'bill', Record<string, (p: TemplateParams) => { subject: string; html: string }>> = {
+const TEMPLATES: Record<
+  'task' | 'bill' | 'event',
+  Record<string, (p: TemplateParams) => { subject: string; html: string }>
+> = {
   task: {
     en: (p) => ({
       subject: `Reminder: "${p.title}"`,
@@ -174,9 +177,32 @@ const TEMPLATES: Record<'task' | 'bill', Record<string, (p: TemplateParams) => {
       ),
     }),
   },
+  event: {
+    en: (p) => ({
+      subject: `Reminder: "${p.title}"`,
+      html: emailShell(
+        `<p>Hi ${p.name},</p><p>Reminder about <strong>${p.title}</strong>${p.when ? ` (${p.when})` : ''} in <strong>${p.houseName}</strong>.</p>`,
+        '📅'
+      ),
+    }),
+    'pt-BR': (p) => ({
+      subject: `Lembrete: "${p.title}"`,
+      html: emailShell(
+        `<p>Oi ${p.name},</p><p>Lembrete sobre <strong>${p.title}</strong>${p.when ? ` (${p.when})` : ''} em <strong>${p.houseName}</strong>.</p>`,
+        '📅'
+      ),
+    }),
+    es: (p) => ({
+      subject: `Recordatorio: "${p.title}"`,
+      html: emailShell(
+        `<p>Hola ${p.name},</p><p>Recordatorio sobre <strong>${p.title}</strong>${p.when ? ` (${p.when})` : ''} en <strong>${p.houseName}</strong>.</p>`,
+        '📅'
+      ),
+    }),
+  },
 }
 
-function renderTemplate(entityType: 'task' | 'bill', language: string, params: TemplateParams) {
+function renderTemplate(entityType: 'task' | 'bill' | 'event', language: string, params: TemplateParams) {
   const byLanguage = TEMPLATES[entityType]
   const build = byLanguage[language] ?? byLanguage.en
   return build(params)
@@ -197,7 +223,7 @@ async function sendEmail(to: string, subject: string, html: string) {
 
 // --- Idempotency ---------------------------------------------------------
 
-async function claim(entityType: 'task' | 'bill', entityId: string, occurrenceDate: string, userId: string, reminderId: string) {
+async function claim(entityType: 'task' | 'bill' | 'event', entityId: string, occurrenceDate: string, userId: string, reminderId: string) {
   const { error } = await supabase
     .from('notification_log')
     .insert({ entity_type: entityType, entity_id: entityId, occurrence_date: occurrenceDate, user_id: userId, reminder_id: reminderId })
@@ -208,7 +234,7 @@ async function claim(entityType: 'task' | 'bill', entityId: string, occurrenceDa
   return true
 }
 
-async function release(entityType: 'task' | 'bill', entityId: string, occurrenceDate: string, userId: string, reminderId: string) {
+async function release(entityType: 'task' | 'bill' | 'event', entityId: string, occurrenceDate: string, userId: string, reminderId: string) {
   await supabase
     .from('notification_log')
     .delete()
@@ -238,6 +264,11 @@ Deno.serve(async () => {
       )
     if (billsError) throw billsError
 
+    const { data: allEvents, error: eventsError } = await supabase
+      .from('calendar_events')
+      .select('id, title, house_id, event_date, event_time, location, event_reminders(*)')
+    if (eventsError) throw eventsError
+
     // Pair each task/bill with the specific reminder(s) firing this hour,
     // and (for bills) the occurrence date that reminder is about.
     const dueTasks: { task: (typeof allTasks)[number]; reminder: Reminder }[] = []
@@ -264,7 +295,17 @@ Deno.serve(async () => {
       }
     }
 
-    if (dueTasks.length === 0 && dueBills.length === 0) {
+    const dueEvents: { event: (typeof allEvents)[number]; reminder: Reminder }[] = []
+    for (const event of allEvents ?? []) {
+      for (const reminder of (event.event_reminders ?? []) as Reminder[]) {
+        const fireDate = addDays(event.event_date, -reminder.days_before)
+        if (fireDate === today && hourOfTime(reminder.time_of_day) === currentHour) {
+          dueEvents.push({ event, reminder })
+        }
+      }
+    }
+
+    if (dueTasks.length === 0 && dueBills.length === 0 && dueEvents.length === 0) {
       return new Response(JSON.stringify({ ok: true, sent: 0 }), { headers: { 'Content-Type': 'application/json' } })
     }
 
@@ -277,6 +318,25 @@ Deno.serve(async () => {
     for (const { bill } of dueBills) {
       houseIds.add(bill.house_id)
       for (const s of bill.bill_shares ?? []) if (!s.paid) userIds.add(s.user_id)
+    }
+    for (const { event } of dueEvents) houseIds.add(event.house_id)
+
+    // Events have no per-user assignment — a reminder goes to every active
+    // member of the house it belongs to.
+    const eventHouseIds = [...new Set(dueEvents.map(({ event }) => event.house_id))]
+    const { data: eventMembers } =
+      eventHouseIds.length > 0
+        ? await supabase
+            .from('house_members')
+            .select('house_id, user_id')
+            .in('house_id', eventHouseIds)
+            .is('left_at', null)
+        : { data: [] as { house_id: string; user_id: string }[] }
+    const membersByHouse = new Map<string, string[]>()
+    for (const m of eventMembers ?? []) {
+      if (!membersByHouse.has(m.house_id)) membersByHouse.set(m.house_id, [])
+      membersByHouse.get(m.house_id)!.push(m.user_id)
+      userIds.add(m.user_id)
     }
 
     const { data: houses } = await supabase.from('houses').select('id, name, currency').in('id', [...houseIds])
@@ -354,6 +414,42 @@ Deno.serve(async () => {
         } catch (err) {
           errors.push(`bill ${bill.id} -> ${share.user_id}: ${err}`)
           await release('bill', bill.id, occurrenceDate, share.user_id, reminder.id)
+        }
+      }
+    }
+
+    for (const { event, reminder } of dueEvents) {
+      const house = houseById.get(event.house_id)
+      const when = [event.event_time?.slice(0, 5), event.location].filter(Boolean).join(' · ')
+      for (const userId of membersByHouse.get(event.house_id) ?? []) {
+        const profile = profileById.get(userId)
+        if (!profile) continue
+        const claimed = await claim('event', event.id, event.event_date, userId, reminder.id)
+        if (!claimed) continue
+        try {
+          const { subject, html } = renderTemplate('event', profile.language ?? 'en', {
+            name: profile.full_name ?? profile.email,
+            title: event.title,
+            houseName: house?.name ?? '',
+            when: when || undefined,
+          })
+          if (reminder.channel === 'email' || reminder.channel === 'both') {
+            if (profile.email) {
+              try {
+                await sendEmail(profile.email, subject, html)
+              } catch (err) {
+                errors.push(`event ${event.id} -> ${userId} (email): ${err}`)
+              }
+            }
+          }
+          if (reminder.channel === 'push' || reminder.channel === 'both') {
+            const pushErrors = await sendPush(supabase, userId, subject, `${event.title} — ${house?.name ?? ''}`)
+            for (const e of pushErrors) errors.push(`event ${event.id} -> ${userId} (push): ${e}`)
+          }
+          sent++
+        } catch (err) {
+          errors.push(`event ${event.id} -> ${userId}: ${err}`)
+          await release('event', event.id, event.event_date, userId, reminder.id)
         }
       }
     }

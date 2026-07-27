@@ -168,7 +168,12 @@
     "deleteThisAndFollowing": "Excluir esta e as próximas",
     "deleteOnlyThisConfirm": "Excluir somente esta ocorrência? A conta continua existindo para as próximas datas.",
     "deleteFollowingConfirm": "Excluir esta e todas as próximas ocorrências? As anteriores continuam registradas.",
-    "deleteError": "Não foi possível apagar a conta. Tente de novo."
+    "deleteError": "Não foi possível apagar a conta. Tente de novo.",
+    "addPhoto": "Anexar foto da conta",
+    "changePhoto": "Trocar foto",
+    "processingPhoto": "Enviando...",
+    "photoError": "Não foi possível salvar a foto. Tente de novo.",
+    "removePhotoConfirm": "Remover a foto anexada a esta conta?"
   },
   "tasksPage": {
     "addTask": "Adicionar tarefa",
@@ -435,6 +440,7 @@
     "label": "Lembretes",
     "billHint": "Adicione um ou mais lembretes pra essa conta, cada um com seu canal, quantos dias antes do vencimento e horário.",
     "taskHint": "Adicione um ou mais lembretes pra essa tarefa, cada um com seu canal, quantos dias antes do vencimento e horário.",
+    "eventHint": "Adicione um ou mais lembretes pra esse evento — vão pra todo mundo da casa, cada um com seu canal, quantos dias antes e horário.",
     "addReminder": "Adicionar lembrete",
     "daysBefore": "dia(s) antes",
     "channel": {

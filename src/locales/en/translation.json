@@ -168,7 +168,12 @@
     "deleteThisAndFollowing": "Delete this and future ones",
     "deleteOnlyThisConfirm": "Delete only this occurrence? The bill keeps existing for future dates.",
     "deleteFollowingConfirm": "Delete this and all future occurrences? Past ones stay recorded.",
-    "deleteError": "Couldn't delete the bill. Please try again."
+    "deleteError": "Couldn't delete the bill. Please try again.",
+    "addPhoto": "Attach a photo of the bill",
+    "changePhoto": "Change photo",
+    "processingPhoto": "Uploading...",
+    "photoError": "Couldn't save the photo. Try again.",
+    "removePhotoConfirm": "Remove the photo attached to this bill?"
   },
   "tasksPage": {
     "addTask": "Add task",
@@ -435,6 +440,7 @@
     "label": "Reminders",
     "billHint": "Add one or more reminders for this bill, each with its own channel, how many days before the due date, and time.",
     "taskHint": "Add one or more reminders for this task, each with its own channel, how many days before the due date, and time.",
+    "eventHint": "Add one or more reminders for this event — sent to everyone in the house, each with its own channel, how many days before, and time.",
     "addReminder": "Add reminder",
     "daysBefore": "day(s) before",
     "channel": {
