@@ -177,7 +177,8 @@
     "amountReviewPrompt": "Did this bill's amount change this month?",
     "updateAmount": "Update amount",
     "sameAmount": "Still the same",
-    "amountReviewError": "Couldn't confirm. Try again."
+    "amountReviewError": "Couldn't confirm. Try again.",
+    "duplicateConfirm": "You already have a similar bill — \"{{title}}\" on {{date}}. Create it anyway?"
   },
   "tasksPage": {
     "addTask": "Add task",
@@ -215,6 +216,8 @@
     "monthlyComparison": "Monthly comparison",
     "monthlyComparisonFor": "Monthly comparison — {{category}}",
     "clearFilter": "View all",
+    "projectionNote": "The last bar is a projection, based on the average of the last few months.",
+    "projected": "projected",
     "export": "Export report (CSV)",
     "empty": "No expenses yet.",
     "noneInPeriod": "No expenses in this period.",

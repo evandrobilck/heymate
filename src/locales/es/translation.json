@@ -177,7 +177,8 @@
     "amountReviewPrompt": "¿El valor de esta cuenta cambió este mes?",
     "updateAmount": "Actualizar valor",
     "sameAmount": "Sigue igual",
-    "amountReviewError": "No pudimos confirmar. Intenta de nuevo."
+    "amountReviewError": "No pudimos confirmar. Intenta de nuevo.",
+    "duplicateConfirm": "Ya tienes una cuenta parecida — \"{{title}}\" el {{date}}. ¿Crearla de todos modos?"
   },
   "tasksPage": {
     "addTask": "Agregar tarea",
@@ -215,6 +216,8 @@
     "monthlyComparison": "Comparativo mensual",
     "monthlyComparisonFor": "Comparativo mensual — {{category}}",
     "clearFilter": "Ver todas",
+    "projectionNote": "La última barra es una proyección, basada en el promedio de los últimos meses.",
+    "projected": "proyección",
     "export": "Exportar informe (CSV)",
     "empty": "Aún no hay gastos.",
     "noneInPeriod": "No hay gastos en este período.",

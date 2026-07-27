@@ -169,6 +169,29 @@ export default function GastosPage() {
     }))
   }, [monthlyExpenses, monthKeys, i18n.language])
 
+  // A lightweight projection, not a forecast model: just the average of the
+  // last up to 3 months, shown as an extra ghost bar so people get a rough
+  // "what's coming" without us pretending to predict bills precisely.
+  const projectedMonth = useMemo(() => {
+    if (monthlyData.length === 0) return null
+    const recent = monthlyData.slice(-3)
+    const average = recent.reduce((sum, entry) => sum + entry.total, 0) / recent.length
+    const [year, month] = monthlyData[monthlyData.length - 1].monthKey.split('-').map(Number)
+    const nextDate = new Date(year, month, 1)
+    const nextMonthKey = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}`
+    return {
+      monthKey: nextMonthKey,
+      label: formatMonth(nextMonthKey, i18n.language),
+      total: average,
+      projected: true,
+    }
+  }, [monthlyData, i18n.language])
+
+  const chartData = useMemo(
+    () => (projectedMonth ? [...monthlyData, projectedMonth] : monthlyData),
+    [monthlyData, projectedMonth]
+  )
+
   function toggleCategoryFilter(categoryId) {
     setSelectedCategoryId((current) => (current === categoryId ? null : categoryId))
   }
@@ -375,9 +398,10 @@ export default function GastosPage() {
             </button>
           )}
         </div>
+        {projectedMonth && <p className="mt-0.5 text-xs text-gray-400">{t('expensesPage.projectionNote')}</p>}
         <div className="mt-2 h-48">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={monthlyData}>
+            <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-gray-200)" />
               <XAxis
                 dataKey="label"
@@ -387,11 +411,22 @@ export default function GastosPage() {
               />
               <YAxis tick={{ fontSize: 10, fill: 'var(--color-gray-500)' }} axisLine={false} tickLine={false} width={40} />
               <Tooltip
-                formatter={(value) => formatCurrency(value, i18n.language, house.currency)}
+                formatter={(value, _name, props) =>
+                  `${formatCurrency(value, i18n.language, house.currency)}${
+                    props?.payload?.projected ? ` (${t('expensesPage.projected')})` : ''
+                  }`
+                }
                 contentStyle={CHART_TOOLTIP_STYLE}
                 labelStyle={{ color: 'var(--color-gray-700)' }}
               />
-              <Bar dataKey="total" fill="var(--color-brand-600)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="total" radius={[4, 4, 0, 0]}>
+                {chartData.map((entry) => (
+                  <Cell
+                    key={entry.monthKey}
+                    fill={entry.projected ? 'var(--color-brand-200)' : 'var(--color-brand-600)'}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

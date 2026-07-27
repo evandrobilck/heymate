@@ -3,19 +3,43 @@ import { useTranslation } from 'react-i18next'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useCategories } from '../contexts/CategoriesContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { billCategories, recurrenceOptions } from '../services/mockData'
 import { computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
 import { formatCurrency } from '../utils/formatCurrency'
+import { formatDate } from '../utils/formatDate'
 import Modal from './Modal'
 import ReminderList from './ReminderList'
 
 const SPLIT_TYPES = ['equal', 'percentage', 'exact']
 
+// Same title (case/whitespace-insensitive) and category, due within 20 days
+// of each other — close enough to be "did I already log this?" territory
+// without flagging genuinely separate recurring cycles a month+ apart.
+function daysBetween(dateKeyA, dateKeyB) {
+  const [ay, am, ad] = dateKeyA.split('-').map(Number)
+  const [by, bm, bd] = dateKeyB.split('-').map(Number)
+  const a = new Date(ay, am - 1, ad)
+  const b = new Date(by, bm - 1, bd)
+  return Math.abs(Math.round((a - b) / 86400000))
+}
+
+function findPossibleDuplicate(bills, candidate) {
+  const normalizedTitle = candidate.title.trim().toLowerCase()
+  return bills.find(
+    (existing) =>
+      existing.title.trim().toLowerCase() === normalizedTitle &&
+      existing.category === candidate.category &&
+      daysBetween(existing.dueDate, candidate.dueDate) <= 20
+  )
+}
+
 export default function AddBillForm({ onClose, bill = null }) {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
-  const { addBill, updateBill } = useBills()
+  const { bills, addBill, updateBill } = useBills()
   const { customBillCategories, hiddenCategoryIds } = useCategories()
+  const confirm = useConfirm()
   const isEditing = Boolean(bill)
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
@@ -79,9 +103,22 @@ export default function AddBillForm({ onClose, bill = null }) {
     (splitType !== 'percentage' || Math.abs(percentageTotal - 100) < 0.01) &&
     (splitType !== 'exact' || Math.abs(exactTotal - amountValue) < 0.01)
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
     if (!isValid) return
+
+    if (!isEditing) {
+      const duplicate = findPossibleDuplicate(bills, { title, category, dueDate })
+      if (duplicate) {
+        const proceed = await confirm(
+          t('billsPage.duplicateConfirm', {
+            title: duplicate.title,
+            date: formatDate(duplicate.dueDate, i18n.language),
+          })
+        )
+        if (!proceed) return
+      }
+    }
 
     let shares
     if (splitType === 'equal') {
