@@ -1,10 +1,33 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useShopping } from '../contexts/ShoppingContext'
 import ShoppingListItem from '../components/ShoppingListItem'
 import SkeletonRows from '../components/SkeletonRows'
 import EmptyState from '../components/EmptyState'
+
+// Items the house has bought/added at least twice before, excluding
+// anything already pending — a quick "add this again" shortcut instead of
+// a real recommendation model.
+const MIN_FREQUENCY = 2
+const MAX_SUGGESTIONS = 6
+
+function computeFrequentSuggestions(items, pendingItems) {
+  const counts = new Map()
+  items.forEach((item) => {
+    const key = item.name.trim().toLowerCase()
+    if (!key) return
+    if (!counts.has(key)) counts.set(key, { name: item.name.trim(), count: 0 })
+    counts.get(key).count += 1
+  })
+
+  const pendingKeys = new Set(pendingItems.map((item) => item.name.trim().toLowerCase()))
+
+  return Array.from(counts.values())
+    .filter((entry) => entry.count >= MIN_FREQUENCY && !pendingKeys.has(entry.name.toLowerCase()))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, MAX_SUGGESTIONS)
+}
 
 export default function ComprasPage() {
   const { t } = useTranslation()
@@ -14,6 +37,10 @@ export default function ComprasPage() {
 
   const pendingItems = items.filter((item) => !item.bought)
   const boughtItems = items.filter((item) => item.bought)
+  const frequentSuggestions = useMemo(
+    () => computeFrequentSuggestions(items, pendingItems),
+    [items, pendingItems]
+  )
 
   function handleAddItem(event) {
     event.preventDefault()
@@ -42,6 +69,24 @@ export default function ComprasPage() {
           {t('shoppingPage.add')}
         </button>
       </form>
+
+      {frequentSuggestions.length > 0 && (
+        <div className="mt-3">
+          <p className="text-xs font-medium text-gray-500">{t('shoppingPage.frequentItems')}</p>
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            {frequentSuggestions.map((suggestion) => (
+              <button
+                key={suggestion.name}
+                type="button"
+                onClick={() => addItem(suggestion.name, user.id)}
+                className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:border-brand-300 hover:text-brand-600"
+              >
+                + {suggestion.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-4 space-y-2">
         <h2 className="text-sm font-semibold text-gray-900">{t('shoppingPage.toBuyTitle')}</h2>

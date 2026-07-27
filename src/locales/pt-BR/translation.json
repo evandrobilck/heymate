@@ -246,6 +246,7 @@
   "shoppingPage": {
     "addPlaceholder": "Adicionar item",
     "add": "Adicionar",
+    "frequentItems": "Frequentes",
     "toBuyTitle": "Para comprar",
     "boughtTitle": "Compradas",
     "noPending": "Lista vazia. Adicione algo!",
