@@ -182,7 +182,7 @@ export const mockBills = [
   },
 ]
 
-export const taskRecurrenceOptions = ['none', 'daily', 'weekly', 'monthly']
+export const taskRecurrenceOptions = ['none', 'daily', 'weekly', 'biweekly', 'monthly']
 
 export const mockTasks = [
   {
