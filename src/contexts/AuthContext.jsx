@@ -14,8 +14,18 @@ export function AuthProvider({ children }) {
       setLoading(false)
     })
 
+    // Supabase re-validates the session whenever the tab/window regains
+    // focus (so a suspended mobile browser doesn't miss a scheduled token
+    // refresh) — this fires onAuthStateChange even when nothing actually
+    // changed. Blindly calling setSession(nextSession) every time handed
+    // out a brand-new object on every tab switch, which cascaded into
+    // every context depending on the logged-in user re-fetching — and
+    // RequireHouse/RequireAuth render nothing while their data is
+    // "loading", so the whole page (any open modal included) briefly
+    // unmounted and lost whatever the user was typing. Bail out when the
+    // token hasn't actually changed so React skips the re-render entirely.
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession)
+      setSession((prev) => (prev?.access_token === nextSession?.access_token ? prev : nextSession))
     })
 
     return () => listener.subscription.unsubscribe()
@@ -108,19 +118,24 @@ export function AuthProvider({ children }) {
     await refreshProfile()
   }
 
-  const user = session?.user
-    ? {
-        id: session.user.id,
-        email: session.user.email,
-        name: profile?.full_name ?? session.user.email,
-        phone: profile?.phone ?? '',
-        avatarUrl: profile?.avatar_url ?? null,
-        payId: profile?.pay_id ?? '',
-        bankDetails: profile?.bank_details ?? '',
-        emergencyContactName: profile?.emergency_contact_name ?? '',
-        emergencyContactPhone: profile?.emergency_contact_phone ?? '',
-      }
-    : null
+  // Memoized so a legitimate token refresh (new access_token, same person)
+  // doesn't hand out a new object either — every context keyed off `user`
+  // would otherwise still re-fetch on a plain background token renewal,
+  // same as the tab-refocus case the setSession guard above addresses.
+  const user = useMemo(() => {
+    if (!session?.user) return null
+    return {
+      id: session.user.id,
+      email: session.user.email,
+      name: profile?.full_name ?? session.user.email,
+      phone: profile?.phone ?? '',
+      avatarUrl: profile?.avatar_url ?? null,
+      payId: profile?.pay_id ?? '',
+      bankDetails: profile?.bank_details ?? '',
+      emergencyContactName: profile?.emergency_contact_name ?? '',
+      emergencyContactPhone: profile?.emergency_contact_phone ?? '',
+    }
+  }, [session?.user?.id, session?.user?.email, profile])
 
   const value = useMemo(
     () => ({

@@ -75,7 +75,11 @@ export function HouseProvider({ children }) {
       }))
     )
     setLoading(false)
-  }, [user, authLoading])
+    // Depend on user?.id, not the whole user object — a new object with
+    // the same id (e.g. profile fields changing) shouldn't re-trigger a
+    // full house refetch (and the loading flip that briefly unmounts
+    // RequireHouse's children, see AuthContext's setSession comment).
+  }, [user?.id, authLoading])
 
   useEffect(() => {
     refresh()
