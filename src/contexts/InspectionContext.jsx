@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../services/supabase'
 import { useHouse } from './HouseContext'
 
@@ -21,6 +21,17 @@ export function InspectionProvider({ children }) {
   const { house } = useHouse()
   const [inspections, setInspections] = useState([])
   const [loading, setLoading] = useState(true)
+
+  // Realtime's postgres_changes filter can only match a column on the
+  // table being watched — inspection_tasks only has inspection_id, not
+  // house_id, so "does this row belong to one of MY house's inspections"
+  // can't be expressed as a Realtime filter. Kept in a ref so the channel
+  // subscription below doesn't need to resubscribe every time the
+  // inspection list changes.
+  const inspectionIdsRef = useRef([])
+  useEffect(() => {
+    inspectionIdsRef.current = inspections.map((inspection) => inspection.id)
+  }, [inspections])
 
   const refresh = useCallback(async () => {
     if (!house?.id) {
@@ -59,7 +70,10 @@ export function InspectionProvider({ children }) {
         { event: '*', schema: 'public', table: 'inspections', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'inspection_tasks' }, () => refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'inspection_tasks' }, (payload) => {
+        const inspectionId = payload.new?.inspection_id ?? payload.old?.inspection_id
+        if (inspectionIdsRef.current.includes(inspectionId)) refresh()
+      })
       .subscribe()
 
     return () => {

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../services/supabase'
 import { useHouse } from './HouseContext'
 
@@ -27,6 +27,17 @@ export function CalendarEventsProvider({ children }) {
   const { house } = useHouse()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
+
+  // Realtime's postgres_changes filter can only match a column on the
+  // table being watched — event_reminders only has event_id, not
+  // house_id, so "does this row belong to one of MY house's events" can't
+  // be expressed as a Realtime filter. Kept in a ref so the channel
+  // subscription below doesn't need to resubscribe every time the event
+  // list changes.
+  const eventIdsRef = useRef([])
+  useEffect(() => {
+    eventIdsRef.current = events.map((event) => event.id)
+  }, [events])
 
   const refresh = useCallback(async () => {
     if (!house?.id) {
@@ -65,7 +76,10 @@ export function CalendarEventsProvider({ children }) {
         { event: '*', schema: 'public', table: 'calendar_events', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_reminders' }, () => refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_reminders' }, (payload) => {
+        const eventId = payload.new?.event_id ?? payload.old?.event_id
+        if (eventIdsRef.current.includes(eventId)) refresh()
+      })
       .subscribe()
 
     return () => {

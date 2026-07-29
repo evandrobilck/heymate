@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../services/supabase'
 import { useAuth } from './AuthContext'
 
@@ -23,6 +23,16 @@ export function HouseProvider({ children }) {
   const [house, setHouse] = useState(null)
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
+
+  // Realtime's postgres_changes filter can only match a column on the
+  // table being watched — profiles has no house_id, so "did a member of
+  // MY house change their profile" can't be expressed as a Realtime
+  // filter. Kept in a ref (not state) so the channel subscription below
+  // doesn't need to resubscribe every time membership changes.
+  const membersRef = useRef(members)
+  useEffect(() => {
+    membersRef.current = members
+  }, [members])
 
   const refresh = useCallback(async () => {
     // Wait for AuthContext to finish resolving the session before deciding
@@ -96,7 +106,9 @@ export function HouseProvider({ children }) {
         { event: '*', schema: 'public', table: 'house_members', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, () => refresh())
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, (payload) => {
+        if (membersRef.current.some((member) => member.id === payload.new?.id)) refresh()
+      })
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'houses', filter: `id=eq.${house.id}` },

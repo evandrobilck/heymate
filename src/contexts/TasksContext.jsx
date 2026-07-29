@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../services/supabase'
 import { useHouse } from './HouseContext'
 
@@ -28,6 +28,17 @@ export function TasksProvider({ children }) {
   const { house } = useHouse()
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
+
+  // Realtime's postgres_changes filter can only match a column on the
+  // table being watched — task_assignees/task_completers/task_reminders
+  // only have task_id, not house_id, so "does this row belong to one of
+  // MY house's tasks" can't be expressed as a Realtime filter. Kept in a
+  // ref so the channel subscription below doesn't need to resubscribe
+  // every time the task list changes.
+  const taskIdsRef = useRef([])
+  useEffect(() => {
+    taskIdsRef.current = tasks.map((task) => task.id)
+  }, [tasks])
 
   const refresh = useCallback(async () => {
     if (!house?.id) {
@@ -66,9 +77,18 @@ export function TasksProvider({ children }) {
         { event: '*', schema: 'public', table: 'tasks', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_assignees' }, () => refresh())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_completers' }, () => refresh())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_reminders' }, () => refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_assignees' }, (payload) => {
+        const taskId = payload.new?.task_id ?? payload.old?.task_id
+        if (taskIdsRef.current.includes(taskId)) refresh()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_completers' }, (payload) => {
+        const taskId = payload.new?.task_id ?? payload.old?.task_id
+        if (taskIdsRef.current.includes(taskId)) refresh()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'task_reminders' }, (payload) => {
+        const taskId = payload.new?.task_id ?? payload.old?.task_id
+        if (taskIdsRef.current.includes(taskId)) refresh()
+      })
       .subscribe()
 
     return () => {

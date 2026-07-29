@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../services/supabase'
 import { useHouse } from './HouseContext'
 
@@ -45,6 +45,17 @@ export function BillsProvider({ children }) {
   const [bills, setBills] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Realtime's postgres_changes filter can only match a column on the
+  // table being watched — bill_shares/bill_occurrence_exceptions/
+  // bill_reminders only have bill_id, not house_id, so "does this row
+  // belong to one of MY house's bills" can't be expressed as a Realtime
+  // filter. Kept in a ref so the channel subscription below doesn't need
+  // to resubscribe every time the bill list changes.
+  const billIdsRef = useRef([])
+  useEffect(() => {
+    billIdsRef.current = bills.map((bill) => bill.id)
+  }, [bills])
+
   const refresh = useCallback(async () => {
     if (!house?.id) {
       setBills([])
@@ -82,9 +93,18 @@ export function BillsProvider({ children }) {
         { event: '*', schema: 'public', table: 'bills', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_shares' }, () => refresh())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_occurrence_exceptions' }, () => refresh())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_reminders' }, () => refresh())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_shares' }, (payload) => {
+        const billId = payload.new?.bill_id ?? payload.old?.bill_id
+        if (billIdsRef.current.includes(billId)) refresh()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_occurrence_exceptions' }, (payload) => {
+        const billId = payload.new?.bill_id ?? payload.old?.bill_id
+        if (billIdsRef.current.includes(billId)) refresh()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_reminders' }, (payload) => {
+        const billId = payload.new?.bill_id ?? payload.old?.bill_id
+        if (billIdsRef.current.includes(billId)) refresh()
+      })
       .subscribe()
 
     return () => {

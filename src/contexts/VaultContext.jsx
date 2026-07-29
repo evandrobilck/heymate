@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../services/supabase'
 import { useHouse } from './HouseContext'
 
@@ -12,6 +12,17 @@ export function VaultProvider({ children }) {
 
   const memberIds = house?.members.map((member) => member.id) ?? []
   const memberIdsKey = memberIds.join(',')
+
+  // Realtime's postgres_changes filter can only match a column on the
+  // table being watched — profiles has no house_id, so "did a member of
+  // MY house change their profile" can't be expressed as a Realtime
+  // filter. Kept in a ref so the channel subscription below doesn't need
+  // to resubscribe every time membership changes.
+  const memberIdsRef = useRef(memberIds)
+  useEffect(() => {
+    memberIdsRef.current = memberIds
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memberIdsKey])
 
   const refresh = useCallback(async () => {
     if (!house?.id) {
@@ -68,7 +79,9 @@ export function VaultProvider({ children }) {
         { event: '*', schema: 'public', table: 'house_wifi', filter: `house_id=eq.${house.id}` },
         () => refresh()
       )
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, () => refresh())
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles' }, (payload) => {
+        if (memberIdsRef.current.includes(payload.new?.id)) refresh()
+      })
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'vault_custom_fields', filter: `house_id=eq.${house.id}` },
