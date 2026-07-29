@@ -169,6 +169,7 @@
     "deleteOnlyThisConfirm": "Excluir somente esta ocorrência? A conta continua existindo para as próximas datas.",
     "deleteFollowingConfirm": "Excluir esta e todas as próximas ocorrências? As anteriores continuam registradas.",
     "deleteError": "Não foi possível apagar a conta. Tente de novo.",
+    "photoLabel": "Foto da conta",
     "addPhoto": "Anexar foto da conta",
     "changePhoto": "Trocar foto",
     "processingPhoto": "Enviando...",

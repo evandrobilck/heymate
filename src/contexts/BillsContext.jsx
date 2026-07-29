@@ -222,6 +222,7 @@ export function BillsProvider({ children }) {
     const { error } = await supabase.rpc('set_bill_photo', { p_bill_id: billId, p_photo_url: photoUrl })
     if (error) throw error
     await refresh()
+    return photoUrl
   }
 
   async function confirmBillAmount(billId) {

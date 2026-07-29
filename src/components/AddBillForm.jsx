@@ -4,10 +4,12 @@ import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useCategories } from '../contexts/CategoriesContext'
 import { useConfirm } from '../contexts/ConfirmContext'
+import { useToast } from '../contexts/ToastContext'
 import { billCategories, recurrenceOptions } from '../services/mockData'
 import { computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
+import { resizeImageFile } from '../utils/resizeImage'
 import Modal from './Modal'
 import ReminderList from './ReminderList'
 
@@ -37,10 +39,16 @@ function findPossibleDuplicate(bills, candidate) {
 export default function AddBillForm({ onClose, bill = null }) {
   const { t, i18n } = useTranslation()
   const { house } = useHouse()
-  const { bills, addBill, updateBill } = useBills()
+  const { bills, addBill, updateBill, setBillPhoto } = useBills()
   const { customBillCategories, hiddenCategoryIds } = useCategories()
   const confirm = useConfirm()
+  const showToast = useToast()
   const isEditing = Boolean(bill)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  // Tracked locally (not just read off `bill.photoUrl`) because `bill` is a
+  // snapshot the parent page captured when "Edit" was clicked — it won't
+  // pick up BillsContext's refresh() on its own while this modal stays open.
+  const [photoUrl, setPhotoUrl] = useState(bill?.photoUrl ?? null)
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
   // Include past members who are already on the bill being edited, so
@@ -102,6 +110,34 @@ export default function AddBillForm({ onClose, bill = null }) {
     participantIds.length > 0 &&
     (splitType !== 'percentage' || Math.abs(percentageTotal - 100) < 0.01) &&
     (splitType !== 'exact' || Math.abs(exactTotal - amountValue) < 0.01)
+
+  async function handlePhotoChange(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    setUploadingPhoto(true)
+    try {
+      const resized = await resizeImageFile(file)
+      const uploadedUrl = await setBillPhoto(bill.id, resized)
+      setPhotoUrl(uploadedUrl)
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.photoError'))
+    } finally {
+      setUploadingPhoto(false)
+      event.target.value = ''
+    }
+  }
+
+  async function handleRemovePhoto() {
+    if (!(await confirm(t('billsPage.removePhotoConfirm')))) return
+    try {
+      await setBillPhoto(bill.id, null)
+      setPhotoUrl(null)
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.photoError'))
+    }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -176,6 +212,55 @@ export default function AddBillForm({ onClose, bill = null }) {
               className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
             />
           </div>
+
+          {isEditing && (
+            <div>
+              <label className="text-xs font-medium text-gray-600">{t('billsPage.photoLabel')}</label>
+              <div className="mt-1">
+                {photoUrl ? (
+                  <div>
+                    <a href={photoUrl} target="_blank" rel="noreferrer">
+                      <img
+                        src={photoUrl}
+                        alt=""
+                        className="h-32 w-full rounded-lg border border-gray-200 object-cover"
+                      />
+                    </a>
+                    <div className="mt-1.5 flex gap-3">
+                      <label className="cursor-pointer text-xs font-medium text-brand-600 hover:text-brand-700">
+                        {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.changePhoto')}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePhotoChange}
+                          disabled={uploadingPhoto}
+                          className="hidden"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleRemovePhoto}
+                        className="text-xs font-medium text-gray-400 hover:text-red-600"
+                      >
+                        {t('vaultPage.remove')}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-center text-xs font-medium text-brand-600 hover:border-brand-400">
+                    {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.addPhoto')}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      disabled={uploadingPhoto}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+          )}
 
           <div>
             <label className="text-xs font-medium text-gray-600">{t('billsPage.categoryLabel')}</label>

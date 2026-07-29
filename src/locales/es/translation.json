@@ -169,6 +169,7 @@
     "deleteOnlyThisConfirm": "¿Eliminar solo esta ocurrencia? La cuenta sigue existiendo para las próximas fechas.",
     "deleteFollowingConfirm": "¿Eliminar esta y todas las próximas ocurrencias? Las anteriores siguen registradas.",
     "deleteError": "No se pudo eliminar la cuenta. Intenta de nuevo.",
+    "photoLabel": "Foto de la cuenta",
     "addPhoto": "Adjuntar foto de la cuenta",
     "changePhoto": "Cambiar foto",
     "processingPhoto": "Subiendo...",

@@ -169,6 +169,7 @@
     "deleteOnlyThisConfirm": "Delete only this occurrence? The bill keeps existing for future dates.",
     "deleteFollowingConfirm": "Delete this and all future occurrences? Past ones stay recorded.",
     "deleteError": "Couldn't delete the bill. Please try again.",
+    "photoLabel": "Bill photo",
     "addPhoto": "Attach a photo of the bill",
     "changePhoto": "Change photo",
     "processingPhoto": "Uploading...",
