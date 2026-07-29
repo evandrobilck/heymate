@@ -125,6 +125,7 @@ export default function CasaPage() {
               key={member.id}
               member={member}
               canManage={isAdmin && member.id !== user.id}
+              canEditDate={isAdmin}
               onMarkAsLeft={markMemberAsLeft}
               onMakeAdmin={handleMakeAdmin}
               onEditJoinedAt={handleEditJoinedAt}

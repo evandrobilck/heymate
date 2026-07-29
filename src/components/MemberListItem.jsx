@@ -7,6 +7,7 @@ export default function MemberListItem({
   member,
   isPast = false,
   canManage = false,
+  canEditDate = false,
   onMarkAsLeft,
   onMakeAdmin,
   onEditJoinedAt,
@@ -62,7 +63,7 @@ export default function MemberListItem({
                   end: formatDate(member.leftAt, i18n.language),
                 })
               : t('housePage.since', { date: formatDate(member.joinedAt, i18n.language) })}
-            {canManage && !isPast && (
+            {canEditDate && !isPast && (
               <button
                 type="button"
                 onClick={() => setEditingDate(true)}
