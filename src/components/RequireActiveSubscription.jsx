@@ -5,6 +5,7 @@ import { useHouse } from '../contexts/HouseContext'
 import { useSubscription } from '../contexts/SubscriptionContext'
 import { formatCurrency } from '../utils/formatCurrency'
 import { isSubscriptionBlocked, isTrialExpired } from '../utils/subscriptionStatus'
+import { PLAN_IDS, PLAN_PRICE_CENTS, PLAN_LABEL_KEYS, PLAN_PERIOD_KEYS } from '../utils/subscriptionPlans'
 
 function BlockedScreen() {
   const { t, i18n } = useTranslation()
@@ -13,15 +14,15 @@ function BlockedScreen() {
   const { subscription, startCheckout } = useSubscription()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [selectedPlan, setSelectedPlan] = useState('monthly')
 
   const trialExpired = isTrialExpired(subscription)
-  const price = formatCurrency(subscription.priceCents / 100, i18n.language, subscription.currency)
 
   async function handleSubscribe() {
     setError('')
     setSubmitting(true)
     try {
-      await startCheckout()
+      await startCheckout(selectedPlan)
     } catch (err) {
       console.error(err)
       setError(`${t('subscription.subscribeError')} (${err.message})`)
@@ -41,19 +42,41 @@ function BlockedScreen() {
             ? t('subscription.trialExpiredBody', { houseName: house.name })
             : t('subscription.canceledBody', { houseName: house.name })}
         </p>
-        <p className="mt-3 text-sm font-medium text-gray-700">{t('subscription.priceLabel', { price })}</p>
 
         {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
         {isAdmin ? (
-          <button
-            type="button"
-            onClick={handleSubscribe}
-            disabled={submitting}
-            className="mt-6 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
-          >
-            {t('subscription.subscribeButton')}
-          </button>
+          <>
+            <div className="mt-6 space-y-2 text-left">
+              {PLAN_IDS.map((planId) => {
+                const price = formatCurrency(PLAN_PRICE_CENTS[planId] / 100, i18n.language, 'AUD')
+                const isSelected = selectedPlan === planId
+                return (
+                  <button
+                    key={planId}
+                    type="button"
+                    onClick={() => setSelectedPlan(planId)}
+                    className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-sm transition-colors ${
+                      isSelected
+                        ? 'border-brand-500 bg-brand-50 text-brand-700'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                    }`}
+                  >
+                    <span className="font-medium">{t(PLAN_LABEL_KEYS[planId])}</span>
+                    <span className="text-xs opacity-80">{t(PLAN_PERIOD_KEYS[planId], { price })}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={handleSubscribe}
+              disabled={submitting}
+              className="mt-4 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
+            >
+              {t('subscription.subscribeButton')}
+            </button>
+          </>
         ) : (
           <p className="mt-6 text-sm text-gray-500">{t('subscription.nonAdminBlockedHint')}</p>
         )}

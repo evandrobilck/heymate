@@ -4,6 +4,7 @@ import { useSubscription } from '../contexts/SubscriptionContext'
 import { useConfirm } from '../contexts/ConfirmContext'
 import { formatCurrency } from '../utils/formatCurrency'
 import { getDaysRemaining, isTrialExpired } from '../utils/subscriptionStatus'
+import { PLAN_IDS, PLAN_PRICE_CENTS, PLAN_LABEL_KEYS, PLAN_PERIOD_KEYS } from '../utils/subscriptionPlans'
 
 const STATUS_STYLES = {
   trialing: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400',
@@ -32,17 +33,20 @@ export default function SubscriptionCard() {
   const confirm = useConfirm()
   const [actionError, setActionError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState('monthly')
 
   if (loading || !subscription) return null
 
-  const { status, priceCents, currency, trialEndsAt, currentPeriodEnd, canceledAt } = subscription
-  const price = formatCurrency(priceCents / 100, i18n.language, currency)
+  const { status, billingInterval, priceCents, currency, trialEndsAt, currentPeriodEnd, canceledAt } = subscription
+  const needsPlanChoice = status !== 'active'
+  const currentPeriodKey = PLAN_PERIOD_KEYS[billingInterval] ?? PLAN_PERIOD_KEYS.monthly
+  const currentPrice = formatCurrency(priceCents / 100, i18n.language, currency)
 
   async function handleSubscribe() {
     setActionError('')
     setSubmitting(true)
     try {
-      await startCheckout()
+      await startCheckout(selectedPlan)
     } catch (err) {
       console.error(err)
       setActionError(`${t('subscription.subscribeError')} (${err.message})`)
@@ -73,7 +77,7 @@ export default function SubscriptionCard() {
         </span>
       </div>
 
-      <p className="text-sm text-gray-600">{t('subscription.priceLabel', { price })}</p>
+      {!needsPlanChoice && <p className="text-sm text-gray-600">{t(currentPeriodKey, { price: currentPrice })}</p>}
 
       {status === 'trialing' && isTrialExpired(subscription) && (
         <p className="text-sm font-medium text-red-600">{t('subscription.trialExpiredLabel')}</p>
@@ -93,6 +97,33 @@ export default function SubscriptionCard() {
         <p className="text-sm text-gray-600">
           {t('subscription.canceledOn', { date: formatFullDate(canceledAt, i18n.language) })}
         </p>
+      )}
+
+      {needsPlanChoice && (
+        <div>
+          <p className="text-xs font-medium text-gray-600">{t('subscription.choosePlan')}</p>
+          <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {PLAN_IDS.map((planId) => {
+              const price = formatCurrency(PLAN_PRICE_CENTS[planId] / 100, i18n.language, 'AUD')
+              const isSelected = selectedPlan === planId
+              return (
+                <button
+                  key={planId}
+                  type="button"
+                  onClick={() => setSelectedPlan(planId)}
+                  className={`rounded-lg border px-3 py-2 text-left text-sm transition-colors ${
+                    isSelected
+                      ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-950/40'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  <span className="block font-medium">{t(PLAN_LABEL_KEYS[planId])}</span>
+                  <span className="block text-xs opacity-80">{t(PLAN_PERIOD_KEYS[planId], { price })}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
       )}
 
       {actionError && <p className="text-sm text-red-600">{actionError}</p>}

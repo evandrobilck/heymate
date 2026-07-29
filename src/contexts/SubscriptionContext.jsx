@@ -26,6 +26,7 @@ function mapSubscriptionRow(row) {
   return {
     status: row.status,
     plan: row.plan,
+    billingInterval: row.billing_interval,
     priceCents: row.price_cents,
     currency: row.currency,
     trialEndsAt: row.trial_ends_at,
@@ -88,10 +89,10 @@ export function SubscriptionProvider({ children }) {
   // the app's own UI is what keeps this exempt from Apple/Google's in-app
   // purchase requirement. The subscription row itself is only updated once
   // Stripe confirms payment via the stripe-webhook edge function.
-  async function startCheckout() {
+  async function startCheckout(plan) {
     if (!house?.id) return
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-      body: { house_id: house.id },
+      body: { house_id: house.id, plan },
     })
     if (error) throw new Error(await readFunctionError(error))
 

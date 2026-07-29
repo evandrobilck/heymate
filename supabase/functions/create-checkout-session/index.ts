@@ -10,8 +10,17 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY')!
-const STRIPE_PRICE_ID = Deno.env.get('STRIPE_PRICE_ID')!
 const APP_URL = Deno.env.get('APP_URL') ?? 'https://heymate-lovat.vercel.app'
+
+// One Stripe Price per billing interval, all on the same "HeyFlat Casa"
+// product — the plan the client asks for just selects which of these to
+// check out with. stripe-webhook is what actually persists which one a
+// house ended up on, reading it back off the real Stripe subscription.
+const PRICE_IDS: Record<string, string> = {
+  monthly: Deno.env.get('STRIPE_PRICE_ID')!,
+  semiannual: Deno.env.get('STRIPE_PRICE_ID_SEMIANNUAL')!,
+  annual: Deno.env.get('STRIPE_PRICE_ID_ANNUAL')!,
+}
 
 const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: '2025-08-27.basil' })
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY)
@@ -37,8 +46,11 @@ Deno.serve(async (req) => {
   } = await userClient.auth.getUser()
   if (userError || !user) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
 
-  const { house_id } = await req.json()
+  const { house_id, plan } = await req.json()
   if (!house_id) return new Response('Missing house_id', { status: 400, headers: corsHeaders })
+
+  const priceId = PRICE_IDS[plan]
+  if (!priceId) return new Response('Invalid plan', { status: 400, headers: corsHeaders })
 
   const { data: membership } = await supabase
     .from('house_members')
@@ -75,7 +87,7 @@ Deno.serve(async (req) => {
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
     customer: customerId,
-    line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+    line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${APP_URL}/checkout-resultado?status=success`,
     cancel_url: `${APP_URL}/checkout-resultado?status=canceled`,
     allow_promotion_codes: true,

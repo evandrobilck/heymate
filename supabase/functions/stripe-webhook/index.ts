@@ -26,14 +26,28 @@ function getCurrentPeriodEnd(subscription: Stripe.Subscription): number | undefi
   return subscription.items.data[0]?.current_period_end
 }
 
+// Derived from the Stripe price's own recurring interval, not looked up by
+// price ID — works no matter which of the 3 HeyFlat Casa prices a house is
+// on, and keeps working if a price is ever recreated with a new ID.
+function getBillingInterval(subscription: Stripe.Subscription): string {
+  const recurring = subscription.items.data[0]?.price.recurring
+  if (recurring?.interval === 'year') return 'annual'
+  if (recurring?.interval === 'month' && recurring.interval_count === 6) return 'semiannual'
+  return 'monthly'
+}
+
 async function updateFromSubscription(houseId: string, subscription: Stripe.Subscription) {
   const periodEnd = getCurrentPeriodEnd(subscription)
+  const price = subscription.items.data[0]?.price
 
   await supabase
     .from('house_subscriptions')
     .update({
       status: mapStripeStatus(subscription.status),
       stripe_subscription_id: subscription.id,
+      billing_interval: getBillingInterval(subscription),
+      price_cents: price?.unit_amount ?? undefined,
+      currency: price?.currency ? price.currency.toUpperCase() : undefined,
       current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
       canceled_at: subscription.status === 'canceled' ? new Date().toISOString() : null,
     })
