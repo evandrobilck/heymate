@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
@@ -45,10 +45,23 @@ export default function AddBillForm({ onClose, bill = null }) {
   const showToast = useToast()
   const isEditing = Boolean(bill)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   // Tracked locally (not just read off `bill.photoUrl`) because `bill` is a
   // snapshot the parent page captured when "Edit" was clicked — it won't
   // pick up BillsContext's refresh() on its own while this modal stays open.
   const [photoUrl, setPhotoUrl] = useState(bill?.photoUrl ?? null)
+  // When creating a new bill there's no id yet to attach a photo to — the
+  // resized file is held here and actually uploaded right after the bill
+  // is saved (see handleSubmit), so the user can pick it up front instead
+  // of having to reopen the bill in Edit afterward just for the photo.
+  const [pendingPhotoFile, setPendingPhotoFile] = useState(null)
+  const [pendingPhotoPreview, setPendingPhotoPreview] = useState(null)
+
+  useEffect(() => {
+    return () => {
+      if (pendingPhotoPreview) URL.revokeObjectURL(pendingPhotoPreview)
+    }
+  }, [pendingPhotoPreview])
 
   const activeMembers = house.members.filter((member) => !member.leftAt)
   // Include past members who are already on the bill being edited, so
@@ -114,6 +127,24 @@ export default function AddBillForm({ onClose, bill = null }) {
   async function handlePhotoChange(event) {
     const file = event.target.files?.[0]
     if (!file) return
+
+    if (!isEditing) {
+      // No bill.id yet — hold onto the resized file and upload it right
+      // after the bill itself is created (see handleSubmit).
+      try {
+        const resized = await resizeImageFile(file)
+        if (pendingPhotoPreview) URL.revokeObjectURL(pendingPhotoPreview)
+        setPendingPhotoFile(resized)
+        setPendingPhotoPreview(URL.createObjectURL(resized))
+      } catch (err) {
+        console.error(err)
+        showToast(t('billsPage.photoError'))
+      } finally {
+        event.target.value = ''
+      }
+      return
+    }
+
     setUploadingPhoto(true)
     try {
       const resized = await resizeImageFile(file)
@@ -129,6 +160,13 @@ export default function AddBillForm({ onClose, bill = null }) {
   }
 
   async function handleRemovePhoto() {
+    if (!isEditing) {
+      if (pendingPhotoPreview) URL.revokeObjectURL(pendingPhotoPreview)
+      setPendingPhotoFile(null)
+      setPendingPhotoPreview(null)
+      return
+    }
+
     if (!(await confirm(t('billsPage.removePhotoConfirm')))) return
     try {
       await setBillPhoto(bill.id, null)
@@ -182,13 +220,25 @@ export default function AddBillForm({ onClose, bill = null }) {
       reminders,
     }
 
-    if (isEditing) {
-      updateBill(bill.id, payload)
-    } else {
-      addBill(payload)
+    setSubmitting(true)
+    try {
+      if (isEditing) {
+        await updateBill(bill.id, payload)
+      } else {
+        const newBillId = await addBill(payload)
+        if (newBillId && pendingPhotoFile) {
+          try {
+            await setBillPhoto(newBillId, pendingPhotoFile)
+          } catch (err) {
+            console.error(err)
+            showToast(t('billsPage.photoError'))
+          }
+        }
+      }
+      onClose()
+    } finally {
+      setSubmitting(false)
     }
-
-    onClose()
   }
 
   return (
@@ -213,54 +263,52 @@ export default function AddBillForm({ onClose, bill = null }) {
             />
           </div>
 
-          {isEditing && (
-            <div>
-              <label className="text-xs font-medium text-gray-600">{t('billsPage.photoLabel')}</label>
-              <div className="mt-1">
-                {photoUrl ? (
-                  <div>
-                    <a href={photoUrl} target="_blank" rel="noreferrer">
-                      <img
-                        src={photoUrl}
-                        alt=""
-                        className="h-32 w-full rounded-lg border border-gray-200 object-cover"
-                      />
-                    </a>
-                    <div className="mt-1.5 flex gap-3">
-                      <label className="cursor-pointer text-xs font-medium text-brand-600 hover:text-brand-700">
-                        {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.changePhoto')}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePhotoChange}
-                          disabled={uploadingPhoto}
-                          className="hidden"
-                        />
-                      </label>
-                      <button
-                        type="button"
-                        onClick={handleRemovePhoto}
-                        className="text-xs font-medium text-gray-400 hover:text-red-600"
-                      >
-                        {t('vaultPage.remove')}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <label className="block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-center text-xs font-medium text-brand-600 hover:border-brand-400">
-                    {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.addPhoto')}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoChange}
-                      disabled={uploadingPhoto}
-                      className="hidden"
+          <div>
+            <label className="text-xs font-medium text-gray-600">{t('billsPage.photoLabel')}</label>
+            <div className="mt-1">
+              {(isEditing ? photoUrl : pendingPhotoPreview) ? (
+                <div>
+                  <a href={isEditing ? photoUrl : pendingPhotoPreview} target="_blank" rel="noreferrer">
+                    <img
+                      src={isEditing ? photoUrl : pendingPhotoPreview}
+                      alt=""
+                      className="h-32 w-full rounded-lg border border-gray-200 object-cover"
                     />
-                  </label>
-                )}
-              </div>
+                  </a>
+                  <div className="mt-1.5 flex gap-3">
+                    <label className="cursor-pointer text-xs font-medium text-brand-600 hover:text-brand-700">
+                      {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.changePhoto')}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoChange}
+                        disabled={uploadingPhoto}
+                        className="hidden"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleRemovePhoto}
+                      className="text-xs font-medium text-gray-400 hover:text-red-600"
+                    >
+                      {t('vaultPage.remove')}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <label className="block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-center text-xs font-medium text-brand-600 hover:border-brand-400">
+                  {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.addPhoto')}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    disabled={uploadingPhoto}
+                    className="hidden"
+                  />
+                </label>
+              )}
             </div>
-          )}
+          </div>
 
           <div>
             <label className="text-xs font-medium text-gray-600">{t('billsPage.categoryLabel')}</label>
@@ -436,7 +484,7 @@ export default function AddBillForm({ onClose, bill = null }) {
 
           <button
             type="submit"
-            disabled={!isValid}
+            disabled={!isValid || submitting}
             className="w-full rounded-lg bg-brand-600 py-2.5 text-sm font-medium text-white disabled:opacity-40"
           >
             {isEditing ? t('billsPage.saveChanges') : t('billsPage.save')}

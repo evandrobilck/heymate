@@ -153,6 +153,7 @@ export function BillsProvider({ children }) {
     if (error) throw error
     if (bill.reminders?.length > 0) await syncBillReminders(data.id, bill.reminders)
     await refresh()
+    return data.id
   }
 
   async function updateBill(billId, bill) {
