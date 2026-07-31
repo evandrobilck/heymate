@@ -145,6 +145,8 @@
     "dueDateLabel": "Vencimento",
     "recurrenceLabel": "Recorrência",
     "participantsLabel": "Dividir entre",
+    "privateLabel": "Privado (só quem foi marcado acima vê esta conta)",
+    "privateHint": "Os demais moradores da casa não verão esta conta na aba Contas.",
     "splitTypeLabel": "Tipo de divisão",
     "percentageTotal": "Total: {{total}}%",
     "exactTotal": "Alocado {{total}} de {{amount}}",

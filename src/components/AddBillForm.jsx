@@ -104,6 +104,7 @@ export default function AddBillForm({ onClose, bill = null }) {
       : {}
   )
   const [reminders, setReminders] = useState(bill?.reminders ?? [])
+  const [isPrivate, setIsPrivate] = useState(bill?.isPrivate ?? false)
 
   const amountValue = Number(totalAmount) || 0
 
@@ -218,6 +219,7 @@ export default function AddBillForm({ onClose, bill = null }) {
       participantIds,
       shares,
       reminders,
+      isPrivate,
     }
 
     setSubmitting(true)
@@ -430,6 +432,19 @@ export default function AddBillForm({ onClose, bill = null }) {
                 )
               })}
             </ul>
+          </div>
+
+          <div>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={isPrivate}
+                onChange={(event) => setIsPrivate(event.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-brand-600"
+              />
+              <span className="text-xs font-medium text-gray-600">{t('billsPage.privateLabel')}</span>
+            </label>
+            {isPrivate && <p className="mt-1 text-xs text-gray-400">{t('billsPage.privateHint')}</p>}
           </div>
 
           <div>

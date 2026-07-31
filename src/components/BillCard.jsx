@@ -142,6 +142,11 @@ export default function BillCard({ bill, onEdit }) {
                 🛒
               </span>
             )}
+            {bill.isPrivate && (
+              <span className="ml-1" title={t('billsPage.privateLabel')}>
+                🔒
+              </span>
+            )}
           </p>
           <p className="text-xs text-gray-500">
             {t('billsPage.dueOn', { date: formatDate(bill.dueDate, i18n.language) })}

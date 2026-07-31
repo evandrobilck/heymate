@@ -27,6 +27,7 @@ function mapBillRow(row) {
     splitType: row.split_type,
     createdBy: row.created_by,
     source: row.source,
+    isPrivate: row.is_private,
     photoUrl: row.photo_url,
     amountConfirmedThrough: row.amount_confirmed_through,
     participantIds: (row.bill_shares ?? []).map((share) => share.user_id),
@@ -148,6 +149,7 @@ export function BillsProvider({ children }) {
       p_split_type: bill.splitType,
       p_source: bill.source ?? null,
       p_shares: shares,
+      p_is_private: bill.isPrivate ?? false,
     })
 
     if (error) throw error
@@ -182,6 +184,7 @@ export function BillsProvider({ children }) {
       p_recurrence: bill.recurrence,
       p_split_type: bill.splitType,
       p_shares: shares,
+      p_is_private: bill.isPrivate ?? false,
     })
 
     if (error) throw error
