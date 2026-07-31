@@ -146,7 +146,7 @@
     "recurrenceLabel": "Recurrencia",
     "participantsLabel": "Dividir entre",
     "privateLabel": "Privada (solo las personas marcadas arriba ven esta cuenta)",
-    "privateHint": "El resto de la casa no verá esta cuenta en la pestaña Cuentas.",
+    "privateHint": "El resto de la casa no verá esta cuenta en la pestaña Cuentas, y tampoco se sumará a los Gastos de la casa.",
     "splitTypeLabel": "Tipo de división",
     "percentageTotal": "Total: {{total}}%",
     "exactTotal": "Asignado {{total}} de {{amount}}",

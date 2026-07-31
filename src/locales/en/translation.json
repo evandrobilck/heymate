@@ -146,7 +146,7 @@
     "recurrenceLabel": "Recurrence",
     "participantsLabel": "Split between",
     "privateLabel": "Private (only the people checked above can see this bill)",
-    "privateHint": "Other housemates won't see this bill on the Bills tab.",
+    "privateHint": "Other housemates won't see this bill on the Bills tab, and it won't count toward the house's Expenses either.",
     "splitTypeLabel": "Split type",
     "percentageTotal": "Total: {{total}}%",
     "exactTotal": "Allocated {{total}} of {{amount}}",
