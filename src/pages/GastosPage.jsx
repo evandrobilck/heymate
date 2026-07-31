@@ -73,9 +73,12 @@ export default function GastosPage() {
   // Historical expenses are a manual log kept only for these reports — they
   // never touch the `bills` table, so they're merged in here rather than
   // inside BillsContext.
+  // Private bills are excluded from the house-wide report even for viewers
+  // who can see them (creator/participants) — "private" means it shouldn't
+  // be mixed into shared totals, not just hidden from other roommates.
   const combinedExpenses = useMemo(
     () => [
-      ...bills,
+      ...bills.filter((bill) => !bill.isPrivate),
       ...historicalExpenses.map((expense) => ({
         title: expense.title,
         dueDate: expense.expenseDate,
