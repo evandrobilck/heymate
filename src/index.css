@@ -42,6 +42,18 @@
   --color-brand-100: #392c63;
 }
 
+/* Without this, native controls (select dropdowns, date pickers, scrollbars)
+   keep rendering with light-mode chrome even under `.dark` — text color
+   follows our CSS vars (near-white) while the popup background stays the
+   browser's default white, making dropdown options unreadable. */
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
 html,
 body,
 #root {
