@@ -243,8 +243,11 @@
     "addOldHint": "Só entra nos relatórios de gastos — não aparece na aba Contas nem é dividida entre moradores.",
     "dateLabel": "Data",
     "save": "Salvar",
-    "oldExpensesTitle": "Contas antigas adicionadas",
-    "deleteOldConfirm": "Apagar esse lançamento antigo? Essa ação não pode ser desfeita."
+    "deleteOldConfirm": "Apagar esse lançamento antigo? Essa ação não pode ser desfeita.",
+    "historyTitle": "Histórico",
+    "historySearchPlaceholder": "Buscar por título...",
+    "allCategories": "Todas as categorias",
+    "noHistoryResults": "Nada encontrado com esses filtros."
   },
   "shoppingPage": {
     "addPlaceholder": "Adicionar item",

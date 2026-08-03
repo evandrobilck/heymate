@@ -8,6 +8,7 @@ import { useHistoricalExpenses } from '../contexts/HistoricalExpensesContext'
 import { useConfirm } from '../contexts/ConfirmContext'
 import { billCategories } from '../services/mockData'
 import { toDayKey } from '../utils/calendar'
+import { isBillOccurrenceVisible } from '../utils/recurrence'
 import {
   computeCategoryTotalsInRange,
   computeMonthlyTotals,
@@ -17,8 +18,9 @@ import {
 } from '../utils/expenseStats'
 import { downloadCsv } from '../utils/exportCsv'
 import { formatCurrency } from '../utils/formatCurrency'
-import { formatDate } from '../utils/formatDate'
+import { formatDate, formatMonthLabel } from '../utils/formatDate'
 import { formatMonth } from '../utils/leaderboard'
+import { groupByYearMonth } from '../utils/groupByYearMonth'
 import EmptyState from '../components/EmptyState'
 import AddHistoricalExpenseForm from '../components/AddHistoricalExpenseForm'
 
@@ -67,6 +69,9 @@ export default function GastosPage() {
   const confirm = useConfirm()
   const [showAddOld, setShowAddOld] = useState(false)
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
+  const [historySearch, setHistorySearch] = useState('')
+  const [historyCategoryId, setHistoryCategoryId] = useState('')
+  const [expandedHistoryYears, setExpandedHistoryYears] = useState(() => new Set())
 
   const allCustomCategories = [...customBillCategories, ...customShoppingCategories]
 
@@ -88,6 +93,73 @@ export default function GastosPage() {
     ],
     [bills, historicalExpenses]
   )
+
+  // The Histórico list mixes two sources: bills paid off in the Contas tab
+  // and manually logged historical expenses — anything the house has fully
+  // settled, in one searchable timeline.
+  const historyItems = useMemo(
+    () => [
+      ...bills
+        .filter(
+          (bill) =>
+            !bill.isPrivate &&
+            isBillOccurrenceVisible(bill) &&
+            bill.participantIds.every((id) => bill.shares[id].paid)
+        )
+        .map((bill) => ({
+          id: `bill-${bill.id}`,
+          title: bill.title,
+          category: bill.category,
+          totalAmount: bill.totalAmount,
+          date: bill.dueDate,
+          kind: 'bill',
+        })),
+      ...historicalExpenses.map((expense) => ({
+        id: `historical-${expense.id}`,
+        title: expense.title,
+        category: expense.category,
+        totalAmount: expense.totalAmount,
+        date: expense.expenseDate,
+        kind: 'historical',
+        historicalId: expense.id,
+      })),
+    ],
+    [bills, historicalExpenses]
+  )
+
+  const historyCategoryOptions = useMemo(() => {
+    const present = new Set(historyItems.map((item) => item.category))
+    return [
+      ...billCategories.map((category) => ({ id: category.id, name: t(category.labelKey), icon: category.icon })),
+      ...allCustomCategories.map((category) => ({ id: category.id, name: category.label, icon: '🏷️' })),
+    ].filter((category) => present.has(category.id))
+  }, [historyItems, allCustomCategories, t])
+
+  const filteredHistoryItems = useMemo(() => {
+    const query = historySearch.trim().toLowerCase()
+    return historyItems.filter((item) => {
+      if (historyCategoryId && item.category !== historyCategoryId) return false
+      if (query && !item.title.toLowerCase().includes(query)) return false
+      return true
+    })
+  }, [historyItems, historySearch, historyCategoryId])
+
+  const historyByYear = useMemo(
+    () => groupByYearMonth(filteredHistoryItems, (item) => item.date),
+    [filteredHistoryItems]
+  )
+
+  function toggleHistoryYear(year) {
+    setExpandedHistoryYears((prev) => {
+      const next = new Set(prev)
+      if (next.has(year)) {
+        next.delete(year)
+      } else {
+        next.add(year)
+      }
+      return next
+    })
+  }
 
   async function handleDeleteHistoricalExpense(expenseId) {
     if (!(await confirm(t('expensesPage.deleteOldConfirm')))) return
@@ -435,33 +507,90 @@ export default function GastosPage() {
         </div>
       </div>
 
-      {historicalExpenses.length > 0 && (
+      {historyItems.length > 0 && (
         <div className="rounded-xl border border-gray-200 bg-surface p-4">
-          <p className="text-sm font-semibold text-gray-900">{t('expensesPage.oldExpensesTitle')}</p>
-          <ul className="mt-2 space-y-2">
-            {historicalExpenses.map((expense) => (
-              <li key={expense.id} className="flex items-center justify-between gap-2 text-sm">
-                <div>
-                  <p className="text-gray-800">{expense.title}</p>
-                  <p className="text-xs text-gray-400">
-                    {categoryLabel(expense.category)} · {formatDate(expense.expenseDate, i18n.language)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency(expense.totalAmount, i18n.language, house.currency)}
-                  </span>
+          <p className="text-sm font-semibold text-gray-900">{t('expensesPage.historyTitle')}</p>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            <input
+              type="search"
+              value={historySearch}
+              onChange={(event) => setHistorySearch(event.target.value)}
+              placeholder={t('expensesPage.historySearchPlaceholder')}
+              className="min-w-[180px] flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-brand-500"
+            />
+            <select
+              value={historyCategoryId}
+              onChange={(event) => setHistoryCategoryId(event.target.value)}
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm outline-none focus:border-brand-500"
+            >
+              <option value="">{t('expensesPage.allCategories')}</option>
+              {historyCategoryOptions.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.icon} {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mt-3 space-y-2">
+            {historyByYear.length === 0 && (
+              <p className="text-sm text-gray-400">{t('expensesPage.noHistoryResults')}</p>
+            )}
+            {historyByYear.map(({ year, months }) => {
+              const isOpen = expandedHistoryYears.has(year)
+              return (
+                <div key={year} className="rounded-lg border border-gray-100">
                   <button
                     type="button"
-                    onClick={() => handleDeleteHistoricalExpense(expense.id)}
-                    className="text-xs text-gray-400 hover:text-red-600"
+                    onClick={() => toggleHistoryYear(year)}
+                    aria-expanded={isOpen}
+                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm font-semibold text-gray-900"
                   >
-                    {t('billsPage.delete')}
+                    <span>{year}</span>
+                    <span className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}>⌄</span>
                   </button>
+                  {isOpen && (
+                    <div className="space-y-3 border-t border-gray-100 px-3 pb-3 pt-2">
+                      {months.map(({ month, items }) => (
+                        <div key={month} className="space-y-2">
+                          <h3 className="text-xs font-semibold uppercase text-gray-500">
+                            {formatMonthLabel(year, month, i18n.language)}
+                          </h3>
+                          <ul className="space-y-2">
+                            {items.map((item) => (
+                              <li key={item.id} className="flex items-center justify-between gap-2 text-sm">
+                                <div className="min-w-0">
+                                  <p className="truncate text-gray-800">{item.title}</p>
+                                  <p className="text-xs text-gray-400">
+                                    {categoryLabel(item.category)} · {formatDate(item.date, i18n.language)}
+                                  </p>
+                                </div>
+                                <div className="flex shrink-0 items-center gap-3">
+                                  <span className="font-medium text-gray-900">
+                                    {formatCurrency(item.totalAmount, i18n.language, house.currency)}
+                                  </span>
+                                  {item.kind === 'historical' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeleteHistoricalExpense(item.historicalId)}
+                                      className="text-xs text-gray-400 hover:text-red-600"
+                                    >
+                                      {t('billsPage.delete')}
+                                    </button>
+                                  )}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </li>
-            ))}
-          </ul>
+              )
+            })}
+          </div>
         </div>
       )}
 

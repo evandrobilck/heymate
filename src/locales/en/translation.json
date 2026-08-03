@@ -243,8 +243,11 @@
     "addOldHint": "Only counts in these expense reports — it won't show up in the Bills tab or get split between roommates.",
     "dateLabel": "Date",
     "save": "Save",
-    "oldExpensesTitle": "Old bills added",
-    "deleteOldConfirm": "Delete this old expense entry? This can't be undone."
+    "deleteOldConfirm": "Delete this old expense entry? This can't be undone.",
+    "historyTitle": "History",
+    "historySearchPlaceholder": "Search by title...",
+    "allCategories": "All categories",
+    "noHistoryResults": "Nothing found for these filters."
   },
   "shoppingPage": {
     "addPlaceholder": "Add an item",

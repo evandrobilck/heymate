@@ -243,8 +243,11 @@
     "addOldHint": "Solo cuenta en estos informes de gastos — no aparece en la pestaña Cuentas ni se divide entre los compañeros.",
     "dateLabel": "Fecha",
     "save": "Guardar",
-    "oldExpensesTitle": "Cuentas antiguas añadidas",
-    "deleteOldConfirm": "¿Eliminar este gasto antiguo? Esta acción no se puede deshacer."
+    "deleteOldConfirm": "¿Eliminar este gasto antiguo? Esta acción no se puede deshacer.",
+    "historyTitle": "Historial",
+    "historySearchPlaceholder": "Buscar por título...",
+    "allCategories": "Todas las categorías",
+    "noHistoryResults": "No se encontró nada con estos filtros."
   },
   "shoppingPage": {
     "addPlaceholder": "Agregar artículo",
