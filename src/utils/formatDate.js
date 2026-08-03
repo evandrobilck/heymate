@@ -6,3 +6,8 @@ export function formatDate(dateString, locale = 'en') {
     year: 'numeric',
   }).format(new Date(`${dateString}T00:00:00`))
 }
+
+export function formatMonthLabel(year, month, locale = 'en') {
+  const label = new Intl.DateTimeFormat(locale, { month: 'long' }).format(new Date(`${year}-${month}-01T00:00:00`))
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`
+}

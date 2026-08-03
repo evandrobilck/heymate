@@ -1,23 +1,57 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBills } from '../contexts/BillsContext'
 import { isBillOccurrenceVisible } from '../utils/recurrence'
+import { formatMonthLabel } from '../utils/formatDate'
 import BillCard from '../components/BillCard'
 import AddBillForm from '../components/AddBillForm'
 import BalanceSummary from '../components/BalanceSummary'
 import SkeletonRows from '../components/SkeletonRows'
 import EmptyState from '../components/EmptyState'
 
+function groupPaidBillsByYear(paidBills) {
+  const byYear = new Map()
+  for (const bill of paidBills) {
+    const [year, month] = bill.dueDate.split('-')
+    if (!byYear.has(year)) byYear.set(year, new Map())
+    const byMonth = byYear.get(year)
+    if (!byMonth.has(month)) byMonth.set(month, [])
+    byMonth.get(month).push(bill)
+  }
+  return [...byYear.entries()]
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([year, byMonth]) => ({
+      year,
+      months: [...byMonth.entries()]
+        .sort(([a], [b]) => b.localeCompare(a))
+        .map(([month, monthBills]) => ({ month, bills: monthBills })),
+    }))
+}
+
 export default function ContasPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { bills, loading } = useBills()
   const [showForm, setShowForm] = useState(false)
   const [editingBill, setEditingBill] = useState(null)
+  const [expandedYears, setExpandedYears] = useState(() => new Set())
 
   const visibleBills = bills.filter(isBillOccurrenceVisible)
 
   const pendingBills = visibleBills.filter((bill) => bill.participantIds.some((id) => !bill.shares[id].paid))
   const paidBills = visibleBills.filter((bill) => bill.participantIds.every((id) => bill.shares[id].paid))
+  const paidBillsByYear = useMemo(() => groupPaidBillsByYear(paidBills), [paidBills])
+
+  function toggleYear(year) {
+    setExpandedYears((prev) => {
+      const next = new Set(prev)
+      if (next.has(year)) {
+        next.delete(year)
+      } else {
+        next.add(year)
+      }
+      return next
+    })
+  }
 
   return (
     <div>
@@ -53,9 +87,40 @@ export default function ContasPage() {
       {!loading && paidBills.length > 0 && (
         <div className="mt-6 space-y-3">
           <h2 className="text-sm font-semibold text-gray-900">{t('billsPage.paidTitle')}</h2>
-          {paidBills.map((bill) => (
-            <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
-          ))}
+          <div className="space-y-2">
+            {paidBillsByYear.map(({ year, months }) => {
+              const isOpen = expandedYears.has(year)
+              return (
+                <div key={year} className="rounded-xl border border-gray-200 bg-surface">
+                  <button
+                    type="button"
+                    onClick={() => toggleYear(year)}
+                    aria-expanded={isOpen}
+                    className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-gray-900"
+                  >
+                    <span>{year}</span>
+                    <span className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}>⌄</span>
+                  </button>
+                  {isOpen && (
+                    <div className="space-y-4 border-t border-gray-100 px-4 pb-4 pt-3">
+                      {months.map(({ month, bills: monthBills }) => (
+                        <div key={month} className="space-y-2">
+                          <h3 className="text-xs font-semibold uppercase text-gray-500">
+                            {formatMonthLabel(year, month, i18n.language)}
+                          </h3>
+                          <div className="space-y-3">
+                            {monthBills.map((bill) => (
+                              <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 
