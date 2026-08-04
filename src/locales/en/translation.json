@@ -181,7 +181,10 @@
     "updateAmount": "Update amount",
     "sameAmount": "Still the same",
     "amountReviewError": "Couldn't confirm. Try again.",
-    "duplicateConfirm": "You already have a similar bill — \"{{title}}\" on {{date}}. Create it anyway?"
+    "duplicateConfirm": "You already have a similar bill — \"{{title}}\" on {{date}}. Create it anyway?",
+    "debtOffsetHint": "{{name}} already owes you {{amount}} — this will be automatically offset against this bill.",
+    "settledViaOffset": "offset against another debt",
+    "partiallyOffset": "{{amount}} already offset"
   },
   "tasksPage": {
     "addTask": "Add task",

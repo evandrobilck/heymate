@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { useCategories } from '../contexts/CategoriesContext'
@@ -7,6 +8,8 @@ import { useConfirm } from '../contexts/ConfirmContext'
 import { useToast } from '../contexts/ToastContext'
 import { billCategories, recurrenceOptions } from '../services/mockData'
 import { computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
+import { computeBalances } from '../utils/computeBalances'
+import { isBillOccurrenceVisible } from '../utils/recurrence'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 import { resizeImageFile } from '../utils/resizeImage'
@@ -38,6 +41,7 @@ function findPossibleDuplicate(bills, candidate) {
 
 export default function AddBillForm({ onClose, bill = null }) {
   const { t, i18n } = useTranslation()
+  const { user } = useAuth()
   const { house } = useHouse()
   const { bills, addBill, updateBill, setBillPhoto } = useBills()
   const { customBillCategories, hiddenCategoryIds } = useCategories()
@@ -107,6 +111,27 @@ export default function AddBillForm({ onClose, bill = null }) {
   const [isPrivate, setIsPrivate] = useState(bill?.isPrivate ?? false)
 
   const amountValue = Number(totalAmount) || 0
+
+  // Only relevant when creating a bill: if a checked participant is
+  // already owed money by the current user from other bills, create_bill's
+  // p_apply_debt_offset will settle that existing debt with this share
+  // instead of requiring a separate cash payment. Surfaced as a hint so
+  // it isn't a silent balance change.
+  const owedToMembers = useMemo(() => {
+    if (isEditing) return {}
+    const { youOwe } = computeBalances(bills.filter(isBillOccurrenceVisible), user.id)
+    return Object.fromEntries(youOwe.map(({ memberId, amount }) => [memberId, amount]))
+  }, [bills, user.id, isEditing])
+
+  function estimateShare(memberId) {
+    if (splitType === 'exact') return Number(exactAmounts[memberId]) || 0
+    if (splitType === 'percentage') return round2((Number(percentages[memberId]) || 0) * amountValue / 100)
+    return participantIds.length > 0 ? round2(amountValue / participantIds.length) : 0
+  }
+
+  function round2(value) {
+    return Math.round(value * 100) / 100
+  }
 
   function toggleParticipant(memberId) {
     setParticipantIds((prev) =>
@@ -391,42 +416,54 @@ export default function AddBillForm({ onClose, bill = null }) {
             <ul className="mt-1 space-y-2">
               {memberOptions.map((member) => {
                 const checked = participantIds.includes(member.id)
+                const owedAmount = owedToMembers[member.id]
+                const showOffsetHint = checked && owedAmount > 0.005 && estimateShare(member.id) > 0.005
                 return (
-                  <li key={member.id} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleParticipant(member.id)}
-                      className="h-4 w-4 rounded border-gray-300 text-brand-600"
-                    />
-                    <span className="flex-1 text-sm text-gray-800">{member.name}</span>
-
-                    {checked && splitType === 'percentage' && (
+                  <li key={member.id}>
+                    <div className="flex items-center gap-2">
                       <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        value={percentages[member.id] ?? ''}
-                        onChange={(event) =>
-                          setPercentages((prev) => ({ ...prev, [member.id]: event.target.value }))
-                        }
-                        placeholder="%"
-                        className="w-16 rounded-lg border border-gray-300 px-2 py-1 text-right text-sm"
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleParticipant(member.id)}
+                        className="h-4 w-4 rounded border-gray-300 text-brand-600"
                       />
-                    )}
+                      <span className="flex-1 text-sm text-gray-800">{member.name}</span>
 
-                    {checked && splitType === 'exact' && (
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={exactAmounts[member.id] ?? ''}
-                        onChange={(event) =>
-                          setExactAmounts((prev) => ({ ...prev, [member.id]: event.target.value }))
-                        }
-                        placeholder="$"
-                        className="w-20 rounded-lg border border-gray-300 px-2 py-1 text-right text-sm"
-                      />
+                      {checked && splitType === 'percentage' && (
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={percentages[member.id] ?? ''}
+                          onChange={(event) =>
+                            setPercentages((prev) => ({ ...prev, [member.id]: event.target.value }))
+                          }
+                          placeholder="%"
+                          className="w-16 rounded-lg border border-gray-300 px-2 py-1 text-right text-sm"
+                        />
+                      )}
+
+                      {checked && splitType === 'exact' && (
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={exactAmounts[member.id] ?? ''}
+                          onChange={(event) =>
+                            setExactAmounts((prev) => ({ ...prev, [member.id]: event.target.value }))
+                          }
+                          placeholder="$"
+                          className="w-20 rounded-lg border border-gray-300 px-2 py-1 text-right text-sm"
+                        />
+                      )}
+                    </div>
+                    {showOffsetHint && (
+                      <p className="ml-6 mt-0.5 text-xs text-brand-600">
+                        {t('billsPage.debtOffsetHint', {
+                          name: member.name,
+                          amount: formatCurrency(owedAmount, i18n.language, house.currency),
+                        })}
+                      </p>
                     )}
                   </li>
                 )

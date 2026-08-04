@@ -5,6 +5,11 @@ function round(value) {
 // Net balance per housemate: unpaid shares are debts owed to whoever created
 // the bill (the person who fronted the money). Balances across bills net
 // out per person, same as Splitwise's per-friend total.
+//
+// Uses the remaining amount (amount - paidAmount) rather than the paid
+// boolean, so a share that was partially settled via debt offset (see
+// create_bill's p_apply_debt_offset) still contributes its leftover
+// portion instead of dropping out of the sum entirely.
 export function computeBalances(bills, currentUserId) {
   const net = {}
 
@@ -14,12 +19,14 @@ export function computeBalances(bills, currentUserId) {
     bill.participantIds.forEach((participantId) => {
       if (participantId === payerId) return
       const share = bill.shares[participantId]
-      if (!share || share.paid) return
+      if (!share) return
+      const remaining = round(share.amount - (share.paidAmount ?? 0))
+      if (remaining <= 0.005) return
 
       if (payerId === currentUserId) {
-        net[participantId] = (net[participantId] ?? 0) + share.amount
+        net[participantId] = (net[participantId] ?? 0) + remaining
       } else if (participantId === currentUserId) {
-        net[payerId] = (net[payerId] ?? 0) - share.amount
+        net[payerId] = (net[payerId] ?? 0) - remaining
       }
     })
   })

@@ -309,6 +309,12 @@ export default function BillCard({ bill, onEdit }) {
                       {share.paid && share.paidAt
                         ? ` · ${t('billsPage.paidOn', { date: formatDate(share.paidAt, i18n.language) })}`
                         : ''}
+                      {share.paid && share.settledVia === 'debt_offset' ? ` · ${t('billsPage.settledViaOffset')}` : ''}
+                      {!share.paid && share.paidAmount > 0.005
+                        ? ` · ${t('billsPage.partiallyOffset', {
+                            amount: formatCurrency(share.paidAmount, i18n.language, house.currency),
+                          })}`
+                        : ''}
                     </p>
                   </div>
                   {canToggle ? (

@@ -181,7 +181,10 @@
     "updateAmount": "Atualizar valor",
     "sameAmount": "Continua o mesmo",
     "amountReviewError": "Não foi possível confirmar. Tente de novo.",
-    "duplicateConfirm": "Você já tem uma conta parecida — \"{{title}}\" em {{date}}. Quer criar mesmo assim?"
+    "duplicateConfirm": "Você já tem uma conta parecida — \"{{title}}\" em {{date}}. Quer criar mesmo assim?",
+    "debtOffsetHint": "{{name}} já deve {{amount}} a você — esse valor será compensado automaticamente com essa conta.",
+    "settledViaOffset": "compensado com outra dívida",
+    "partiallyOffset": "{{amount}} já compensado"
   },
   "tasksPage": {
     "addTask": "Adicionar tarefa",

@@ -12,6 +12,8 @@ function mapBillRow(row) {
       percentage: share.percentage != null ? Number(share.percentage) : undefined,
       paid: share.paid,
       paidAt: share.paid_at,
+      paidAmount: Number(share.paid_amount ?? (share.paid ? share.amount : 0)),
+      settledVia: share.settled_via ?? null,
     }
   })
 
@@ -150,6 +152,7 @@ export function BillsProvider({ children }) {
       p_source: bill.source ?? null,
       p_shares: shares,
       p_is_private: bill.isPrivate ?? false,
+      p_apply_debt_offset: bill.applyDebtOffset ?? true,
     })
 
     if (error) throw error
@@ -164,14 +167,21 @@ export function BillsProvider({ children }) {
     const shares = bill.participantIds.map((userId) => {
       const newShare = bill.shares[userId]
       const previousShare = existing?.shares[userId]
-      const keepPaid = Boolean(previousShare?.paid)
+      // Cap the carried-over paid amount to the (possibly edited) new
+      // total, so shrinking a bill's amount can't leave paid_amount
+      // stranded above amount, but otherwise preserve whatever was
+      // already settled — including partial debt-offset amounts.
+      const carriedPaidAmount = Math.min(previousShare?.paidAmount ?? 0, newShare.amount)
+      const keepPaid = carriedPaidAmount >= newShare.amount - 0.005
 
       return {
         user_id: userId,
         amount: newShare.amount,
         percentage: newShare.percentage ?? null,
         paid: keepPaid,
-        paid_at: keepPaid ? previousShare.paidAt : null,
+        paid_at: keepPaid ? (previousShare?.paidAt ?? new Date().toISOString().slice(0, 10)) : null,
+        paid_amount: carriedPaidAmount,
+        settled_via: carriedPaidAmount > 0 ? (previousShare?.settledVia ?? 'cash') : null,
       }
     })
 
@@ -195,11 +205,17 @@ export function BillsProvider({ children }) {
   async function toggleParticipantPaid(billId, userId) {
     const bill = bills.find((current) => current.id === billId)
     if (!bill) return
-    const nextPaid = !bill.shares[userId].paid
+    const share = bill.shares[userId]
+    const nextPaid = !share.paid
 
     const { error } = await supabase
       .from('bill_shares')
-      .update({ paid: nextPaid, paid_at: nextPaid ? new Date().toISOString().slice(0, 10) : null })
+      .update({
+        paid: nextPaid,
+        paid_at: nextPaid ? new Date().toISOString().slice(0, 10) : null,
+        paid_amount: nextPaid ? share.amount : 0,
+        settled_via: nextPaid ? 'cash' : null,
+      })
       .eq('bill_id', billId)
       .eq('user_id', userId)
 
