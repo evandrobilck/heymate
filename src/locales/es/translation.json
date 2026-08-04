@@ -346,7 +346,11 @@
     "save": "Guardar cambios",
     "saving": "Guardando…",
     "saved": "¡Guardado!",
-    "saveError": "No pudimos guardar tu perfil. Intenta de nuevo."
+    "saveError": "No pudimos guardar tu perfil. Intenta de nuevo.",
+    "deleteAccount": "Eliminar mi cuenta",
+    "deleteAccountConfirm": "Esto borra tus datos personales (nombre, foto, teléfono, datos de pago) y te saca de cualquier casa de la que participes — las cuentas y tareas que creaste siguen registradas para tus compañeros, pero sin tus datos. No vas a poder iniciar sesión de nuevo con esta cuenta. Esta acción no se puede deshacer. ¿Continuar?",
+    "deleteAccountError": "No pudimos eliminar tu cuenta. Intenta de nuevo o contacta al soporte.",
+    "deleteAccountDeleting": "Eliminando cuenta…"
   },
   "settingsPage": {
     "title": "Configuración",

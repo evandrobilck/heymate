@@ -15,6 +15,7 @@ import { formatDate } from '../utils/formatDate'
 import { resizeImageFile } from '../utils/resizeImage'
 import Modal from './Modal'
 import ReminderList from './ReminderList'
+import PhotoPickerLabel from './PhotoPickerLabel'
 
 const SPLIT_TYPES = ['equal', 'percentage', 'exact']
 
@@ -150,10 +151,7 @@ export default function AddBillForm({ onClose, bill = null }) {
     (splitType !== 'percentage' || Math.abs(percentageTotal - 100) < 0.01) &&
     (splitType !== 'exact' || Math.abs(exactTotal - amountValue) < 0.01)
 
-  async function handlePhotoChange(event) {
-    const file = event.target.files?.[0]
-    if (!file) return
-
+  async function handlePhotoChange(file) {
     if (!isEditing) {
       // No bill.id yet — hold onto the resized file and upload it right
       // after the bill itself is created (see handleSubmit).
@@ -165,8 +163,6 @@ export default function AddBillForm({ onClose, bill = null }) {
       } catch (err) {
         console.error(err)
         showToast(t('billsPage.photoError'))
-      } finally {
-        event.target.value = ''
       }
       return
     }
@@ -181,7 +177,6 @@ export default function AddBillForm({ onClose, bill = null }) {
       showToast(t('billsPage.photoError'))
     } finally {
       setUploadingPhoto(false)
-      event.target.value = ''
     }
   }
 
@@ -303,16 +298,13 @@ export default function AddBillForm({ onClose, bill = null }) {
                     />
                   </a>
                   <div className="mt-1.5 flex gap-3">
-                    <label className="cursor-pointer text-xs font-medium text-brand-600 hover:text-brand-700">
+                    <PhotoPickerLabel
+                      onPick={handlePhotoChange}
+                      disabled={uploadingPhoto}
+                      className="cursor-pointer text-xs font-medium text-brand-600 hover:text-brand-700"
+                    >
                       {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.changePhoto')}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handlePhotoChange}
-                        disabled={uploadingPhoto}
-                        className="hidden"
-                      />
-                    </label>
+                    </PhotoPickerLabel>
                     <button
                       type="button"
                       onClick={handleRemovePhoto}
@@ -323,16 +315,13 @@ export default function AddBillForm({ onClose, bill = null }) {
                   </div>
                 </div>
               ) : (
-                <label className="block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-center text-xs font-medium text-brand-600 hover:border-brand-400">
+                <PhotoPickerLabel
+                  onPick={handlePhotoChange}
+                  disabled={uploadingPhoto}
+                  className="block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-center text-xs font-medium text-brand-600 hover:border-brand-400"
+                >
                   {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.addPhoto')}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoChange}
-                    disabled={uploadingPhoto}
-                    className="hidden"
-                  />
-                </label>
+                </PhotoPickerLabel>
               )}
             </div>
           </div>

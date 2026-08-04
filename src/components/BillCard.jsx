@@ -13,6 +13,7 @@ import { resizeImageFile } from '../utils/resizeImage'
 import { toDayKey } from '../utils/calendar'
 import { getLatestOccurrenceOnOrBefore } from '../utils/recurrence'
 import { mergeOccurrenceShares } from '../utils/billOccurrences'
+import PhotoPickerLabel from './PhotoPickerLabel'
 
 export default function BillCard({ bill, occurrenceDate = bill.dueDate, onEdit }) {
   const { t, i18n } = useTranslation()
@@ -116,9 +117,7 @@ export default function BillCard({ bill, occurrenceDate = bill.dueDate, onEdit }
     }
   }
 
-  async function handlePhotoChange(event) {
-    const file = event.target.files?.[0]
-    if (!file) return
+  async function handlePhotoChange(file) {
     setUploadingPhoto(true)
     try {
       const resized = await resizeImageFile(file)
@@ -128,7 +127,6 @@ export default function BillCard({ bill, occurrenceDate = bill.dueDate, onEdit }
       showToast(t('billsPage.photoError'))
     } finally {
       setUploadingPhoto(false)
-      event.target.value = ''
     }
   }
 
@@ -227,16 +225,13 @@ export default function BillCard({ bill, occurrenceDate = bill.dueDate, onEdit }
                   />
                 </a>
                 <div className="mt-1.5 flex gap-3">
-                  <label className="cursor-pointer text-xs font-medium text-brand-600 hover:text-brand-700">
+                  <PhotoPickerLabel
+                    onPick={handlePhotoChange}
+                    disabled={uploadingPhoto}
+                    className="cursor-pointer text-xs font-medium text-brand-600 hover:text-brand-700"
+                  >
                     {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.changePhoto')}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoChange}
-                      disabled={uploadingPhoto}
-                      className="hidden"
-                    />
-                  </label>
+                  </PhotoPickerLabel>
                   <button
                     type="button"
                     onClick={handleRemovePhoto}
@@ -247,16 +242,13 @@ export default function BillCard({ bill, occurrenceDate = bill.dueDate, onEdit }
                 </div>
               </div>
             ) : (
-              <label className="block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-center text-xs font-medium text-brand-600 hover:border-brand-400">
+              <PhotoPickerLabel
+                onPick={handlePhotoChange}
+                disabled={uploadingPhoto}
+                className="block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-2.5 text-center text-xs font-medium text-brand-600 hover:border-brand-400"
+              >
                 {uploadingPhoto ? t('billsPage.processingPhoto') : t('billsPage.addPhoto')}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoChange}
-                  disabled={uploadingPhoto}
-                  className="hidden"
-                />
-              </label>
+              </PhotoPickerLabel>
             )}
           </div>
 

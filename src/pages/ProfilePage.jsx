@@ -5,8 +5,10 @@ import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { useToast } from '../contexts/ToastContext'
+import { useConfirm } from '../contexts/ConfirmContext'
 import { resizeImageFile } from '../utils/resizeImage'
 import Avatar from '../components/Avatar'
+import PhotoPickerLabel from '../components/PhotoPickerLabel'
 
 const LANGUAGE_LABELS = {
   en: 'English',
@@ -16,10 +18,11 @@ const LANGUAGE_LABELS = {
 
 export default function ProfilePage() {
   const { t } = useTranslation()
-  const { user, updateProfile, uploadAvatar, logout } = useAuth()
+  const { user, updateProfile, uploadAvatar, deleteAccount, logout } = useAuth()
   const { language, setLanguage, supportedLanguages } = useLanguage()
   const { theme, toggleTheme } = useTheme()
   const showToast = useToast()
+  const confirm = useConfirm()
   const navigate = useNavigate()
 
   const [name, setName] = useState(user.name)
@@ -33,6 +36,7 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [error, setError] = useState('')
+  const [deletingAccount, setDeletingAccount] = useState(false)
 
   async function handleSave(event) {
     event.preventDefault()
@@ -59,9 +63,7 @@ export default function ProfilePage() {
     }
   }
 
-  async function handlePhotoChange(event) {
-    const file = event.target.files?.[0]
-    if (!file) return
+  async function handlePhotoChange(file) {
     setUploadingPhoto(true)
     setError('')
     try {
@@ -81,6 +83,19 @@ export default function ProfilePage() {
     navigate('/login')
   }
 
+  async function handleDeleteAccount() {
+    if (!(await confirm(t('profilePage.deleteAccountConfirm')))) return
+    setDeletingAccount(true)
+    try {
+      await deleteAccount()
+      navigate('/login')
+    } catch (err) {
+      console.error(err)
+      showToast(t('profilePage.deleteAccountError'))
+      setDeletingAccount(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold text-gray-900">{t('profilePage.title')}</h1>
@@ -88,16 +103,14 @@ export default function ProfilePage() {
       <div className="rounded-xl border border-gray-200 bg-surface p-4">
         <div className="flex items-center gap-4">
           <Avatar name={user.name} avatarUrl={user.avatarUrl} size="lg" />
-          <label className="cursor-pointer text-sm font-medium text-brand-600 hover:text-brand-700">
+          <PhotoPickerLabel
+            onPick={handlePhotoChange}
+            disabled={uploadingPhoto}
+            maxDimension={800}
+            className="cursor-pointer text-sm font-medium text-brand-600 hover:text-brand-700"
+          >
             {uploadingPhoto ? t('profilePage.uploading') : t('profilePage.changePhoto')}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              disabled={uploadingPhoto}
-              className="hidden"
-            />
-          </label>
+          </PhotoPickerLabel>
         </div>
       </div>
 
@@ -241,9 +254,17 @@ export default function ProfilePage() {
         </button>
       </form>
 
-      <div className="border-t border-gray-100 pt-6">
+      <div className="flex items-center justify-between border-t border-gray-100 pt-6">
         <button type="button" onClick={handleLogout} className="text-xs font-medium text-red-500 hover:text-red-700">
           {t('auth.logout')}
+        </button>
+        <button
+          type="button"
+          onClick={handleDeleteAccount}
+          disabled={deletingAccount}
+          className="text-xs font-medium text-gray-400 hover:text-red-700 disabled:opacity-50"
+        >
+          {deletingAccount ? t('profilePage.deleteAccountDeleting') : t('profilePage.deleteAccount')}
         </button>
       </div>
     </div>

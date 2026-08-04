@@ -11,6 +11,7 @@ import { resizeImageFile } from '../utils/resizeImage'
 import { billCategories, currencyOptions } from '../services/mockData'
 import CategoryManager from '../components/CategoryManager'
 import SubscriptionCard from '../components/SubscriptionCard'
+import PhotoPickerLabel from '../components/PhotoPickerLabel'
 
 export default function SettingsPage() {
   const { t } = useTranslation()
@@ -69,9 +70,7 @@ export default function SettingsPage() {
     }
   }
 
-  async function handlePhotoChange(event) {
-    const file = event.target.files?.[0]
-    if (!file) return
+  async function handlePhotoChange(file) {
     setUploadingPhoto(true)
     setPhotoError('')
     try {
@@ -161,16 +160,14 @@ export default function SettingsPage() {
           ) : (
             <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-gray-100 text-3xl">🏠</div>
           )}
-          <label className="cursor-pointer text-sm font-medium text-brand-600 hover:text-brand-700">
+          <PhotoPickerLabel
+            onPick={handlePhotoChange}
+            disabled={uploadingPhoto}
+            maxDimension={1200}
+            className="cursor-pointer text-sm font-medium text-brand-600 hover:text-brand-700"
+          >
             {uploadingPhoto ? t('profilePage.uploading') : t('settingsPage.changePhoto')}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              disabled={uploadingPhoto}
-              className="hidden"
-            />
-          </label>
+          </PhotoPickerLabel>
         </div>
         {photoError && (
           <p role="alert" className="text-sm text-red-600">

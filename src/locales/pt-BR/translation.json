@@ -346,7 +346,11 @@
     "save": "Salvar alterações",
     "saving": "Salvando…",
     "saved": "Salvo!",
-    "saveError": "Não foi possível salvar seu perfil. Tente de novo."
+    "saveError": "Não foi possível salvar seu perfil. Tente de novo.",
+    "deleteAccount": "Excluir minha conta",
+    "deleteAccountConfirm": "Isso apaga seus dados pessoais (nome, foto, telefone, dados de pagamento) e você sai de qualquer casa da qual participa — as contas e tarefas que você criou continuam registradas para os demais moradores, mas sem os seus dados. Você não vai conseguir entrar de novo com essa conta. Essa ação não pode ser desfeita. Quer continuar?",
+    "deleteAccountError": "Não foi possível excluir sua conta. Tente de novo ou fale com o suporte.",
+    "deleteAccountDeleting": "Excluindo conta…"
   },
   "settingsPage": {
     "title": "Configurações",

@@ -100,6 +100,12 @@ export function AuthProvider({ children }) {
     await refreshProfile()
   }
 
+  async function deleteAccount() {
+    const { error } = await supabase.functions.invoke('delete-account')
+    if (error) throw error
+    await supabase.auth.signOut()
+  }
+
   async function uploadAvatar(file) {
     const extension = file.name.split('.').pop()
     const path = `${session.user.id}/avatar-${Date.now()}.${extension}`
@@ -149,6 +155,7 @@ export function AuthProvider({ children }) {
       updatePassword,
       updateProfile,
       uploadAvatar,
+      deleteAccount,
     }),
     [user, loading]
   )

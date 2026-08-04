@@ -346,7 +346,11 @@
     "save": "Save changes",
     "saving": "Saving…",
     "saved": "Saved!",
-    "saveError": "Couldn't save your profile. Try again."
+    "saveError": "Couldn't save your profile. Try again.",
+    "deleteAccount": "Delete my account",
+    "deleteAccountConfirm": "This erases your personal data (name, photo, phone, payment details) and removes you from any house you're part of — bills and tasks you created stay on record for your housemates, but without your data attached. You won't be able to sign in with this account again. This can't be undone. Continue?",
+    "deleteAccountError": "Couldn't delete your account. Try again or contact support.",
+    "deleteAccountDeleting": "Deleting account…"
   },
   "settingsPage": {
     "title": "Settings",

@@ -5,6 +5,7 @@ import { useMaintenance } from '../contexts/MaintenanceContext'
 import { useToast } from '../contexts/ToastContext'
 import { resizeImageFile } from '../utils/resizeImage'
 import Modal from './Modal'
+import PhotoPickerLabel from './PhotoPickerLabel'
 
 export default function AddMaintenanceForm({ onClose }) {
   const { t } = useTranslation()
@@ -22,9 +23,7 @@ export default function AddMaintenanceForm({ onClose }) {
 
   const isValid = title.trim() !== ''
 
-  async function handlePhotoChange(event) {
-    const file = event.target.files?.[0]
-    if (!file) return
+  async function handlePhotoChange(file) {
     setProcessingPhoto(true)
     try {
       const resized = await resizeImageFile(file)
@@ -100,20 +99,17 @@ export default function AddMaintenanceForm({ onClose }) {
         <div>
           <label className="text-xs font-medium text-gray-600">{t('maintenancePage.photoLabel')}</label>
           {photoPreview && <img src={photoPreview} alt="" className="mt-2 h-40 w-full rounded-lg object-cover" />}
-          <label className="mt-2 block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-3 text-center text-sm font-medium text-brand-600 hover:border-brand-400">
+          <PhotoPickerLabel
+            onPick={handlePhotoChange}
+            disabled={processingPhoto}
+            className="mt-2 block cursor-pointer rounded-lg border border-dashed border-gray-300 px-3 py-3 text-center text-sm font-medium text-brand-600 hover:border-brand-400"
+          >
             {processingPhoto
               ? t('maintenancePage.processingPhoto')
               : photoPreview
                 ? t('maintenancePage.changePhoto')
                 : t('maintenancePage.addPhoto')}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              disabled={processingPhoto}
-              className="hidden"
-            />
-          </label>
+          </PhotoPickerLabel>
         </div>
 
         <button
