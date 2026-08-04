@@ -43,32 +43,49 @@ function isOccurrenceComplete(shares, participantIds) {
 // advances it) and per-cycle payment state lives in bill_occurrence_payments.
 // This derives, as of `todayKey`: every occurrence that's fully paid by
 // every participant (-> permanent Pagas history entries) and the single
-// oldest not-yet-fully-paid occurrence, which only counts as "the" live
-// Pendente card once it falls within `pendingWindowDays` of its due date —
-// so a September rent bill doesn't show as due in August just because
-// August's was paid.
+// oldest not-yet-fully-paid occurrence (-> the live Pendente card).
+//
+// The `pendingWindowDays` gate only holds back a freshly-spawned NEXT cycle
+// right after the previous one was completed (so a September rent bill
+// doesn't show as due in August just because August's was paid) — it does
+// NOT apply to a bill's first-ever unresolved cycle, which must show
+// regardless of how far off its due date is, same as a non-recurring bill
+// would, or a plain bill that's simply due later this month would silently
+// vanish from Pendentes until 6 days out.
 export function getBillOccurrenceState(bill, todayKey, pendingWindowDays = 6) {
   if (bill.recurrence === 'none') return { completed: [], pending: null }
 
   const horizonKey = addDays(todayKey, pendingWindowDays)
+  // Search far enough ahead that a bill with no completed cycles yet is
+  // always found, even if its due date is weeks or months out.
+  const searchEndKey = addDays(todayKey, 366)
   const occurrenceDates = getRecurrenceOccurrencesInRange(
     bill.dueDate,
     bill.recurrence,
     bill.dueDate,
-    horizonKey,
+    searchEndKey,
     bill.recurrenceUntil,
     bill.excludedDates
   ).sort()
 
   const completed = []
-  let pending = null
+  let candidate = null
 
   for (const occurrenceDate of occurrenceDates) {
     const shares = mergeOccurrenceShares(bill, occurrenceDate)
     if (isOccurrenceComplete(shares, bill.participantIds)) {
       completed.push({ occurrenceDate, shares })
-    } else if (pending === null) {
-      pending = { occurrenceDate, shares }
+    } else if (candidate === null) {
+      candidate = { occurrenceDate, shares }
+    }
+  }
+
+  let pending = null
+  if (candidate) {
+    const isDueSoonOrOverdue = candidate.occurrenceDate <= horizonKey
+    const isFirstEverCycle = completed.length === 0
+    if (isDueSoonOrOverdue || isFirstEverCycle) {
+      pending = candidate
     }
   }
 
