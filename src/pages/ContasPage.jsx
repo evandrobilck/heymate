@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBills } from '../contexts/BillsContext'
 import { isBillOccurrenceVisible } from '../utils/recurrence'
+import { getBillOccurrenceState } from '../utils/billOccurrences'
+import { toDayKey } from '../utils/calendar'
 import { formatMonthLabel } from '../utils/formatDate'
 import { groupByYearMonth } from '../utils/groupByYearMonth'
 import BillCard from '../components/BillCard'
@@ -17,11 +19,31 @@ export default function ContasPage() {
   const [editingBill, setEditingBill] = useState(null)
   const [expandedYears, setExpandedYears] = useState(() => new Set())
 
-  const visibleBills = bills.filter(isBillOccurrenceVisible)
+  // Non-recurring bills are a single card (their own due_date/shares).
+  // Recurring bills spread into one card per cycle: any fully paid cycle
+  // becomes a permanent Pagas entry, and the oldest unpaid cycle becomes
+  // the live Pendente card once it's due (see getBillOccurrenceState).
+  const { pendingItems, paidItems } = useMemo(() => {
+    const todayKey = toDayKey(new Date())
+    const pending = []
+    const paid = []
 
-  const pendingBills = visibleBills.filter((bill) => bill.participantIds.some((id) => !bill.shares[id].paid))
-  const paidBills = visibleBills.filter((bill) => bill.participantIds.every((id) => bill.shares[id].paid))
-  const paidBillsByYear = useMemo(() => groupByYearMonth(paidBills, (bill) => bill.dueDate), [paidBills])
+    bills.filter(isBillOccurrenceVisible).forEach((bill) => {
+      if (bill.recurrence === 'none') {
+        const isPaid = bill.participantIds.every((id) => bill.shares[id].paid)
+        ;(isPaid ? paid : pending).push({ bill, occurrenceDate: bill.dueDate })
+        return
+      }
+
+      const { completed, pending: currentPending } = getBillOccurrenceState(bill, todayKey)
+      completed.forEach(({ occurrenceDate }) => paid.push({ bill, occurrenceDate }))
+      if (currentPending) pending.push({ bill, occurrenceDate: currentPending.occurrenceDate })
+    })
+
+    return { pendingItems: pending, paidItems: paid }
+  }, [bills])
+
+  const paidBillsByYear = useMemo(() => groupByYearMonth(paidItems, (item) => item.occurrenceDate), [paidItems])
 
   function toggleYear(year) {
     setExpandedYears((prev) => {
@@ -58,15 +80,20 @@ export default function ContasPage() {
           <SkeletonRows />
         ) : (
           <>
-            {pendingBills.length === 0 && <EmptyState icon="🎉" message={t('billsPage.noPending')} />}
-            {pendingBills.map((bill) => (
-              <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
+            {pendingItems.length === 0 && <EmptyState icon="🎉" message={t('billsPage.noPending')} />}
+            {pendingItems.map(({ bill, occurrenceDate }) => (
+              <BillCard
+                key={`${bill.id}-${occurrenceDate}`}
+                bill={bill}
+                occurrenceDate={occurrenceDate}
+                onEdit={() => setEditingBill(bill)}
+              />
             ))}
           </>
         )}
       </div>
 
-      {!loading && paidBills.length > 0 && (
+      {!loading && paidItems.length > 0 && (
         <div className="mt-6 space-y-3">
           <h2 className="text-sm font-semibold text-gray-900">{t('billsPage.paidTitle')}</h2>
           <div className="space-y-2">
@@ -91,8 +118,13 @@ export default function ContasPage() {
                             {formatMonthLabel(year, month, i18n.language)}
                           </h3>
                           <div className="space-y-3">
-                            {monthBills.map((bill) => (
-                              <BillCard key={bill.id} bill={bill} onEdit={() => setEditingBill(bill)} />
+                            {monthBills.map(({ bill, occurrenceDate }) => (
+                              <BillCard
+                                key={`${bill.id}-${occurrenceDate}`}
+                                bill={bill}
+                                occurrenceDate={occurrenceDate}
+                                onEdit={() => setEditingBill(bill)}
+                              />
                             ))}
                           </div>
                         </div>

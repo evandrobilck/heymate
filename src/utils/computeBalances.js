@@ -1,3 +1,6 @@
+import { getBillOccurrenceState } from './billOccurrences'
+import { toDayKey } from './calendar'
+
 function round(value) {
   return Math.round(value * 100) / 100
 }
@@ -10,15 +13,26 @@ function round(value) {
 // boolean, so a share that was partially settled via debt offset (see
 // create_bill's p_apply_debt_offset) still contributes its leftover
 // portion instead of dropping out of the sum entirely.
-export function computeBalances(bills, currentUserId) {
+//
+// Recurring bills only count their current pending cycle (same one shown
+// as the live card in Contas) — bill_shares itself is just the template
+// and no longer reflects what's actually owed once a cycle has been paid.
+export function computeBalances(bills, currentUserId, todayKey = toDayKey(new Date())) {
   const net = {}
 
   bills.forEach((bill) => {
     const payerId = bill.createdBy
+    let shares = bill.shares
+
+    if (bill.recurrence !== 'none') {
+      const { pending } = getBillOccurrenceState(bill, todayKey)
+      if (!pending) return
+      shares = pending.shares
+    }
 
     bill.participantIds.forEach((participantId) => {
       if (participantId === payerId) return
-      const share = bill.shares[participantId]
+      const share = shares[participantId]
       if (!share) return
       const remaining = round(share.amount - (share.paidAmount ?? 0))
       if (remaining <= 0.005) return

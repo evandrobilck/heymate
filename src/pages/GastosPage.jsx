@@ -9,6 +9,7 @@ import { useConfirm } from '../contexts/ConfirmContext'
 import { billCategories } from '../services/mockData'
 import { toDayKey } from '../utils/calendar'
 import { isBillOccurrenceVisible } from '../utils/recurrence'
+import { getBillOccurrenceState } from '../utils/billOccurrences'
 import {
   computeCategoryTotalsInRange,
   computeMonthlyTotals,
@@ -96,25 +97,45 @@ export default function GastosPage() {
 
   // The Histórico list mixes two sources: bills paid off in the Contas tab
   // and manually logged historical expenses — anything the house has fully
-  // settled, in one searchable timeline.
-  const historyItems = useMemo(
-    () => [
-      ...bills
-        .filter(
-          (bill) =>
-            !bill.isPrivate &&
-            isBillOccurrenceVisible(bill) &&
-            bill.participantIds.every((id) => bill.shares[id].paid)
-        )
-        .map((bill) => ({
-          id: `bill-${bill.id}`,
+  // settled, in one searchable timeline. Recurring bills contribute one
+  // entry per fully-paid cycle (see getBillOccurrenceState), not one entry
+  // for the whole series — each cycle is its own settled expense.
+  const historyItems = useMemo(() => {
+    const todayKey = toDayKey(new Date())
+    const items = []
+
+    bills.forEach((bill) => {
+      if (bill.isPrivate) return
+
+      if (bill.recurrence === 'none') {
+        if (isBillOccurrenceVisible(bill) && bill.participantIds.every((id) => bill.shares[id].paid)) {
+          items.push({
+            id: `bill-${bill.id}`,
+            title: bill.title,
+            category: bill.category,
+            totalAmount: bill.totalAmount,
+            date: bill.dueDate,
+            kind: 'bill',
+          })
+        }
+        return
+      }
+
+      const { completed } = getBillOccurrenceState(bill, todayKey)
+      completed.forEach(({ occurrenceDate, shares }) => {
+        items.push({
+          id: `bill-${bill.id}-${occurrenceDate}`,
           title: bill.title,
           category: bill.category,
-          totalAmount: bill.totalAmount,
-          date: bill.dueDate,
+          totalAmount: bill.participantIds.reduce((sum, id) => sum + shares[id].amount, 0),
+          date: occurrenceDate,
           kind: 'bill',
-        })),
-      ...historicalExpenses.map((expense) => ({
+        })
+      })
+    })
+
+    historicalExpenses.forEach((expense) => {
+      items.push({
         id: `historical-${expense.id}`,
         title: expense.title,
         category: expense.category,
@@ -122,10 +143,11 @@ export default function GastosPage() {
         date: expense.expenseDate,
         kind: 'historical',
         historicalId: expense.id,
-      })),
-    ],
-    [bills, historicalExpenses]
-  )
+      })
+    })
+
+    return items
+  }, [bills, historicalExpenses])
 
   const historyCategoryOptions = useMemo(() => {
     const present = new Set(historyItems.map((item) => item.category))

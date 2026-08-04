@@ -5,7 +5,7 @@ import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { billCategories } from '../services/mockData'
 import { toDayKey } from '../utils/calendar'
-import { getNextOccurrenceOnOrAfter } from '../utils/recurrence'
+import { getBillOccurrenceState } from '../utils/billOccurrences'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
 
@@ -18,13 +18,15 @@ export default function NextBillCard() {
     const todayKey = toDayKey(new Date())
 
     return bills
-      .filter((bill) => bill.participantIds.some((id) => !bill.shares[id].paid))
       .map((bill) => {
-        const date =
-          bill.recurrence === 'none'
-            ? bill.dueDate
-            : getNextOccurrenceOnOrAfter(bill.dueDate, bill.recurrence, todayKey, bill.recurrenceUntil, bill.excludedDates)
-        return date ? { bill, date, overdue: date < todayKey } : null
+        if (bill.recurrence === 'none') {
+          const isPaid = bill.participantIds.every((id) => bill.shares[id].paid)
+          return isPaid ? null : { bill, date: bill.dueDate, overdue: bill.dueDate < todayKey }
+        }
+        // Same "oldest unpaid cycle" the bill's Contas card shows — a cycle
+        // already settled via toggleOccurrencePaid shouldn't still look due.
+        const { pending } = getBillOccurrenceState(bill, todayKey)
+        return pending ? { bill, date: pending.occurrenceDate, overdue: pending.occurrenceDate < todayKey } : null
       })
       .filter(Boolean)
       .sort((a, b) => a.date.localeCompare(b.date))

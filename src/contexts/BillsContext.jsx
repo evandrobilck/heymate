@@ -17,6 +17,21 @@ function mapBillRow(row) {
     }
   })
 
+  // Per-cycle payment state for recurring bills, keyed by occurrence date
+  // then by participant — see getBillOccurrenceState in billOccurrences.js.
+  const occurrencePayments = {}
+  ;(row.bill_occurrence_payments ?? []).forEach((payment) => {
+    if (!occurrencePayments[payment.occurrence_date]) occurrencePayments[payment.occurrence_date] = {}
+    occurrencePayments[payment.occurrence_date][payment.user_id] = {
+      amount: Number(payment.amount),
+      percentage: payment.percentage != null ? Number(payment.percentage) : undefined,
+      paid: payment.paid,
+      paidAt: payment.paid_at,
+      paidAmount: Number(payment.paid_amount ?? (payment.paid ? payment.amount : 0)),
+      settledVia: payment.settled_via ?? null,
+    }
+  })
+
   return {
     id: row.id,
     title: row.title,
@@ -34,6 +49,7 @@ function mapBillRow(row) {
     amountConfirmedThrough: row.amount_confirmed_through,
     participantIds: (row.bill_shares ?? []).map((share) => share.user_id),
     shares,
+    occurrencePayments,
     reminders: (row.bill_reminders ?? []).map((reminder) => ({
       id: reminder.id,
       channel: reminder.channel,
@@ -68,7 +84,9 @@ export function BillsProvider({ children }) {
 
     const { data, error } = await supabase
       .from('bills')
-      .select('*, bill_shares(*), bill_occurrence_exceptions(occurrence_date), bill_reminders(*)')
+      .select(
+        '*, bill_shares(*), bill_occurrence_exceptions(occurrence_date), bill_reminders(*), bill_occurrence_payments(*)'
+      )
       .eq('house_id', house.id)
       .order('due_date', { ascending: true })
 
@@ -105,6 +123,10 @@ export function BillsProvider({ children }) {
         if (billIdsRef.current.includes(billId)) refresh()
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_reminders' }, (payload) => {
+        const billId = payload.new?.bill_id ?? payload.old?.bill_id
+        if (billIdsRef.current.includes(billId)) refresh()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bill_occurrence_payments' }, (payload) => {
         const billId = payload.new?.bill_id ?? payload.old?.bill_id
         if (billIdsRef.current.includes(billId)) refresh()
       })
@@ -226,6 +248,24 @@ export function BillsProvider({ children }) {
     await refresh()
   }
 
+  // Recurring bills: toggle one participant's payment for a specific cycle
+  // instead of the bill's bill_shares row (which is just the template).
+  async function toggleOccurrencePaid(billId, occurrenceDate, userId, amount, percentage) {
+    const { error } = await supabase.rpc('toggle_occurrence_paid', {
+      p_bill_id: billId,
+      p_occurrence_date: occurrenceDate,
+      p_user_id: userId,
+      p_amount: amount,
+      p_percentage: percentage ?? null,
+    })
+
+    if (error) {
+      console.error(error)
+      return
+    }
+    await refresh()
+  }
+
   async function uploadBillPhoto(file) {
     const extension = file.name.split('.').pop()
     const path = `${house.id}/${Date.now()}.${extension}`
@@ -292,6 +332,7 @@ export function BillsProvider({ children }) {
       confirmBillAmount,
       deleteBill,
       toggleParticipantPaid,
+      toggleOccurrencePaid,
       deleteOccurrence,
       deleteOccurrenceAndFollowing,
     }),
