@@ -37,7 +37,9 @@ export default function SubscriptionCard() {
 
   if (loading || !subscription) return null
 
-  const { status, billingInterval, priceCents, currency, trialEndsAt, currentPeriodEnd, canceledAt } = subscription
+  const { status, billingInterval, priceCents, currency, trialEndsAt, currentPeriodEnd, canceledAt, provider } =
+    subscription
+  const isRevenueCat = provider === 'revenuecat'
   const needsPlanChoice = status !== 'active'
   const currentPeriodKey = PLAN_PERIOD_KEYS[billingInterval] ?? PLAN_PERIOD_KEYS.monthly
   const currentPrice = formatCurrency(priceCents / 100, i18n.language, currency)
@@ -55,7 +57,10 @@ export default function SubscriptionCard() {
   }
 
   async function handleCancel() {
-    if (!(await confirm(t('subscription.cancelConfirm')))) return
+    // A subscription bought via Apple can only be cancelled from Apple's
+    // own subscription management screen (which cancelSubscription()
+    // opens) — no destructive action happens on our side to confirm here.
+    if (!isRevenueCat && !(await confirm(t('subscription.cancelConfirm')))) return
     setActionError('')
     setSubmitting(true)
     try {
@@ -146,7 +151,7 @@ export default function SubscriptionCard() {
             disabled={submitting}
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-400 disabled:opacity-40"
           >
-            {t('subscription.cancelButton')}
+            {isRevenueCat ? t('subscription.manageOnAppStoreButton') : t('subscription.cancelButton')}
           </button>
         )}
       </div>

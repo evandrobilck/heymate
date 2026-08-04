@@ -44,6 +44,7 @@ async function updateFromSubscription(houseId: string, subscription: Stripe.Subs
     .from('house_subscriptions')
     .update({
       status: mapStripeStatus(subscription.status),
+      provider: 'stripe',
       stripe_subscription_id: subscription.id,
       billing_interval: getBillingInterval(subscription),
       price_cents: price?.unit_amount ?? undefined,

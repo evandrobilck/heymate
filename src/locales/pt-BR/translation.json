@@ -403,6 +403,7 @@
     "periodAnnual": "{{price}} por ano",
     "subscribeButton": "Assinar",
     "cancelButton": "Cancelar assinatura",
+    "manageOnAppStoreButton": "Gerenciar na App Store",
     "reactivateButton": "Assinar de novo",
     "subscribeError": "Não foi possível iniciar a assinatura. Tente de novo.",
     "cancelError": "Não foi possível cancelar a assinatura. Tente de novo.",

@@ -403,6 +403,7 @@
     "periodAnnual": "{{price}} por año",
     "subscribeButton": "Suscribirse",
     "cancelButton": "Cancelar suscripción",
+    "manageOnAppStoreButton": "Gestionar en la App Store",
     "reactivateButton": "Suscribirse de nuevo",
     "subscribeError": "No pudimos iniciar la suscripción. Intenta de nuevo.",
     "cancelError": "No pudimos cancelar la suscripción. Intenta de nuevo.",

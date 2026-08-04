@@ -3,6 +3,11 @@ import { Capacitor } from '@capacitor/core'
 import { Browser } from '@capacitor/browser'
 import { supabase } from '../services/supabase'
 import { useHouse } from './HouseContext'
+import { purchasePlanWithRevenueCat, resetRevenueCatUser, syncRevenueCatUser } from '../utils/revenueCat'
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
 
 const SubscriptionContext = createContext(null)
 
@@ -32,6 +37,7 @@ function mapSubscriptionRow(row) {
     trialEndsAt: row.trial_ends_at,
     currentPeriodEnd: row.current_period_end,
     canceledAt: row.canceled_at,
+    provider: row.provider,
   }
 }
 
@@ -83,14 +89,40 @@ export function SubscriptionProvider({ children }) {
     }
   }, [house?.id, refresh])
 
-  // Starts a real Stripe Checkout session (test mode). On native platforms
-  // this opens in an in-app browser tab (SFSafariViewController / Custom
-  // Tabs) instead of the app's own webview, since payment happening outside
-  // the app's own UI is what keeps this exempt from Apple/Google's in-app
-  // purchase requirement. The subscription row itself is only updated once
-  // Stripe confirms payment via the stripe-webhook edge function.
+  // Apple requires iOS purchases to go through StoreKit — RevenueCat needs
+  // its "current user" set to this house (a subscription unlocks the whole
+  // house, not just whoever bought it) before a purchase can be attributed
+  // correctly by revenuecat-webhook. No-ops on web/Android, where Stripe
+  // checkout is still used directly.
+  useEffect(() => {
+    if (Capacitor.getPlatform() !== 'ios') return
+    if (house?.id) {
+      syncRevenueCatUser(house.id)
+    } else {
+      resetRevenueCatUser()
+    }
+  }, [house?.id])
+
+  // On iOS this must be an Apple In-App Purchase (App Review guideline
+  // 3.1.1) — everywhere else it's a real Stripe Checkout session. Either
+  // way, house_subscriptions itself is only ever written by a webhook
+  // (stripe-webhook or revenuecat-webhook) once the provider confirms
+  // payment, never by the client directly.
   async function startCheckout(plan) {
     if (!house?.id) return
+
+    if (Capacitor.getPlatform() === 'ios') {
+      await purchasePlanWithRevenueCat(plan)
+      // revenuecat-webhook updates house_subscriptions asynchronously —
+      // give it a few seconds to land instead of leaving the UI showing
+      // "not subscribed" right after a successful purchase.
+      for (let attempt = 0; attempt < 5; attempt++) {
+        await sleep(1500)
+        await refresh()
+      }
+      return
+    }
+
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: { house_id: house.id, plan },
     })
@@ -103,10 +135,19 @@ export function SubscriptionProvider({ children }) {
     }
   }
 
-  // Cancels the subscription in Stripe (test mode). house_subscriptions is
-  // updated by stripe-webhook once Stripe confirms the cancellation.
+  // A subscription bought via Apple can only be cancelled through Apple's
+  // own subscription management (App Review doesn't allow a custom in-app
+  // cancel flow to replace it) — deep-link there instead of calling Stripe.
+  // house_subscriptions is updated by revenuecat-webhook once Apple
+  // confirms the cancellation.
   async function cancelSubscription() {
     if (!house?.id) return
+
+    if (subscription?.provider === 'revenuecat') {
+      await Browser.open({ url: 'https://apps.apple.com/account/subscriptions' })
+      return
+    }
+
     const { error } = await supabase.functions.invoke('cancel-subscription', {
       body: { house_id: house.id },
     })
