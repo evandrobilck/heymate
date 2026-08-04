@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '../contexts/AuthContext'
+import { useHouse } from '../contexts/HouseContext'
 import { useBills } from '../contexts/BillsContext'
 import { isBillOccurrenceVisible } from '../utils/recurrence'
 import { getBillOccurrenceState } from '../utils/billOccurrences'
 import { toDayKey } from '../utils/calendar'
+import { formatCurrency } from '../utils/formatCurrency'
 import { formatMonthLabel } from '../utils/formatDate'
 import { groupByYearMonth } from '../utils/groupByYearMonth'
 import BillCard from '../components/BillCard'
@@ -14,10 +17,13 @@ import EmptyState from '../components/EmptyState'
 
 export default function ContasPage() {
   const { t, i18n } = useTranslation()
+  const { user } = useAuth()
+  const { house } = useHouse()
   const { bills, loading } = useBills()
   const [showForm, setShowForm] = useState(false)
   const [editingBill, setEditingBill] = useState(null)
   const [expandedYears, setExpandedYears] = useState(() => new Set())
+  const [shoppingExpanded, setShoppingExpanded] = useState(false)
 
   // Non-recurring bills are a single card (their own due_date/shares).
   // Recurring bills spread into one card per cycle: any fully paid cycle
@@ -44,6 +50,27 @@ export default function ContasPage() {
   }, [bills])
 
   const paidBillsByYear = useMemo(() => groupByYearMonth(paidItems, (item) => item.occurrenceDate), [paidItems])
+
+  // Items bought off the shopping list generate one small bill each — left
+  // ungrouped they can flood Pendentes with a dozen tiny cards. Fold them
+  // into a single collapsible group instead, one line per item once opened.
+  const { shoppingPendingItems, regularPendingItems, youOweShopping } = useMemo(() => {
+    const shopping = []
+    const regular = []
+    let owed = 0
+
+    pendingItems.forEach((item) => {
+      if (item.bill.source === 'shopping') {
+        shopping.push(item)
+        const share = item.bill.shares[user.id]
+        if (share && !share.paid) owed += share.amount - (share.paidAmount ?? 0)
+      } else {
+        regular.push(item)
+      }
+    })
+
+    return { shoppingPendingItems: shopping, regularPendingItems: regular, youOweShopping: owed }
+  }, [pendingItems, user.id])
 
   function toggleYear(year) {
     setExpandedYears((prev) => {
@@ -81,7 +108,7 @@ export default function ContasPage() {
         ) : (
           <>
             {pendingItems.length === 0 && <EmptyState icon="🎉" message={t('billsPage.noPending')} />}
-            {pendingItems.map(({ bill, occurrenceDate }) => (
+            {regularPendingItems.map(({ bill, occurrenceDate }) => (
               <BillCard
                 key={`${bill.id}-${occurrenceDate}`}
                 bill={bill}
@@ -89,6 +116,45 @@ export default function ContasPage() {
                 onEdit={() => setEditingBill(bill)}
               />
             ))}
+
+            {shoppingPendingItems.length > 0 && (
+              <div className="rounded-xl border border-gray-200 bg-surface">
+                <button
+                  type="button"
+                  onClick={() => setShoppingExpanded((prev) => !prev)}
+                  aria-expanded={shoppingExpanded}
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left"
+                >
+                  <span className="text-xl">🛒</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-900">{t('billsPage.shoppingGroupTitle')}</p>
+                    <p className="text-xs text-gray-500">
+                      {t('billsPage.shoppingGroupCount', { count: shoppingPendingItems.length })}
+                    </p>
+                  </div>
+                  {youOweShopping > 0.005 && (
+                    <span className="text-sm font-semibold text-amber-600">
+                      {formatCurrency(youOweShopping, i18n.language, house.currency)}
+                    </span>
+                  )}
+                  <span className={`text-gray-400 transition-transform ${shoppingExpanded ? 'rotate-180' : ''}`}>
+                    ⌄
+                  </span>
+                </button>
+                {shoppingExpanded && (
+                  <div className="space-y-3 border-t border-gray-100 px-4 pb-4 pt-3">
+                    {shoppingPendingItems.map(({ bill, occurrenceDate }) => (
+                      <BillCard
+                        key={`${bill.id}-${occurrenceDate}`}
+                        bill={bill}
+                        occurrenceDate={occurrenceDate}
+                        onEdit={() => setEditingBill(bill)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </>
         )}
       </div>

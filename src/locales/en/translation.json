@@ -184,7 +184,10 @@
     "duplicateConfirm": "You already have a similar bill — \"{{title}}\" on {{date}}. Create it anyway?",
     "debtOffsetHint": "{{name}} already owes you {{amount}} — this will be automatically offset against this bill.",
     "settledViaOffset": "offset against another debt",
-    "partiallyOffset": "{{amount}} already offset"
+    "partiallyOffset": "{{amount}} already offset",
+    "shoppingGroupTitle": "Shopping list items",
+    "shoppingGroupCount_one": "{{count}} pending item",
+    "shoppingGroupCount_other": "{{count}} pending items"
   },
   "tasksPage": {
     "addTask": "Add task",
