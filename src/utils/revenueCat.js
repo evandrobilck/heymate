@@ -34,6 +34,10 @@ export async function resetRevenueCatUser() {
 // offering, mirroring the Stripe monthly/semiannual/annual prices.
 const PLAN_TO_PACKAGE_KEY = { monthly: 'monthly', semiannual: 'sixMonth', annual: 'annual' }
 
+// Returns the purchased product's id/expiration/price straight from the
+// SDK's own (already receipt-validated) result, so the caller can report it
+// to sync-revenuecat-purchase immediately instead of only waiting on
+// revenuecat-webhook — see that function's comment for why.
 export async function purchasePlanWithRevenueCat(plan) {
   const offerings = await Purchases.getOfferings()
   const packageKey = PLAN_TO_PACKAGE_KEY[plan]
@@ -43,5 +47,12 @@ export async function purchasePlanWithRevenueCat(plan) {
     throw new Error(`No RevenueCat package configured for the "${plan}" plan`)
   }
 
-  await Purchases.purchasePackage({ aPackage })
+  const { productIdentifier, customerInfo } = await Purchases.purchasePackage({ aPackage })
+
+  return {
+    product_id: productIdentifier,
+    expiration_date: customerInfo.allExpirationDates?.[productIdentifier] ?? null,
+    price_cents: Math.round((aPackage.product.price ?? 0) * 100),
+    currency: aPackage.product.currencyCode ?? null,
+  }
 }

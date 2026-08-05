@@ -5,10 +5,6 @@ import { supabase } from '../services/supabase'
 import { useHouse } from './HouseContext'
 import { purchasePlanWithRevenueCat, resetRevenueCatUser, syncRevenueCatUser } from '../utils/revenueCat'
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
 const SubscriptionContext = createContext(null)
 
 // supabase.functions.invoke() only gives a generic error on non-2xx
@@ -112,14 +108,16 @@ export function SubscriptionProvider({ children }) {
     if (!house?.id) return
 
     if (Capacitor.getPlatform() === 'ios') {
-      await purchasePlanWithRevenueCat(plan)
-      // revenuecat-webhook updates house_subscriptions asynchronously —
-      // give it a few seconds to land instead of leaving the UI showing
-      // "not subscribed" right after a successful purchase.
-      for (let attempt = 0; attempt < 5; attempt++) {
-        await sleep(1500)
-        await refresh()
-      }
+      const purchaseInfo = await purchasePlanWithRevenueCat(plan)
+      // Report the SDK-validated purchase ourselves instead of only
+      // waiting on revenuecat-webhook — see sync-revenuecat-purchase's
+      // comment for why. Non-fatal if this fails: the webhook (once
+      // RevenueCat's delivery issue is resolved) is still a backup path.
+      const { error: syncError } = await supabase.functions.invoke('sync-revenuecat-purchase', {
+        body: { house_id: house.id, ...purchaseInfo },
+      })
+      if (syncError) console.error(await readFunctionError(syncError))
+      await refresh()
       return
     }
 
