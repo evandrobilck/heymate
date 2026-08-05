@@ -7,6 +7,11 @@
 // profiles.id is what every bill/task/shopping row's created_by/user_id
 // points at — a hard delete would either cascade destructively through a
 // house's shared history or fail outright on those foreign keys.
+//
+// Every step is wrapped and logged individually (console.error) because an
+// uncaught exception here surfaces to the client as an opaque
+// "EDGE_FUNCTION_ERROR" with no detail — this makes the actual failing
+// step visible in the function's Logs tab instead of only Invocations.
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
@@ -20,6 +25,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, content-type, apikey, x-client-info',
 }
 
+function errorResponse(step: string, err: unknown) {
+  console.error(`[delete-account] failed at: ${step}`, err)
+  const message = err instanceof Error ? err.message : String(err)
+  return new Response(JSON.stringify({ step, error: message }), {
+    status: 500,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  })
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: corsHeaders })
@@ -30,31 +44,37 @@ Deno.serve(async (req) => {
   const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     global: { headers: { Authorization: authHeader } },
   })
-  const {
-    data: { user },
-    error: userError,
-  } = await userClient.auth.getUser()
-  if (userError || !user) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
 
-  const { error: rpcError } = await userClient.rpc('anonymize_own_account')
-  if (rpcError) {
-    return new Response(JSON.stringify({ error: rpcError.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+  let user
+  try {
+    const result = await userClient.auth.getUser()
+    if (result.error || !result.data.user) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
+    user = result.data.user
+  } catch (err) {
+    return errorResponse('auth.getUser', err)
   }
 
-  const { data: avatarFiles } = await supabase.storage.from('avatars').list(user.id)
-  if (avatarFiles?.length) {
-    await supabase.storage.from('avatars').remove(avatarFiles.map((file) => `${user.id}/${file.name}`))
+  try {
+    const { error: rpcError } = await userClient.rpc('anonymize_own_account')
+    if (rpcError) return errorResponse('anonymize_own_account', rpcError)
+  } catch (err) {
+    return errorResponse('anonymize_own_account (threw)', err)
   }
 
-  const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id, true)
-  if (deleteError) {
-    return new Response(JSON.stringify({ error: deleteError.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+  try {
+    const { data: avatarFiles } = await supabase.storage.from('avatars').list(user.id)
+    if (avatarFiles?.length) {
+      await supabase.storage.from('avatars').remove(avatarFiles.map((file) => `${user.id}/${file.name}`))
+    }
+  } catch (err) {
+    console.error('[delete-account] avatar cleanup failed (non-fatal)', err)
+  }
+
+  try {
+    const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id, true)
+    if (deleteError) return errorResponse('auth.admin.deleteUser', deleteError)
+  } catch (err) {
+    return errorResponse('auth.admin.deleteUser (threw)', err)
   }
 
   return new Response(JSON.stringify({ ok: true }), {
