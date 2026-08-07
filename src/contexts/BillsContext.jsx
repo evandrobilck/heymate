@@ -10,6 +10,7 @@ function mapBillRow(row) {
     shares[share.user_id] = {
       amount: Number(share.amount),
       percentage: share.percentage != null ? Number(share.percentage) : undefined,
+      days: share.days != null ? Number(share.days) : undefined,
       paid: share.paid,
       paidAt: share.paid_at,
       paidAmount: Number(share.paid_amount ?? (share.paid ? share.amount : 0)),
@@ -42,6 +43,7 @@ function mapBillRow(row) {
     recurrenceUntil: row.recurrence_until,
     excludedDates: (row.bill_occurrence_exceptions ?? []).map((exception) => exception.occurrence_date),
     splitType: row.split_type,
+    splitMonth: row.split_month,
     createdBy: row.created_by,
     source: row.source,
     isPrivate: row.is_private,
@@ -159,6 +161,7 @@ export function BillsProvider({ children }) {
       user_id: userId,
       amount: bill.shares[userId].amount,
       percentage: bill.shares[userId].percentage ?? null,
+      days: bill.shares[userId].days ?? null,
       paid: bill.shares[userId].paid ?? false,
       paid_at: bill.shares[userId].paidAt ?? null,
     }))
@@ -175,6 +178,7 @@ export function BillsProvider({ children }) {
       p_shares: shares,
       p_is_private: bill.isPrivate ?? false,
       p_apply_debt_offset: bill.applyDebtOffset ?? true,
+      p_split_month: bill.splitMonth ?? null,
     })
 
     if (error) throw error
@@ -200,6 +204,7 @@ export function BillsProvider({ children }) {
         user_id: userId,
         amount: newShare.amount,
         percentage: newShare.percentage ?? null,
+        days: newShare.days ?? null,
         paid: keepPaid,
         paid_at: keepPaid ? (previousShare?.paidAt ?? new Date().toISOString().slice(0, 10)) : null,
         paid_amount: carriedPaidAmount,
@@ -217,6 +222,7 @@ export function BillsProvider({ children }) {
       p_split_type: bill.splitType,
       p_shares: shares,
       p_is_private: bill.isPrivate ?? false,
+      p_split_month: bill.splitMonth ?? null,
     })
 
     if (error) throw error

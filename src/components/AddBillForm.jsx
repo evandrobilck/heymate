@@ -7,7 +7,7 @@ import { useCategories } from '../contexts/CategoriesContext'
 import { useConfirm } from '../contexts/ConfirmContext'
 import { useToast } from '../contexts/ToastContext'
 import { billCategories, recurrenceOptions } from '../services/mockData'
-import { computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
+import { computeByDayShares, computeEqualShares, computeExactShares, computePercentageShares } from '../utils/splitBill'
 import { computeBalances } from '../utils/computeBalances'
 import { isBillOccurrenceVisible } from '../utils/recurrence'
 import { formatCurrency } from '../utils/formatCurrency'
@@ -17,7 +17,13 @@ import Modal from './Modal'
 import ReminderList from './ReminderList'
 import PhotoPickerLabel from './PhotoPickerLabel'
 
-const SPLIT_TYPES = ['equal', 'percentage', 'exact']
+const SPLIT_TYPES = ['equal', 'percentage', 'exact', 'byDay']
+
+function daysInMonth(monthKey) {
+  if (!monthKey) return 31
+  const [year, month] = monthKey.split('-').map(Number)
+  return new Date(year, month, 0).getDate()
+}
 
 // Same title (case/whitespace-insensitive) and category, due within 20 days
 // of each other — close enough to be "did I already log this?" territory
@@ -108,6 +114,12 @@ export default function AddBillForm({ onClose, bill = null }) {
       ? Object.fromEntries(bill.participantIds.map((id) => [id, String(bill.shares[id].amount ?? '')]))
       : {}
   )
+  const [splitMonth, setSplitMonth] = useState(bill?.splitMonth ?? (bill?.dueDate ?? '').slice(0, 7) || new Date().toISOString().slice(0, 7))
+  const [days, setDays] = useState(
+    bill?.splitType === 'byDay'
+      ? Object.fromEntries(bill.participantIds.map((id) => [id, String(bill.shares[id].days ?? '')]))
+      : {}
+  )
   const [reminders, setReminders] = useState(bill?.reminders ?? [])
   const [isPrivate, setIsPrivate] = useState(bill?.isPrivate ?? false)
 
@@ -124,9 +136,19 @@ export default function AddBillForm({ onClose, bill = null }) {
     return Object.fromEntries(youOwe.map(({ memberId, amount }) => [memberId, amount]))
   }, [bills, user.id, isEditing])
 
+  const monthDayCount = daysInMonth(splitMonth)
+
+  function dayValue(memberId) {
+    return Number(days[memberId] ?? monthDayCount) || 0
+  }
+
   function estimateShare(memberId) {
     if (splitType === 'exact') return Number(exactAmounts[memberId]) || 0
     if (splitType === 'percentage') return round2((Number(percentages[memberId]) || 0) * amountValue / 100)
+    if (splitType === 'byDay') {
+      const totalDays = participantIds.reduce((sum, id) => sum + dayValue(id), 0)
+      return totalDays > 0 ? round2((amountValue * dayValue(memberId)) / totalDays) : 0
+    }
     return participantIds.length > 0 ? round2(amountValue / participantIds.length) : 0
   }
 
@@ -142,6 +164,7 @@ export default function AddBillForm({ onClose, bill = null }) {
 
   const percentageTotal = participantIds.reduce((sum, id) => sum + (Number(percentages[id]) || 0), 0)
   const exactTotal = participantIds.reduce((sum, id) => sum + (Number(exactAmounts[id]) || 0), 0)
+  const dayTotal = participantIds.reduce((sum, id) => sum + dayValue(id), 0)
 
   const isValid =
     title.trim() !== '' &&
@@ -149,7 +172,8 @@ export default function AddBillForm({ onClose, bill = null }) {
     dueDate !== '' &&
     participantIds.length > 0 &&
     (splitType !== 'percentage' || Math.abs(percentageTotal - 100) < 0.01) &&
-    (splitType !== 'exact' || Math.abs(exactTotal - amountValue) < 0.01)
+    (splitType !== 'exact' || Math.abs(exactTotal - amountValue) < 0.01) &&
+    (splitType !== 'byDay' || dayTotal > 0)
 
   async function handlePhotoChange(file) {
     if (!isEditing) {
@@ -223,6 +247,11 @@ export default function AddBillForm({ onClose, bill = null }) {
         amountValue,
         Object.fromEntries(participantIds.map((id) => [id, Number(percentages[id]) || 0]))
       )
+    } else if (splitType === 'byDay') {
+      shares = computeByDayShares(
+        amountValue,
+        Object.fromEntries(participantIds.map((id) => [id, dayValue(id)]))
+      )
     } else {
       shares = computeExactShares(
         Object.fromEntries(participantIds.map((id) => [id, Number(exactAmounts[id]) || 0]))
@@ -236,6 +265,7 @@ export default function AddBillForm({ onClose, bill = null }) {
       dueDate,
       recurrence,
       splitType,
+      splitMonth: splitType === 'byDay' ? splitMonth : null,
       participantIds,
       shares,
       reminders,
@@ -445,6 +475,20 @@ export default function AddBillForm({ onClose, bill = null }) {
                           className="w-20 rounded-lg border border-gray-300 px-2 py-1 text-right text-sm"
                         />
                       )}
+
+                      {checked && splitType === 'byDay' && (
+                        <input
+                          type="number"
+                          min="0"
+                          max={monthDayCount}
+                          value={days[member.id] ?? String(monthDayCount)}
+                          onChange={(event) =>
+                            setDays((prev) => ({ ...prev, [member.id]: event.target.value }))
+                          }
+                          placeholder={t('billsPage.daysLabel')}
+                          className="w-16 rounded-lg border border-gray-300 px-2 py-1 text-right text-sm"
+                        />
+                      )}
                     </div>
                     {showOffsetHint && (
                       <p className="ml-6 mt-0.5 text-xs text-brand-600">
@@ -512,6 +556,20 @@ export default function AddBillForm({ onClose, bill = null }) {
                   amount: formatCurrency(amountValue, i18n.language, house.currency),
                 })}
               </p>
+            )}
+            {splitType === 'byDay' && (
+              <div className="mt-2">
+                <label className="text-xs font-medium text-gray-600">{t('billsPage.splitMonthLabel')}</label>
+                <input
+                  type="month"
+                  value={splitMonth}
+                  onChange={(event) => setSplitMonth(event.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('billsPage.dayTotal', { total: dayTotal, monthDays: monthDayCount })}
+                </p>
+              </div>
             )}
           </div>
 

@@ -31,3 +31,18 @@ export function computeExactShares(amountByParticipant) {
     ])
   )
 }
+
+export function computeByDayShares(totalAmount, daysByParticipant) {
+  const totalDays = Object.values(daysByParticipant).reduce((sum, days) => sum + days, 0)
+  return Object.fromEntries(
+    Object.entries(daysByParticipant).map(([id, days]) => [
+      id,
+      {
+        days,
+        amount: totalDays > 0 ? roundCurrency((totalAmount * days) / totalDays) : 0,
+        paid: false,
+        paidAt: null,
+      },
+    ])
+  )
+}

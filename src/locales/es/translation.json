@@ -122,7 +122,8 @@
   "splitType": {
     "equal": "Igual",
     "percentage": "Porcentaje",
-    "exact": "Monto exacto"
+    "exact": "Monto exacto",
+    "byDay": "Por día"
   },
   "billCategories": {
     "rent": "Alquiler",
@@ -150,6 +151,9 @@
     "splitTypeLabel": "Tipo de división",
     "percentageTotal": "Total: {{total}}%",
     "exactTotal": "Asignado {{total}} de {{amount}}",
+    "splitMonthLabel": "Mes de referencia",
+    "daysLabel": "días",
+    "dayTotal": "{{total}} días en total (el mes seleccionado tiene {{monthDays}})",
     "save": "Guardar cuenta",
     "owedToYouTotal": "Te deben {{amount}} en total",
     "owesYou": "{{name}} te debe {{amount}}",

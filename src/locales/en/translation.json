@@ -122,7 +122,8 @@
   "splitType": {
     "equal": "Equal",
     "percentage": "Percentage",
-    "exact": "Exact amount"
+    "exact": "Exact amount",
+    "byDay": "By day"
   },
   "billCategories": {
     "rent": "Rent",
@@ -150,6 +151,9 @@
     "splitTypeLabel": "Split type",
     "percentageTotal": "Total: {{total}}%",
     "exactTotal": "Allocated {{total}} of {{amount}}",
+    "splitMonthLabel": "Reference month",
+    "daysLabel": "days",
+    "dayTotal": "{{total}} days total (the selected month has {{monthDays}})",
     "save": "Save bill",
     "owedToYouTotal": "Owed to you: {{amount}} in total",
     "owesYou": "{{name}} owes you {{amount}}",
