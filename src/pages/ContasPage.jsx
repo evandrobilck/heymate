@@ -54,14 +54,16 @@ export default function ContasPage() {
   // Items bought off the shopping list generate one small bill each — left
   // ungrouped they can flood Pendentes with a dozen tiny cards. Fold them
   // into a single collapsible group instead, one line per item once opened.
-  const { shoppingPendingItems, regularPendingItems, youOweShopping } = useMemo(() => {
+  const { shoppingPendingItems, regularPendingItems, youOweShopping, shoppingTotalAmount } = useMemo(() => {
     const shopping = []
     const regular = []
     let owed = 0
+    let total = 0
 
     pendingItems.forEach((item) => {
       if (item.bill.source === 'shopping') {
         shopping.push(item)
+        total += item.bill.totalAmount
         const share = item.bill.shares[user.id]
         if (share && !share.paid) owed += share.amount - (share.paidAmount ?? 0)
       } else {
@@ -69,7 +71,7 @@ export default function ContasPage() {
       }
     })
 
-    return { shoppingPendingItems: shopping, regularPendingItems: regular, youOweShopping: owed }
+    return { shoppingPendingItems: shopping, regularPendingItems: regular, youOweShopping: owed, shoppingTotalAmount: total }
   }, [pendingItems, user.id])
 
   function toggleYear(year) {
@@ -130,6 +132,10 @@ export default function ContasPage() {
                     <p className="text-sm font-medium text-gray-900">{t('billsPage.shoppingGroupTitle')}</p>
                     <p className="text-xs text-gray-500">
                       {t('billsPage.shoppingGroupCount', { count: shoppingPendingItems.length })}
+                      {' · '}
+                      {t('billsPage.shoppingGroupTotal', {
+                        amount: formatCurrency(shoppingTotalAmount, i18n.language, house.currency),
+                      })}
                     </p>
                   </div>
                   {youOweShopping > 0.005 && (

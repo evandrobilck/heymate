@@ -192,7 +192,8 @@
     "partiallyOffset": "{{amount}} already offset",
     "shoppingGroupTitle": "Shopping list items",
     "shoppingGroupCount_one": "{{count}} pending item",
-    "shoppingGroupCount_other": "{{count}} pending items"
+    "shoppingGroupCount_other": "{{count}} pending items",
+    "shoppingGroupTotal": "{{amount}} total"
   },
   "tasksPage": {
     "addTask": "Add task",

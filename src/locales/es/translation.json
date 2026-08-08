@@ -192,7 +192,8 @@
     "partiallyOffset": "{{amount}} ya compensado",
     "shoppingGroupTitle": "Ítems de la lista de compras",
     "shoppingGroupCount_one": "{{count}} ítem pendiente",
-    "shoppingGroupCount_other": "{{count}} ítems pendientes"
+    "shoppingGroupCount_other": "{{count}} ítems pendientes",
+    "shoppingGroupTotal": "{{amount}} en total"
   },
   "tasksPage": {
     "addTask": "Agregar tarea",
