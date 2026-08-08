@@ -489,6 +489,12 @@ export default function AddBillForm({ onClose, bill = null }) {
                           className="w-16 rounded-lg border border-gray-300 px-2 py-1 text-right text-sm"
                         />
                       )}
+
+                      {checked && (splitType === 'percentage' || splitType === 'byDay') && (
+                        <span className="w-20 shrink-0 text-right text-xs font-medium text-gray-500">
+                          {formatCurrency(estimateShare(member.id), i18n.language, house.currency)}
+                        </span>
+                      )}
                     </div>
                     {showOffsetHint && (
                       <p className="ml-6 mt-0.5 text-xs text-brand-600">
