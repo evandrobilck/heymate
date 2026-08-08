@@ -154,6 +154,7 @@
     "splitMonthLabel": "Reference month",
     "daysLabel": "days",
     "dayTotal": "{{total}} days total (the selected month has {{monthDays}})",
+    "saveError": "Couldn't save the bill. Try again.",
     "save": "Save bill",
     "owedToYouTotal": "Owed to you: {{amount}} in total",
     "owesYou": "{{name}} owes you {{amount}}",

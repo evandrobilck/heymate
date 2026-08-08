@@ -288,6 +288,9 @@ export default function AddBillForm({ onClose, bill = null }) {
         }
       }
       onClose()
+    } catch (err) {
+      console.error(err)
+      showToast(t('billsPage.saveError'))
     } finally {
       setSubmitting(false)
     }

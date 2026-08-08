@@ -154,6 +154,7 @@
     "splitMonthLabel": "Mês de referência",
     "daysLabel": "dias",
     "dayTotal": "{{total}} dias no total (o mês selecionado tem {{monthDays}})",
+    "saveError": "Não foi possível salvar a conta. Tente de novo.",
     "save": "Salvar conta",
     "owedToYouTotal": "Devem a você {{amount}} no total",
     "owesYou": "{{name}} deve {{amount}} a você",
