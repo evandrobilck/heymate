@@ -34,34 +34,42 @@ Deno.serve(async (req) => {
   } = await userClient.auth.getUser()
   if (userError || !user) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
 
-  const { house_id } = await req.json()
-  if (!house_id) return new Response('Missing house_id', { status: 400, headers: corsHeaders })
+  try {
+    const { house_id } = await req.json()
+    if (!house_id) return new Response('Missing house_id', { status: 400, headers: corsHeaders })
 
-  const { data: membership } = await supabase
-    .from('house_members')
-    .select('role')
-    .eq('house_id', house_id)
-    .eq('user_id', user.id)
-    .is('left_at', null)
-    .maybeSingle()
+    const { data: membership } = await supabase
+      .from('house_members')
+      .select('role')
+      .eq('house_id', house_id)
+      .eq('user_id', user.id)
+      .is('left_at', null)
+      .maybeSingle()
 
-  if (!membership || membership.role !== 'admin') {
-    return new Response('Only the house admin can cancel', { status: 403, headers: corsHeaders })
+    if (!membership || membership.role !== 'admin') {
+      return new Response('Only the house admin can cancel', { status: 403, headers: corsHeaders })
+    }
+
+    const { data: subscriptionRow } = await supabase
+      .from('house_subscriptions')
+      .select('stripe_subscription_id')
+      .eq('house_id', house_id)
+      .maybeSingle()
+
+    if (!subscriptionRow?.stripe_subscription_id) {
+      return new Response('No active Stripe subscription for this house', { status: 400, headers: corsHeaders })
+    }
+
+    await stripe.subscriptions.cancel(subscriptionRow.stripe_subscription_id)
+
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  } catch (err) {
+    console.error('[cancel-subscription] failed', err)
+    return new Response(JSON.stringify({ error: 'Something went wrong cancelling the subscription. Please try again.' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
-
-  const { data: subscriptionRow } = await supabase
-    .from('house_subscriptions')
-    .select('stripe_subscription_id')
-    .eq('house_id', house_id)
-    .maybeSingle()
-
-  if (!subscriptionRow?.stripe_subscription_id) {
-    return new Response('No active Stripe subscription for this house', { status: 400, headers: corsHeaders })
-  }
-
-  await stripe.subscriptions.cancel(subscriptionRow.stripe_subscription_id)
-
-  return new Response(JSON.stringify({ ok: true }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  })
 })

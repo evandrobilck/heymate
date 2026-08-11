@@ -46,56 +46,64 @@ Deno.serve(async (req) => {
   } = await userClient.auth.getUser()
   if (userError || !user) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
 
-  const { house_id, plan } = await req.json()
-  if (!house_id) return new Response('Missing house_id', { status: 400, headers: corsHeaders })
+  try {
+    const { house_id, plan } = await req.json()
+    if (!house_id) return new Response('Missing house_id', { status: 400, headers: corsHeaders })
 
-  const priceId = PRICE_IDS[plan]
-  if (!priceId) return new Response('Invalid plan', { status: 400, headers: corsHeaders })
+    const priceId = PRICE_IDS[plan]
+    if (!priceId) return new Response('Invalid plan', { status: 400, headers: corsHeaders })
 
-  const { data: membership } = await supabase
-    .from('house_members')
-    .select('role')
-    .eq('house_id', house_id)
-    .eq('user_id', user.id)
-    .is('left_at', null)
-    .maybeSingle()
+    const { data: membership } = await supabase
+      .from('house_members')
+      .select('role')
+      .eq('house_id', house_id)
+      .eq('user_id', user.id)
+      .is('left_at', null)
+      .maybeSingle()
 
-  if (!membership || membership.role !== 'admin') {
-    return new Response('Only the house admin can subscribe', { status: 403, headers: corsHeaders })
-  }
+    if (!membership || membership.role !== 'admin') {
+      return new Response('Only the house admin can subscribe', { status: 403, headers: corsHeaders })
+    }
 
-  const { data: house } = await supabase.from('houses').select('name').eq('id', house_id).single()
-  const { data: subscriptionRow } = await supabase
-    .from('house_subscriptions')
-    .select('stripe_customer_id')
-    .eq('house_id', house_id)
-    .maybeSingle()
+    const { data: house } = await supabase.from('houses').select('name').eq('id', house_id).single()
+    const { data: subscriptionRow } = await supabase
+      .from('house_subscriptions')
+      .select('stripe_customer_id')
+      .eq('house_id', house_id)
+      .maybeSingle()
 
-  let customerId = subscriptionRow?.stripe_customer_id as string | undefined
+    let customerId = subscriptionRow?.stripe_customer_id as string | undefined
 
-  if (!customerId) {
-    const { data: profile } = await supabase.from('profiles').select('email, full_name').eq('id', user.id).single()
-    const customer = await stripe.customers.create({
-      email: profile?.email,
-      name: profile?.full_name,
-      metadata: { house_id, house_name: house?.name ?? '' },
+    if (!customerId) {
+      const { data: profile } = await supabase.from('profiles').select('email, full_name').eq('id', user.id).single()
+      const customer = await stripe.customers.create({
+        email: profile?.email,
+        name: profile?.full_name,
+        metadata: { house_id, house_name: house?.name ?? '' },
+      })
+      customerId = customer.id
+      await supabase.from('house_subscriptions').update({ stripe_customer_id: customerId }).eq('house_id', house_id)
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      customer: customerId,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${APP_URL}/checkout-resultado?status=success`,
+      cancel_url: `${APP_URL}/checkout-resultado?status=canceled`,
+      allow_promotion_codes: true,
+      subscription_data: { metadata: { house_id } },
+      metadata: { house_id },
     })
-    customerId = customer.id
-    await supabase.from('house_subscriptions').update({ stripe_customer_id: customerId }).eq('house_id', house_id)
+
+    return new Response(JSON.stringify({ url: session.url }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  } catch (err) {
+    console.error('[create-checkout-session] failed', err)
+    return new Response(JSON.stringify({ error: 'Something went wrong starting checkout. Please try again.' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
-
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
-    customer: customerId,
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${APP_URL}/checkout-resultado?status=success`,
-    cancel_url: `${APP_URL}/checkout-resultado?status=canceled`,
-    allow_promotion_codes: true,
-    subscription_data: { metadata: { house_id } },
-    metadata: { house_id },
-  })
-
-  return new Response(JSON.stringify({ url: session.url }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  })
 })
