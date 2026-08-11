@@ -243,8 +243,15 @@ async function release(entityType: 'task' | 'bill' | 'event', entityId: string, 
 
 type Reminder = { id: string; channel: 'email' | 'push' | 'both'; days_before: number; time_of_day: string }
 
-Deno.serve(async () => {
+const CRON_SECRET = Deno.env.get('CRON_SECRET')!
+
+Deno.serve(async (req) => {
   try {
+    const authHeader = req.headers.get('Authorization')
+    if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
+      return new Response('Unauthorized', { status: 401 })
+    }
+
     const today = todayKey()
     const currentHour = currentLocalHour()
     let sent = 0
