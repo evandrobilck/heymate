@@ -70,7 +70,7 @@ export function MaintenanceProvider({ children }) {
 
   async function uploadPhoto(file) {
     const extension = file.name.split('.').pop()
-    const path = `${house.id}/${Date.now()}.${extension}`
+    const path = `${house.id}/${crypto.randomUUID()}.${extension}`
 
     const { error: uploadError } = await supabase.storage.from('maintenance-photos').upload(path, file)
     if (uploadError) throw uploadError

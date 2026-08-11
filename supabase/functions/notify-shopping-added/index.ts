@@ -7,6 +7,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { sendPush } from '../_shared/push.ts'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY)
@@ -19,6 +20,18 @@ const corsHeaders = {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
+
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  })
+  const {
+    data: { user },
+    error: userError,
+  } = await userClient.auth.getUser()
+  if (userError || !user) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
+
   try {
     const { item_id } = await req.json()
     if (!item_id) return new Response('Missing item_id', { status: 400, headers: corsHeaders })
@@ -29,6 +42,15 @@ Deno.serve(async (req) => {
       .eq('id', item_id)
       .single()
     if (itemError) throw itemError
+
+    const { data: membership } = await supabase
+      .from('house_members')
+      .select('user_id')
+      .eq('house_id', item.house_id)
+      .eq('user_id', user.id)
+      .is('left_at', null)
+      .maybeSingle()
+    if (!membership) return new Response('Not a member of this house', { status: 403, headers: corsHeaders })
 
     const { data: house } = await supabase.from('houses').select('name').eq('id', item.house_id).single()
 

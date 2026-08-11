@@ -274,7 +274,7 @@ export function BillsProvider({ children }) {
 
   async function uploadBillPhoto(file) {
     const extension = file.name.split('.').pop()
-    const path = `${house.id}/${Date.now()}.${extension}`
+    const path = `${house.id}/${crypto.randomUUID()}.${extension}`
 
     const { error: uploadError } = await supabase.storage.from('bill-photos').upload(path, file)
     if (uploadError) throw uploadError

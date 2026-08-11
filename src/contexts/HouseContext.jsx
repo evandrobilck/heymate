@@ -180,7 +180,7 @@ export function HouseProvider({ children }) {
   async function uploadHousePhoto(file) {
     if (!house) return
     const extension = file.name.split('.').pop()
-    const path = `${house.id}/photo-${Date.now()}.${extension}`
+    const path = `${house.id}/photo-${crypto.randomUUID()}.${extension}`
 
     const { error: uploadError } = await supabase.storage.from('house-photos').upload(path, file, { upsert: true })
     if (uploadError) throw uploadError
