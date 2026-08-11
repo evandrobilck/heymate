@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import * as Sentry from '@sentry/react'
 import './index.css'
 import './i18n'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -20,6 +21,17 @@ import { InspectionProvider } from './contexts/InspectionContext'
 import { CalendarEventsProvider } from './contexts/CalendarEventsContext'
 import { VaultProvider } from './contexts/VaultContext'
 import App from './App.jsx'
+
+// HeyFlat handles bank details/PayID/bill amounts, so request/response
+// bodies and automatic user PII are kept out of what gets sent to Sentry —
+// only the error itself and its stack trace.
+Sentry.init({
+  dsn: 'https://c301593baa71c53f21b65ed942fe1a2d@o4511889811701760.ingest.us.sentry.io/4511889834246144',
+  dataCollection: {
+    userInfo: false,
+    httpBodies: [],
+  },
+})
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
