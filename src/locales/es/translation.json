@@ -425,7 +425,9 @@
     "resultSuccessBody": "La suscripción de tu casa ya está activa. Puedes cerrar esta pestaña y volver a HeyFlat.",
     "resultCanceledTitle": "Checkout cancelado",
     "resultCanceledBody": "No se realizó ningún cobro. Puedes cerrar esta pestaña y volver a HeyFlat cuando quieras.",
-    "resultCloseHint": "Cierra esta pestaña para volver a la app."
+    "resultCloseHint": "Cierra esta pestaña para volver a la app.",
+    "privacyPolicyLink": "Política de Privacidad",
+    "termsOfUseLink": "Términos de Uso"
   },
   "maintenancePage": {
     "addRequest": "Reportar un problema",

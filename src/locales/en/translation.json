@@ -425,7 +425,9 @@
     "resultSuccessBody": "Your house's subscription is now active. You can close this tab and go back to HeyFlat.",
     "resultCanceledTitle": "Checkout canceled",
     "resultCanceledBody": "No charge was made. You can close this tab and go back to HeyFlat whenever you're ready.",
-    "resultCloseHint": "Close this tab to return to the app."
+    "resultCloseHint": "Close this tab to return to the app.",
+    "privacyPolicyLink": "Privacy Policy",
+    "termsOfUseLink": "Terms of Use"
   },
   "maintenancePage": {
     "addRequest": "Report an issue",

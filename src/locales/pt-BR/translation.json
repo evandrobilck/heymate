@@ -425,7 +425,9 @@
     "resultSuccessBody": "A assinatura da sua casa já está ativa. Pode fechar esta aba e voltar pro HeyFlat.",
     "resultCanceledTitle": "Checkout cancelado",
     "resultCanceledBody": "Nenhuma cobrança foi feita. Pode fechar esta aba e voltar pro HeyFlat quando quiser.",
-    "resultCloseHint": "Feche esta aba para voltar ao app."
+    "resultCloseHint": "Feche esta aba para voltar ao app.",
+    "privacyPolicyLink": "Política de Privacidade",
+    "termsOfUseLink": "Termos de Uso"
   },
   "maintenancePage": {
     "addRequest": "Reportar problema",

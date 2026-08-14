@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Browser } from '@capacitor/browser'
 import { useSubscription } from '../contexts/SubscriptionContext'
 import { useConfirm } from '../contexts/ConfirmContext'
 import { formatCurrency } from '../utils/formatCurrency'
 import { getDaysRemaining, isTrialExpired } from '../utils/subscriptionStatus'
 import { PLAN_IDS, PLAN_PRICE_CENTS, PLAN_LABEL_KEYS, PLAN_PERIOD_KEYS } from '../utils/subscriptionPlans'
+
+const PRIVACY_POLICY_URL = 'https://heyflat.com.au/privacidade'
+const TERMS_OF_USE_URL = 'https://heyflat.com.au/termos'
 
 const STATUS_STYLES = {
   trialing: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400',
@@ -128,6 +132,15 @@ export default function SubscriptionCard() {
               )
             })}
           </div>
+          <p className="mt-2 text-xs text-gray-500">
+            <button type="button" onClick={() => Browser.open({ url: TERMS_OF_USE_URL })} className="underline hover:text-gray-700">
+              {t('subscription.termsOfUseLink')}
+            </button>
+            {' · '}
+            <button type="button" onClick={() => Browser.open({ url: PRIVACY_POLICY_URL })} className="underline hover:text-gray-700">
+              {t('subscription.privacyPolicyLink')}
+            </button>
+          </p>
         </div>
       )}
 
