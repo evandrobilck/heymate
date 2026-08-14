@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Browser } from '@capacitor/browser'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
 import { useSubscription } from '../contexts/SubscriptionContext'
 import { formatCurrency } from '../utils/formatCurrency'
 import { isSubscriptionBlocked, isTrialExpired } from '../utils/subscriptionStatus'
 import { PLAN_IDS, PLAN_PRICE_CENTS, PLAN_LABEL_KEYS, PLAN_PERIOD_KEYS } from '../utils/subscriptionPlans'
+
+const PRIVACY_POLICY_URL = 'https://heyflat.com.au/privacidade'
+const TERMS_OF_USE_URL = 'https://heyflat.com.au/termos'
 
 function BlockedScreen() {
   const { t, i18n } = useTranslation()
@@ -76,6 +80,15 @@ function BlockedScreen() {
             >
               {t('subscription.subscribeButton')}
             </button>
+            <p className="mt-3 text-xs text-gray-500">
+              <button type="button" onClick={() => Browser.open({ url: TERMS_OF_USE_URL })} className="underline hover:text-gray-700">
+                {t('subscription.termsOfUseLink')}
+              </button>
+              {' · '}
+              <button type="button" onClick={() => Browser.open({ url: PRIVACY_POLICY_URL })} className="underline hover:text-gray-700">
+                {t('subscription.privacyPolicyLink')}
+              </button>
+            </p>
           </>
         ) : (
           <p className="mt-6 text-sm text-gray-500">{t('subscription.nonAdminBlockedHint')}</p>
