@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
@@ -7,8 +7,11 @@ import { computeBalances } from '../utils/computeBalances'
 import { formatCurrency } from '../utils/formatCurrency'
 import { isBillOccurrenceVisible } from '../utils/recurrence'
 import Avatar from './Avatar'
+import BalanceBreakdownModal from './BalanceBreakdownModal'
 
-function BalanceCard({ title, total, entries, tone, emptyLabel, memberName, findMember, currency, locale }) {
+function BalanceCard({ title, total, entries, tone, emptyLabel, memberName, findMember, currency, locale, onWhy }) {
+  const { t } = useTranslation()
+  const whyLabel = t('billsPage.whyThisAmount')
   const toneClasses =
     tone === 'positive'
       ? {
@@ -40,7 +43,16 @@ function BalanceCard({ title, total, entries, tone, emptyLabel, memberName, find
             return (
               <li key={memberId} className="flex items-center gap-2">
                 <Avatar name={memberName(memberId)} avatarUrl={member?.avatarUrl} size="sm" />
-                <span className="min-w-0 flex-1 truncate text-sm text-gray-700">{memberName(memberId)}</span>
+                <div className="min-w-0 flex-1">
+                  <span className="block truncate text-sm text-gray-700">{memberName(memberId)}</span>
+                  <button
+                    type="button"
+                    onClick={() => onWhy(memberId, amount)}
+                    className={`text-xs underline decoration-dotted underline-offset-2 ${toneClasses.text}`}
+                  >
+                    {whyLabel}
+                  </button>
+                </div>
                 <span className={`text-sm font-medium ${toneClasses.text}`}>
                   {formatCurrency(amount, locale, currency)}
                 </span>
@@ -58,8 +70,9 @@ export default function HomeBalanceCards() {
   const { user } = useAuth()
   const { house } = useHouse()
   const { bills } = useBills()
+  const [selected, setSelected] = useState(null)
 
-  const { owedToYou, youOwe, totalOwedToYou, totalYouOwe } = useMemo(
+  const { owedToYou, youOwe, totalOwedToYou, totalYouOwe, breakdown } = useMemo(
     () => computeBalances(bills.filter(isBillOccurrenceVisible), user.id),
     [bills, user.id]
   )
@@ -84,6 +97,7 @@ export default function HomeBalanceCards() {
         findMember={findMember}
         currency={house.currency}
         locale={i18n.language}
+        onWhy={(memberId, amount) => setSelected({ memberId, amount, direction: 'youOwe' })}
       />
       <BalanceCard
         title={t('home.owedToYouTitle')}
@@ -95,7 +109,20 @@ export default function HomeBalanceCards() {
         findMember={findMember}
         currency={house.currency}
         locale={i18n.language}
+        onWhy={(memberId, amount) => setSelected({ memberId, amount, direction: 'owedToYou' })}
       />
+
+      {selected && (
+        <BalanceBreakdownModal
+          memberName={memberName(selected.memberId)}
+          netAmount={selected.amount}
+          direction={selected.direction}
+          breakdown={breakdown[selected.memberId]}
+          currency={house.currency}
+          locale={i18n.language}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </div>
   )
 }

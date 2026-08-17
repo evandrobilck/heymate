@@ -17,17 +17,25 @@ function round(value) {
 // Recurring bills only count their current pending cycle (same one shown
 // as the live card in Contas) — bill_shares itself is just the template
 // and no longer reflects what's actually owed once a cycle has been paid.
+function pushBreakdownItem(breakdown, memberId, side, item) {
+  const entry = breakdown[memberId] ?? (breakdown[memberId] = { theyOweYou: [], youOweThem: [] })
+  entry[side].push(item)
+}
+
 export function computeBalances(bills, currentUserId, todayKey = toDayKey(new Date())) {
   const net = {}
+  const breakdown = {}
 
   bills.forEach((bill) => {
     const payerId = bill.createdBy
     let shares = bill.shares
+    let occurrenceDate = null
 
     if (bill.recurrence !== 'none') {
       const { pending } = getBillOccurrenceState(bill, todayKey)
       if (!pending) return
       shares = pending.shares
+      occurrenceDate = pending.occurrenceDate
     }
 
     bill.participantIds.forEach((participantId) => {
@@ -39,8 +47,20 @@ export function computeBalances(bills, currentUserId, todayKey = toDayKey(new Da
 
       if (payerId === currentUserId) {
         net[participantId] = (net[participantId] ?? 0) + remaining
+        pushBreakdownItem(breakdown, participantId, 'theyOweYou', {
+          billId: bill.id,
+          title: bill.title,
+          occurrenceDate,
+          amount: remaining,
+        })
       } else if (participantId === currentUserId) {
         net[payerId] = (net[payerId] ?? 0) - remaining
+        pushBreakdownItem(breakdown, payerId, 'youOweThem', {
+          billId: bill.id,
+          title: bill.title,
+          occurrenceDate,
+          amount: remaining,
+        })
       }
     })
   })
@@ -59,5 +79,6 @@ export function computeBalances(bills, currentUserId, todayKey = toDayKey(new Da
     youOwe,
     totalOwedToYou: round(owedToYou.reduce((sum, item) => sum + item.amount, 0)),
     totalYouOwe: round(youOwe.reduce((sum, item) => sum + item.amount, 0)),
+    breakdown,
   }
 }

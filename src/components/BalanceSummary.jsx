@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useHouse } from '../contexts/HouseContext'
@@ -6,14 +6,16 @@ import { useBills } from '../contexts/BillsContext'
 import { computeBalances } from '../utils/computeBalances'
 import { formatCurrency } from '../utils/formatCurrency'
 import { isBillOccurrenceVisible } from '../utils/recurrence'
+import BalanceBreakdownModal from './BalanceBreakdownModal'
 
 export default function BalanceSummary() {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const { house } = useHouse()
   const { bills } = useBills()
+  const [selected, setSelected] = useState(null)
 
-  const { owedToYou, youOwe, totalOwedToYou, totalYouOwe } = useMemo(
+  const { owedToYou, youOwe, totalOwedToYou, totalYouOwe, breakdown } = useMemo(
     () => computeBalances(bills.filter(isBillOccurrenceVisible), user.id),
     [bills, user.id]
   )
@@ -37,7 +39,14 @@ export default function BalanceSummary() {
                 {t('billsPage.owesYou', {
                   name: memberName(memberId),
                   amount: formatCurrency(amount, i18n.language, house.currency),
-                })}
+                })}{' '}
+                <button
+                  type="button"
+                  onClick={() => setSelected({ memberId, amount, direction: 'owedToYou' })}
+                  className="underline decoration-dotted underline-offset-2 hover:text-green-900 dark:hover:text-green-200"
+                >
+                  {t('billsPage.whyThisAmount')}
+                </button>
               </li>
             ))}
           </ul>
@@ -55,11 +64,30 @@ export default function BalanceSummary() {
                 {t('billsPage.youOweMember', {
                   name: memberName(memberId),
                   amount: formatCurrency(amount, i18n.language, house.currency),
-                })}
+                })}{' '}
+                <button
+                  type="button"
+                  onClick={() => setSelected({ memberId, amount, direction: 'youOwe' })}
+                  className="underline decoration-dotted underline-offset-2 hover:text-amber-900 dark:hover:text-amber-200"
+                >
+                  {t('billsPage.whyThisAmount')}
+                </button>
               </li>
             ))}
           </ul>
         </div>
+      )}
+
+      {selected && (
+        <BalanceBreakdownModal
+          memberName={memberName(selected.memberId)}
+          netAmount={selected.amount}
+          direction={selected.direction}
+          breakdown={breakdown[selected.memberId]}
+          currency={house.currency}
+          locale={i18n.language}
+          onClose={() => setSelected(null)}
+        />
       )}
     </div>
   )
