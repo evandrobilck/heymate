@@ -20,6 +20,7 @@ import { MaintenanceProvider } from './contexts/MaintenanceContext'
 import { InspectionProvider } from './contexts/InspectionContext'
 import { CalendarEventsProvider } from './contexts/CalendarEventsContext'
 import { VaultProvider } from './contexts/VaultContext'
+import AnalyticsTracker from './components/AnalyticsTracker'
 import App from './App.jsx'
 
 // HeyFlat handles bank details/PayID/bill amounts, so request/response
@@ -40,6 +41,7 @@ createRoot(document.getElementById('root')).render(
         <ToastProvider>
           <ConfirmProvider>
             <AuthProvider>
+              <AnalyticsTracker />
               <HouseProvider>
                 <SubscriptionProvider>
                   <LanguageProvider>
