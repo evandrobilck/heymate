@@ -25,6 +25,7 @@ const InspecaoPage = lazy(() => import('./pages/InspecaoPage'))
 const CasaPage = lazy(() => import('./pages/CasaPage'))
 const SettingsPage = lazy(() => import('./pages/SettingsPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+const AdminPage = lazy(() => import('./pages/AdminPage'))
 
 function PageFallback() {
   return (
@@ -100,6 +101,7 @@ export default function App() {
           <Route path="/casa" element={<CasaPage />} />
           <Route path="/configuracoes" element={<SettingsPage />} />
           <Route path="/perfil" element={<ProfilePage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/home" replace />} />

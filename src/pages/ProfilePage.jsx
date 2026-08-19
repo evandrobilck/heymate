@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useLanguage } from '../contexts/LanguageContext'
@@ -267,6 +267,12 @@ export default function ProfilePage() {
           {deletingAccount ? t('profilePage.deleteAccountDeleting') : t('profilePage.deleteAccount')}
         </button>
       </div>
+
+      {user.email === 'xp.vando@gmail.com' && (
+        <Link to="/admin" className="block text-center text-xs font-medium text-gray-400 hover:text-brand-600">
+          Admin
+        </Link>
+      )}
     </div>
   )
 }
