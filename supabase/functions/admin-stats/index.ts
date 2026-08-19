@@ -33,14 +33,50 @@ Deno.serve(async (req) => {
     return new Response('Unauthorized', { status: 401, headers: corsHeaders })
   }
 
-  const [{ count: totalUsers }, { count: totalHouses }, { count: activeSubscriptions }] = await Promise.all([
+  const [{ count: totalUsers }, { count: totalHouses }, { data: activeSubs }] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('houses').select('*', { count: 'exact', head: true }),
-    supabase.from('house_subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    supabase
+      .from('house_subscriptions')
+      .select('billing_interval, price_cents, currency, current_period_end')
+      .eq('status', 'active'),
   ])
 
+  const byInterval: Record<string, number> = { monthly: 0, semiannual: 0, annual: 0 }
+  for (const sub of activeSubs ?? []) {
+    if (sub.billing_interval in byInterval) byInterval[sub.billing_interval]++
+  }
+
+  // "Next month" revenue: only subscriptions whose current period actually
+  // renews next calendar month will charge again then — a semiannual sub
+  // renewing in 4 months contributes nothing to next month's cash-in.
+  const now = new Date()
+  const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+  const monthAfterStart = new Date(now.getFullYear(), now.getMonth() + 2, 1)
+
+  let nextMonthRevenueCents = 0
+  let nextMonthCurrency = 'AUD'
+  let nextMonthRenewalCount = 0
+  for (const sub of activeSubs ?? []) {
+    if (!sub.current_period_end) continue
+    const periodEnd = new Date(sub.current_period_end)
+    if (periodEnd >= nextMonthStart && periodEnd < monthAfterStart) {
+      nextMonthRevenueCents += sub.price_cents ?? 0
+      nextMonthCurrency = sub.currency ?? nextMonthCurrency
+      nextMonthRenewalCount++
+    }
+  }
+
   return new Response(
-    JSON.stringify({ totalUsers: totalUsers ?? 0, totalHouses: totalHouses ?? 0, activeSubscriptions: activeSubscriptions ?? 0 }),
+    JSON.stringify({
+      totalUsers: totalUsers ?? 0,
+      totalHouses: totalHouses ?? 0,
+      activeSubscriptions: activeSubs?.length ?? 0,
+      subscriptionsByInterval: byInterval,
+      nextMonthRevenueCents,
+      nextMonthCurrency,
+      nextMonthRenewalCount,
+    }),
     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
   )
 })
